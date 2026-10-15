@@ -1,0 +1,14 @@
+{
+  "title": "Foundations",
+  "pages": [
+    "colour",
+    "type",
+    "spacing-and-density",
+    "radius-and-borders",
+    "elevation",
+    "motion",
+    "icons",
+    "viewports",
+    "brand"
+  ]
+}

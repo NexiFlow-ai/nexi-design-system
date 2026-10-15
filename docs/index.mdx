@@ -1,0 +1,40 @@
+---
+title: Design system
+description: The one look of the Nexi suite — its principles, tokens, shell, components and patterns — with every component rendered live in the workshop.
+kind: section
+app: platform
+---
+
+Every Nexi application is built from one kit and one set of rules. This section is that system, written once: the
+pages are generated from the Design System Register, and every component is shown as it really renders, in the
+**component workshop** — a living catalogue of every component in every state, in Light and Graphite, in English and
+Ukrainian.
+
+<div className="nx-cta">
+  <a href="/design-system/" className="nx-btn nx-btn--primary">Open the workshop</a>
+  <a href="./components/" className="nx-btn">Browse the components</a>
+</div>
+
+- [Principles](./principles) — what the suite looks and behaves like, in fourteen sentences.
+- [Foundations](./foundations) — colour, type, spacing and density, radius and borders, elevation, motion, icons,
+  viewports. Every number is a token; the workshop reads the live values.
+- [Layout and shell](./layout-and-shell) — one shell, one page frame, one way to go two levels deep, one right-hand
+  panel.
+- [Patterns](./patterns) — the compositions that cover nearly every screen.
+- [Components](./components) — one page per component: contract, states, accessibility, stories.
+- [Copy and language](./copy-and-language) — how the suite speaks, in two languages.
+- [Accessibility](./accessibility) — what every component guarantees.
+- [For builders](./for-builders) — how to add a component, write its story, and keep a new application inside the
+  system.
+
+## How to read a component page
+
+Each page carries the register id (`DS-3001` and the like), the kit export a screen imports, the sentence that *is*
+the component's contract, the list of its states, and the stories that prove it. A story embedded on the page is the
+real component rendered from the same code the applications ship — not a picture. *Open in the workshop* shows the
+same story with the theme, language and density switches.
+
+## The rule in one sentence
+
+A screen is composed of registered components; a new idiom proposes a register row before code; a component without
+a story does not exist.

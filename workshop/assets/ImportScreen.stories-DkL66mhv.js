@@ -1,0 +1,43 @@
+import{I as F,P as q}from"./fixtures-CBGdDB98.js";import{af as E,r as c,j as e,S as H,a0 as S,z as j,B as r,U as L,n as V,c as O,A as U,L as $,b as z}from"./iframe-WvhPuRF9.js";import"./preload-helper-PPVm8Dsz.js";function b({writeMode:v,provider:f,preview:n=F,initialStep:C="file"}){const{t:s}=E(),[t,i]=c.useState(C),[y,k]=c.useState(n.mapping),[I,x]=c.useState(!1),[R,N]=c.useState(!1),_=v==="native"||v==="policy_controlled",B=["Account.legal_name","Account.tax_id","Account.city","Account.industry","Contact.name","Contact.phone","Contact.email"],w=y.filter(a=>!a.field).length,o=n.review.filter(a=>a.issue!=="ok").length,M=[{key:"file",label:s("sales.import.stepFile")},{key:"map",label:s("sales.import.stepMap")},{key:"review",label:s("sales.import.stepReview"),count:o||void 0},{key:"done",label:s("sales.import.stepDone")}],A=[{key:"row",header:s("sales.import.row"),render:a=>String(a.row),width:"70px"},{key:"name",header:s("sales.field.name"),render:a=>a.name},{key:"issue",header:s("sales.import.verdict"),render:a=>e.jsx(H,{tone:a.issue==="ok"?"ok":a.issue==="duplicate"?"warn":"danger",children:s(`sales.import.issue.${a.issue}`)}),width:"140px"},{key:"note",header:s("sales.field.note"),render:a=>e.jsx("span",{className:"nexus-sales-muted",children:a.note??"—"}),wrap:!0}];return _?e.jsx(S,{layout:"dense",title:s("sales.nav.import"),meta:e.jsx(z,{children:n.file}),tabs:e.jsx($,{tabs:M,current:t,onChange:a=>i(a),label:s("sales.import.steps"),id:"import",layout:"page"}),testId:"import-page",children:e.jsxs("div",{id:`import-panel-${t}`,role:"tabpanel","aria-labelledby":`import-tab-${t}`,children:[t==="file"?e.jsxs("div",{className:"nexus-sales-import-file",children:[e.jsx("p",{className:"nexus-sales-p",children:s("sales.import.fileBody",{n:String(n.rows),file:n.file})}),e.jsx("div",{className:"nexus-sales-actions",children:e.jsx(r,{variant:"primary",onClick:()=>i("map"),"data-testid":"import-next-map",children:s("sales.import.continue")})}),e.jsx(L,{children:s("sales.import.typesHint")})]}):null,t==="map"?e.jsxs("div",{className:"nexus-sales-import-map",children:[e.jsxs("table",{className:"nexus-cc-table","data-testid":"import-mapping",children:[e.jsx("caption",{className:"nexus-visually-hidden",children:s("sales.import.stepMap")}),e.jsx("thead",{children:e.jsxs("tr",{children:[e.jsx("th",{scope:"col",children:s("sales.import.column")}),e.jsx("th",{scope:"col",children:s("sales.import.field")})]})}),e.jsx("tbody",{children:y.map((a,D)=>e.jsxs("tr",{children:[e.jsx("td",{children:a.column}),e.jsx("td",{children:e.jsx(V,{quiet:!0,label:s("sales.import.fieldFor",{column:a.column}),value:a.field??"",onChange:l=>k(P=>P.map((g,T)=>T===D?{...g,field:l||null}:g)),options:[{value:"",label:s("sales.import.skipColumn")},...B.map(l=>({value:l,label:s(`sales.field.${l}`)}))],testId:`map-${a.column}`})})]},a.column))})]}),e.jsxs("div",{className:"nexus-sales-actions",children:[e.jsx(r,{onClick:()=>i("file"),children:s("sales.action.back")}),e.jsx(r,{variant:"primary",onClick:()=>i("review"),"data-testid":"import-next-review",children:w?s("sales.import.continueSkipping",{n:String(w)}):s("sales.import.continue")})]})]}):null,t==="review"?e.jsxs("div",{className:"nexus-sales-import-review",children:[e.jsx(O,{rows:n.review,columns:A,rowKey:a=>String(a.row),caption:s("sales.import.stepReview"),testId:"import-review"}),I?e.jsx(U,{title:s("sales.import.confirmTitle",{n:String(n.rows-o)}),onCancel:()=>x(!1),primary:{label:s("sales.import.commit"),onClick:()=>{x(!1),i("done")},testId:"import-commit"},testId:"import-confirm",children:e.jsx("p",{className:"nexus-sales-p",children:s("sales.import.confirmBody",{skipped:String(o)})})}):e.jsxs("div",{className:"nexus-sales-actions",children:[e.jsx(r,{onClick:()=>i("map"),children:s("sales.action.back")}),e.jsx(r,{variant:"primary",onClick:()=>x(!0),"data-testid":"import-next-commit",children:s("sales.import.importN",{n:String(n.rows-o)})})]})]}):null,t==="done"?e.jsx("div",{className:"nexus-sales-import-done",role:"status","data-testid":"import-done",children:R?e.jsx(j,{variant:"quiet",title:s("sales.import.undoneTitle"),body:s("sales.import.undoneBody")}):e.jsxs(e.Fragment,{children:[e.jsx("p",{className:"nexus-sales-receipt",children:s("sales.import.receipt",{n:String(n.rows-o),skipped:String(o),batch:"IMP-0007"})}),e.jsx("div",{className:"nexus-sales-actions",children:e.jsx(r,{variant:"destructive",onClick:()=>N(!0),"data-testid":"import-undo",children:s("sales.import.undo")})})]})}):null]})}):e.jsx(S,{layout:"dense",title:s("sales.nav.import"),testId:"import-page",children:e.jsx(j,{variant:"quiet",title:s("sales.import.connectedTitle",{provider:f??""}),body:s("sales.import.connectedBody",{provider:f??""}),testId:"import-connected"})})}b.__docgenInfo={description:"Import (…2774): three steps — map · review · commit — as `LocalTabs` the person walks in order; the review\ntable names each duplicate and invalid row; commit asks inline (DS-7004) and answers with a receipt that can be\nundone as one batch. Native types only: in the connected world the source owns the records and the screen says so\n(DS-0004 `Restriction`) instead of offering a dead upload.",methods:[],displayName:"ImportScreen",props:{writeMode:{required:!0,tsType:{name:"union",raw:'"native" | "read_only" | "approval_required" | "policy_controlled"',elements:[{name:"literal",value:'"native"'},{name:"literal",value:'"read_only"'},{name:"literal",value:'"approval_required"'},{name:"literal",value:'"policy_controlled"'}]},description:""},provider:{required:!0,tsType:{name:"union",raw:"string | null",elements:[{name:"string"},{name:"null"}]},description:""},preview:{required:!1,tsType:{name:"ImportPreview"},description:"",defaultValue:{value:`{
+  file: "clients-2026.csv",
+  rows: 38,
+  columns: ["Company", "Code", "Contact", "Phone", "City", "Manager"],
+  mapping: [
+    { column: "Company", field: "Account.legal_name" },
+    { column: "Code", field: "Account.tax_id" },
+    { column: "Contact", field: "Contact.name" },
+    { column: "Phone", field: "Contact.phone" },
+    { column: "City", field: "Account.city" },
+    { column: "Manager", field: null },
+  ],
+  review: [
+    { row: 3, name: "Horizon Hotels LLC", issue: "duplicate", note: "matches Horizon Hotels by tax id" },
+    { row: 9, name: "Zelena Hata", issue: "invalid", note: "tax id has 7 digits" },
+    { row: 17, name: "FOP Sofia Hrytsai", issue: "duplicate", note: "matches Sofia Interiors by name" },
+    { row: 1, name: "Verkhovyna Resort", issue: "ok" },
+    { row: 2, name: "Kalyna Café", issue: "ok" },
+  ],
+}`,computed:!1}},initialStep:{required:!1,tsType:{name:"union",raw:'"file" | "map" | "review" | "done"',elements:[{name:"literal",value:'"file"'},{name:"literal",value:'"map"'},{name:"literal",value:'"review"'},{name:"literal",value:'"done"'}]},description:"",defaultValue:{value:'"file"',computed:!1}}}};const G={title:"Apps/NexSales/Import",component:b,parameters:{ds:"DS-3040",layout:"fullscreen",workbench:{ns:"sales",path:"/sales/import"},docs:{description:{component:"Import (composes DS-3024 steps · DS-3030 table · DS-3040 ActionPanel): file → map columns → review (duplicates · invalid) → confirm → receipt with *Undo batch*. In the connected world the file goes to the source."}}},args:{writeMode:"native",provider:null}},d={name:"1 · File"},p={name:"2 · Map columns",args:{initialStep:"map"}},m={name:"3 · Review",args:{initialStep:"review"}},u={name:"4 · Receipt · Undo",args:{initialStep:"done"}},h={name:"Connected world · goes to BAS",args:{writeMode:"read_only",provider:q}},J=["File","Map","Review","Done","Connected"];d.parameters={...d.parameters,docs:{...d.parameters?.docs,source:{originalSource:`{
+  name: "1 · File"
+}`,...d.parameters?.docs?.source}}};p.parameters={...p.parameters,docs:{...p.parameters?.docs,source:{originalSource:`{
+  name: "2 · Map columns",
+  args: {
+    initialStep: "map"
+  }
+}`,...p.parameters?.docs?.source}}};m.parameters={...m.parameters,docs:{...m.parameters?.docs,source:{originalSource:`{
+  name: "3 · Review",
+  args: {
+    initialStep: "review"
+  }
+}`,...m.parameters?.docs?.source}}};u.parameters={...u.parameters,docs:{...u.parameters?.docs,source:{originalSource:`{
+  name: "4 · Receipt · Undo",
+  args: {
+    initialStep: "done"
+  }
+}`,...u.parameters?.docs?.source}}};h.parameters={...h.parameters,docs:{...h.parameters?.docs,source:{originalSource:`{
+  name: "Connected world · goes to BAS",
+  args: {
+    writeMode: "read_only",
+    provider: PROVIDER
+  }
+}`,...h.parameters?.docs?.source}}};export{h as Connected,u as Done,d as File,p as Map,m as Review,J as __namedExportsOrder,G as default};

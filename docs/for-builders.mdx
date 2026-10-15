@@ -1,0 +1,53 @@
+---
+title: For builders
+description: How to add a component, write its story, keep a screen inside the system — and what a new application starts from.
+kind: concept
+app: platform
+---
+
+The system has one rule for the person building a screen: **find the row first.** Everything else follows from it.
+
+## Build a screen
+
+1. Open [Components](./components) and [Patterns](./patterns). A screen is a pattern composed of registered
+   components; name the pattern and the component ids in the screen's acceptance criteria, never a look.
+2. Import the kit exports the rows name (`@nexus/ui`, `@nexus/ui/workbench`, `@nexus/app-shell`). Keep each
+   component's states; do not restyle it.
+3. Every number on the screen is a token — spacing, type, radius, control height, layer, shadow, data colour. A raw
+   colour, a px radius, an off-scale size or a `z-index` literal in an application stylesheet fails the fitness check.
+4. Render the state ladder: loading, empty, error, denied, offline, not found — before the content.
+5. Write the screen's composition stories (populated and every state that applies). The stories *are* the UX review
+   of the screen: they are rendered in the workshop before the screen is accepted, and the running screen is compared
+   to them afterwards.
+
+## Add a component
+
+A component that does not exist yet goes through the register, not around it.
+
+1. Propose the row: its contract in one sentence, its states, its accessibility, its copy keys, and the sources it
+   rests on. The design-system owner approves the row.
+2. Build it in the kit, on tokens, with every state the row names.
+3. Write `<Name>.stories.tsx` beside the component — one export per state, fixtures from the workshop's synthetic
+   fixtures only (no real name, number, address or document).
+4. The story must render, pass its interaction, and pass the accessibility check with no serious or critical finding.
+   A component without a story, or a story without a row, does not merge.
+
+## Change an idiom
+
+Changing how an approved component looks is a register change with the owner's approval — never a side effect of a
+story or a screen. A conversation component (the composer, the thread, the cards) is also governed by the
+Conversation Register and changes only through a conversation change request.
+
+## Start a new application
+
+A new application is created from the suite's application scaffold: the shell, the kit, both languages, the
+composition stories, and the fitness baseline at zero arrive together, and the application claims its accent pair
+in the launcher. Until the scaffold ships, a new application starts from the kit and the shell by the same rules.
+
+## Run the workshop locally
+
+```
+npm run workshop          # the workshop on your machine, with the theme · language · density switches
+npm run workshop:build    # the static export this site serves at /design-system/
+npm run fitness           # the design-system checks: stories, rows, tokens, duplicates, sizes
+```

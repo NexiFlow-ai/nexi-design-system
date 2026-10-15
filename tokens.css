@@ -1,0 +1,277 @@
+/**
+ * NEXUS Design Tokens — override this file (or :root) for tenant/end-user theming.
+ * Apps import @nexus/ui/tokens.css alone, or full @nexus/ui/styles.css
+ */
+:root {
+  /* Neutrals —  §2.6 Light: graphite text on warm white, one accent */
+  --nexus-bg: #ffffff;
+  --nexus-bg-subtle: #f7f7f6;
+  --nexus-bg-muted: #efefee;
+  --nexus-surface: #ffffff;
+  --nexus-surface-raised: #ffffff;
+  --nexus-text: #1f2023;
+  --nexus-text-secondary: #5c5d61;
+  --nexus-text-muted: #6b6c70;
+  --nexus-border: #e6e6e4;
+  --nexus-border-strong: #cfcfcc;
+  --nexus-focus: #1f2023;
+  /* the one accent (): selected · running · composer focus · active execution — never navigation chrome */
+  --nexus-accent: #7c8ef8;
+  --nexus-accent-ring: rgba(124, 142, 248, 0.32);
+  --nexus-accent-soft: rgba(124, 142, 248, 0.12);
+
+  /* Semantic (use sparingly) */
+  --nexus-error: #b91c1c;
+  --nexus-warning: #b45309;
+  --nexus-success: #15803d;
+  --nexus-info: #1d4ed8;
+  /*   (DS-1031): the names the apps already referenced without a definition — aliases, never new values */
+  --nexus-danger: var(--nexus-error);
+  --nexus-on-danger: #ffffff;
+  --nexus-switch-thumb: #ffffff;
+  --nexus-surface-hover: var(--nexus-bg-subtle);
+  --nexus-font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Data palette —   (DS-1005): eight categorical hues and one sequential ramp for things that are data */
+  /* NexForge colour keys, NexBI series, NexMap layers, NexGraph hues; every hue ≥ 3:1 against the surface in its theme;
+     an app never picks its own chart colour; the attention accents above are not a data palette */
+  --nexus-data-1: #3b5bdb;
+  --nexus-data-2: #c2410c;
+  --nexus-data-3: #15803d;
+  --nexus-data-4: #be185d;
+  --nexus-data-5: #6d28d9;
+  --nexus-data-6: #a16207;
+  --nexus-data-7: #0e7490;
+  --nexus-data-8: #57534e;
+  --nexus-data-seq-1: #e0e7ff;
+  --nexus-data-seq-2: #a5b4fc;
+  --nexus-data-seq-3: #6366f1;
+  --nexus-data-seq-4: #4338ca;
+  --nexus-data-seq-5: #312e81;
+
+  /* Attention accents — subtle mint/pink/green only where meaningful */
+  --nexus-accent-mint: #6ee7b7;
+  --nexus-accent-mint-soft: #ecfdf5;
+  --nexus-accent-mint-ring: rgba(110, 231, 183, 0.45);
+  --nexus-accent-pink: #f9a8d4;
+  --nexus-accent-pink-soft: #fdf2f8;
+  --nexus-accent-sky: #93c5fd;
+  --nexus-accent-sky-soft: #eff6ff;
+  --nexus-accent-amber: #fdba74;
+  --nexus-accent-amber-soft: #fff7ed;
+  --nexus-accent-green: #86efac;
+  --nexus-accent-green-soft: #f0fdf4;
+  --nexus-accent-violet: #c4b5fd;
+  --nexus-accent-violet-soft: #f5f3ff;
+  --nexus-accent-slate: #a1a1aa;
+  --nexus-accent-slate-soft: #f4f4f5;
+  /*  : coral — the accent no app used; NexCare's tile only, never chrome */
+  --nexus-accent-coral: #fca5a5;
+  --nexus-accent-coral-soft: #fef2f2;
+  /*  : copper — NexForge's tile only, never chrome */
+  --nexus-accent-copper: #d9a37e;
+  --nexus-accent-copper-soft: #fbf3ee;
+  /*   (proposed): teal — the tenth attention accent; NexSales' tile only, never chrome */
+  --nexus-accent-teal: #5eead4;
+  --nexus-accent-teal-soft: #f0fdfa;
+
+  /* Per-application accents (launcher icons, badges) */
+  --nexus-app-chat-accent: var(--nexus-accent-mint);
+  --nexus-app-chat-soft: var(--nexus-accent-mint-soft);
+  --nexus-app-spin-accent: var(--nexus-accent-pink);
+  --nexus-app-spin-soft: var(--nexus-accent-pink-soft);
+  --nexus-app-tasks-accent: var(--nexus-accent-amber);
+  --nexus-app-tasks-soft: var(--nexus-accent-amber-soft);
+  --nexus-app-bi-accent: var(--nexus-accent-sky);
+  --nexus-app-bi-soft: var(--nexus-accent-sky-soft);
+  /* Graph is violet, not green: next to Chat's mint the two tiles read as one (owner, 2026-09-21) */
+  --nexus-app-graph-accent: var(--nexus-accent-violet);
+  --nexus-app-graph-soft: var(--nexus-accent-violet-soft);
+  --nexus-app-core-accent: var(--nexus-accent-slate);
+  --nexus-app-core-soft: var(--nexus-accent-slate-soft);
+  /*  : NexMap's tile appears once the organization installs the module; green — the one accent no app uses */
+  --nexus-app-map-accent: var(--nexus-accent-green);
+  --nexus-app-map-soft: var(--nexus-accent-green-soft);
+  /*  : NexCare's tile appears once the organization installs the module */
+  --nexus-app-care-accent: var(--nexus-accent-coral);
+  --nexus-app-care-soft: var(--nexus-accent-coral-soft);
+  /*  : NexForge's tile appears once the organization installs the module */
+  --nexus-app-forge-accent: var(--nexus-accent-copper);
+  --nexus-app-forge-soft: var(--nexus-accent-copper-soft);
+  /*  : NexSales' tile appears once the organization installs the module (, proposed) */
+  --nexus-app-sales-accent: var(--nexus-accent-teal);
+  --nexus-app-sales-soft: var(--nexus-accent-teal-soft);
+
+  /* Composer — unified size on Home + Chat (override for tenant branding) */
+  --nexus-user-bubble: #f5f5f5;
+  --nexus-composer-max-width: 720px;
+  --nexus-composer-radius: 26px;
+  --nexus-composer-min-height: 56px;
+  --nexus-composer-card-min-height: 120px; /* docked (owner 2026-09-21: a little under the former 132) */
+  --nexus-composer-hero-min-height: 92px; /* a new chat's composer, centred on the page */
+  --nexus-composer-font-size: 16px;
+  --nexus-composer-placeholder-size: 16px;
+  --nexus-composer-border: var(--nexus-border);
+  --nexus-composer-border-focus: var(--nexus-accent);
+  --nexus-composer-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+  --nexus-composer-shadow-focus: 0 12px 40px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--nexus-accent-ring);
+  /* owner 2026-10-13 (): the band of the thread under the docked composer fades to this opacity so what
+     passes under the dock reads as behind it; whole again above the band. The composer never fades. */
+  --nexus-thread-tail-band: 176px; /* 28 px dock padding + the docked card + the gap above it */
+  --nexus-thread-tail-opacity: 0.25;
+  --nexus-thread-tail-mask: linear-gradient(to bottom, #000 calc(100% - var(--nexus-thread-tail-band)), rgba(0, 0, 0, var(--nexus-thread-tail-opacity)) 100%);
+
+  /* Assistant prose */
+  --nexus-assistant-accent-border: var(--nexus-accent-mint);
+  --nexus-assistant-accent-bg: rgba(236, 253, 245, 0.35);
+
+  /* Surfaces */
+  --nexus-glass-bg: rgba(255, 255, 255, 0.88);
+  --nexus-glass-border: rgba(255, 255, 255, 0.6);
+  --nexus-overlay-bg: rgba(10, 10, 10, 0.18);
+  --nexus-overlay-blur: 12px;
+  --nexus-shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.12), 0 8px 24px rgba(0, 0, 0, 0.06);
+  /*   (DS-1031) — the two smaller shadows every floating surface uses: `sm` a resting card / chip,
+     `md` the menu · popover · combobox list (the `0 18px 50px` literal twelve rules carried). `lg` above is the dialog's. */
+  --nexus-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --nexus-shadow-md: 0 18px 50px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  /* Layers —   (DS-1031): a `z-index` is one of these names, never a number in a rule */
+  --nexus-z-raised: 1;
+  --nexus-z-sticky: 10;
+  --nexus-z-dock: 20;
+  --nexus-z-drawer: 30;
+  --nexus-z-popover: 40;
+  --nexus-z-menu: 50;
+  --nexus-z-dialog: 60;
+  --nexus-z-toast: 70;
+  --nexus-z-skip: 100;
+
+  /* Spacing —   (DS-1011): a margin, padding or gap is one of these ten (0 and the 1 px hairline aside) */
+  /* 10 reads as 8 or 12, 14 as 12 or 16; `--nexus-action-gap` below is `space-4` */
+  --nexus-space-1: 2px;
+  --nexus-space-2: 4px;
+  --nexus-space-3: 6px;
+  --nexus-space-4: 8px;
+  --nexus-space-5: 12px;
+  --nexus-space-6: 16px;
+  --nexus-space-7: 20px;
+  --nexus-space-8: 24px;
+  --nexus-space-9: 32px;
+  --nexus-space-10: 48px;
+  /* the three workbench measures the kit kept private as `--cc-*` (DS-2010 · DS-3031) */
+  --nexus-page-pad: 32px;
+  --nexus-section-gap: 28px;
+  --nexus-inspector-pad: 20px;
+
+  /* Type scale —   (DS-1010): seven sizes, one line-height each, weights 400 / 500 / 600 only */
+  /* `md` (13) is the workbench body (); `lg` (14) the reading body; nothing under `xs`, no half pixels */
+  --nexus-text-xs: 11px;
+  --nexus-text-sm: 12px;
+  --nexus-text-md: 13px;
+  --nexus-text-lg: 14px;
+  --nexus-text-xl: 16px;
+  --nexus-text-2xl: 20px;
+  --nexus-text-3xl: 26px;
+  --nexus-leading-xs: 1.3;
+  --nexus-leading-sm: 1.3;
+  --nexus-leading-md: 1.45;
+  --nexus-leading-lg: 1.45;
+  --nexus-leading-xl: 1.4;
+  --nexus-leading-2xl: 1.2;
+  --nexus-leading-3xl: 1.2;
+
+  /* Layout */
+  /*   (DS-1020): radius `xs` the inner corner (chip, swatch, focus ring), `control` the 34 px input and the
+     32 px toolbar control, `pill` the counter and the status chip; `sm`…`xl` as before; `--nexus-radius` = `sm` */
+  --nexus-radius-xs: 4px;
+  --nexus-radius-control: 6px;
+  --nexus-radius-sm: 8px;
+  --nexus-radius-md: 12px;
+  --nexus-radius-lg: 16px;
+  --nexus-radius-xl: 20px;
+  --nexus-radius-pill: 999px;
+  --nexus-radius: var(--nexus-radius-sm);
+  --nexus-font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --nexus-content-max: 800px;
+  /*  () sidebar density: 248 px wide, 36 px Project rows, 34 px chat rows, 12 px padding,
+     12 px Project indent, 28 px chat indent, 20 px between sections; the accent is a 2 px bar + dot only */
+  --nexus-sidebar-width: 248px;
+  --nexus-sidebar-pad: 12px;
+  --nexus-sidebar-project-row: 36px;
+  --nexus-sidebar-chat-row: 34px;
+  --nexus-sidebar-section-gap: 20px;
+  --nexus-sidebar-project-indent: 12px;
+  --nexus-sidebar-chat-indent: 28px;
+  /*  ( · ): the shell grid — 52 px rail, 52 px project bar, the collapse handle centred on
+     the divider (32 × 44 px, 200 ms width transition); 32 px icon buttons in the rail; () one 440 px confirm dialog */
+  --nexus-sidebar-rail-width: 52px;
+  --nexus-bar-height: 52px;
+  --nexus-handle-width: 32px;
+  --nexus-handle-height: 44px;
+  --nexus-shell-motion: 200ms cubic-bezier(0.2, 0, 0, 1);
+  --nexus-rail-btn: 32px;
+  --nexus-confirm-width: 440px;
+  --nexus-sidebar-selected-bg: var(--nexus-bg-muted);
+  --nexus-sidebar-accent: var(--nexus-accent);
+  --nexus-drawer-width: 400px;
+  /*  AE: one gap for every row of actions (modal footers, Studio head, run bar, composer sheets) */
+  --nexus-action-gap: 8px;
+  /*  §1: two button heights — 36 px default, 28 px row-level (`.nexus-btn-sm`); a row shares one width */
+  --nexus-btn-height: 36px;
+  --nexus-btn-height-sm: 28px;
+  /*   · 2605 · 2606 (DS-1021): the control ladder — 36 the header-line button · 34 the form control
+     (input · select · combobox) · 32 the toolbar line and the rail icon button · 28 the row-level button and icon */
+  --nexus-control-height: 34px;
+  --nexus-toolbar-height: 32px;
+  --nexus-icon-btn: 28px;
+  --nexus-launcher-width: min(680px, calc(100vw - 48px));
+}
+
+/*  §2.6 () — Graphite. Not black: layered graphite surfaces, the same single accent. Selected from
+   Settings → Appearance (`data-theme` on <html>, `System` follows prefers-color-scheme). The Light/Graphite pair is a
+   token contract: components must not hard-code colours. Shipped behind the  token audit. */
+:root[data-theme="graphite"] {
+  color-scheme: dark;
+  --nexus-bg: #1b1c1e;
+  --nexus-bg-subtle: #202124;
+  --nexus-bg-muted: #2a2c30;
+  --nexus-surface: #252629;
+  --nexus-surface-raised: #2a2c30;
+  --nexus-text: #f4f4f4;
+  --nexus-text-secondary: #c2c3c7;
+  --nexus-text-muted: #a7a8ac;
+  --nexus-border: #35373b;
+  --nexus-border-strong: #4a4c51;
+  --nexus-focus: #f4f4f4;
+  --nexus-user-bubble: #2a2c30;
+  --nexus-glass-bg: rgba(37, 38, 41, 0.92);
+  --nexus-glass-border: rgba(255, 255, 255, 0.06);
+  --nexus-overlay-bg: rgba(0, 0, 0, 0.45);
+  --nexus-shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --nexus-composer-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --nexus-composer-shadow-focus: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--nexus-accent-ring);
+  --nexus-assistant-accent-bg: rgba(124, 142, 248, 0.08);
+  --nexus-sidebar-selected-bg: #2a2c30;
+  /*   (the  token audit): the semantic colours as tints — 4.5:1 on the graphite surfaces */
+  --nexus-error: #f87171;
+  --nexus-warning: #fbbf24;
+  --nexus-success: #4ade80;
+  --nexus-info: #60a5fa;
+  --nexus-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --nexus-shadow-md: 0 18px 50px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
+  /* DS-1005: the data palette as tints (≥ 3:1 on #1b1c1e); the ramp runs faint → strong in both themes */
+  --nexus-data-1: #8da2fb;
+  --nexus-data-2: #fb923c;
+  --nexus-data-3: #4ade80;
+  --nexus-data-4: #f472b6;
+  --nexus-data-5: #c4b5fd;
+  --nexus-data-6: #facc15;
+  --nexus-data-7: #22d3ee;
+  --nexus-data-8: #a8a29e;
+  --nexus-data-seq-1: #312e81;
+  --nexus-data-seq-2: #4338ca;
+  --nexus-data-seq-3: #6366f1;
+  --nexus-data-seq-4: #a5b4fc;
+  --nexus-data-seq-5: #e0e7ff;
+}

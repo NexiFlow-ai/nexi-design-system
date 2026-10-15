@@ -1,0 +1,1 @@
+class t extends Response{static json(n,s){const e=new Headers(s?.headers);return e.has("content-type")||e.set("content-type","application/json"),new t(JSON.stringify(n),{...s,headers:e})}}export{t as N};

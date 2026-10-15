@@ -1,0 +1,21 @@
+{
+  "title": "Patterns",
+  "pages": [
+    "discovery-list-inspector",
+    "create-in-the-inspector",
+    "edit-in-place",
+    "confirmation",
+    "the-state-ladder-on-every-read",
+    "overview-page",
+    "settings-surface",
+    "empty-collection",
+    "two-level-page",
+    "list-with-controls",
+    "ask-round-trip",
+    "link-idioms",
+    "filter-panel",
+    "form-rhythm",
+    "floating-surface",
+    "action-rows"
+  ]
+}
