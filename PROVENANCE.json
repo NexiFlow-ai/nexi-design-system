@@ -1,0 +1,15 @@
+{
+  "unit": "design-system",
+  "repository": "NexiFlow-ai/nexi-design-system",
+  "source_tag": "public/design-system/v0.1.0",
+  "source_commit": "02a33644900908e3fc17ce506e2a64b9c5b6a5b6",
+  "version": "0.1.0",
+  "exported_at": "2026-10-15T07:11:26.097Z",
+  "guard_version": "2026.10.14-2",
+  "allowlist_entries": 2,
+  "license": "Apache-2.0",
+  "export_digest": "43a030c99c50d947605260aa63da6954e531ad9a1c5f2247c3f1dc81b76e109b",
+  "mirror": true,
+  "canonical_origin": "https://docs.nexiflow.ai/design-system",
+  "canonical_links": 2
+}

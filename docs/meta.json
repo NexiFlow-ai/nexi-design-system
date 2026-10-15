@@ -1,0 +1,16 @@
+{
+  "title": "Design system",
+  "description": "The one look of the suite — principles, foundations, shell, patterns, components — rendered live in the workshop.",
+  "pages": [
+    "principles",
+    "foundations",
+    "layout-and-shell",
+    "patterns",
+    "components",
+    "---Writing and access---",
+    "copy-and-language",
+    "accessibility",
+    "---Building---",
+    "for-builders"
+  ]
+}

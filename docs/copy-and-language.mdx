@@ -1,0 +1,44 @@
+---
+title: Copy and language
+description: How the suite speaks — one voice, two languages, nothing invented.
+kind: concept
+app: platform
+---
+
+The words on a screen are part of the design system. They follow the same rules in every application, and the rules
+are short.
+
+## Every string is a key
+
+Nothing is written into a component. Every label, hint, empty state and error is a key in the shared locale files,
+present in **English and Ukrainian** at the same time — a string that exists in one language only does not ship. The
+workshop renders every story in both, so a label that overflows in Ukrainian is caught before a screen is built.
+
+## Honest copy
+
+- **Never name a mechanism.** The screen says what happened and what to do, not which service, model, table or flag
+  was involved.
+- **Never invent a value.** A number, a name or a date appears only when the system holds it. A missing value is
+  shown as missing, not as a placeholder that looks real.
+- **Not found and not yours read the same.** The interface cannot tell "this does not exist" from "you may not see
+  this", and it does not try — one wording for both.
+- **One card, one progress, one receipt.** An action shows one card while it runs, one line of progress, and one
+  receipt when it is done — the same shape whether it came from a chat, a button or a voice command.
+
+## The shape of a sentence
+
+Labels are nouns (*Name*, *Region*). Actions are verbs that name the result (*Create project*, *Invite*), never
+*OK* or *Submit*. Hints say when something is needed, not what the control is. A confirmation that destroys
+something names the thing it destroys. No exclamation marks, no jokes, no capitals for emphasis.
+
+## Title case, numbers, units
+
+Sentence case everywhere except proper names and the application names (NexChat, NexCore, VibeBan, NexBI, NexGraph,
+NexMap, NexCare, NexForge). Numbers use the reader's locale for grouping and decimals; units follow a thin space; a
+duration is *3 min 20 s*, a date is the locale's short form, a time is 24-hour.
+
+## Where the rules live
+
+The principle is [DS-0006 — Honest copy, two languages, one card](./principles#ds-0006--honest-copy-two-languages-one-card);
+each component page lists its copy keys. Conversation surfaces — the composer, the thread, the cards — follow the
+Conversation Register as well; this section describes how they look, not what they say.
