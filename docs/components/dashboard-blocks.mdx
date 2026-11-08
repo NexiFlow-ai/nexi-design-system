@@ -9,7 +9,7 @@ app: platform
 
 **DS-6301** · `apps/bi/src/components/bi/Block.tsx#BlockCard · Grid.tsx#Grid · common.tsx#BlockChart · SeriesTable · MetricStatusDot · CertifiedChip · LinkRow · OpenInGraphLink` · adopted
 
-What NexBI owns: the block card (title · figure or chart · the *Data* twin · the trace door; `studio` adds the selection ring and the handles), the 12-column grid it sits on (drag · resize · keyboard, ~150 lines — no library, UX_PROPOSAL; a live region announces every move), the chart through `@nexus/ui`'s ECharts adapter and its accessible table twin (`SeriesTable`, the *Data* tab). `MetricStatusDot` (draft · proposed · certified · deprecated) and `CertifiedChip` are `StatusDot`/`Chip` with the metric vocabulary; `LinkRow` is the discovery row (DS-7001) with a meta column; `OpenInGraphLink` is the door to NexGraph. Not a kit duplicate: the kit has no grid, no block and no chart card.
+What NexBI owns: the block card (title · figure or chart · the *Data* twin · the trace door; `studio` adds the selection ring and the handles), the 12-column grid it sits on (drag · resize · keyboard, ~150 lines — no library, UX_PROPOSAL; a live region announces every move), the chart through `@nexus/ui`'s ECharts adapter and its accessible table twin (`SeriesTable`, the *Data* tab). `MetricStatusDot` (draft · proposed · certified · deprecated) and `CertifiedChip` are `StatusDot`/`Chip` with the metric vocabulary; `LinkRow` is the discovery row (DS-7001) with a meta column; `OpenInGraphLink` is the door to NexGraph. Not a kit duplicate: the kit has no grid, no block and no chart card. **:** the filter bar gains a *toggle* filter (the kit `Switch`, DS-3012 — *Valid runs only*, on by its default, `?f.<id>=off` turns it off) and, on a dashboard whose entity has `runs`, *Previous run* in *Compare* — the dashboard's `default_compare` is the option marked *Default*, an absent `cmp` is that default, `cmp=none` the person's *No comparison*, *Reset* returns to the default; a KPI reads **the latest run** and names it (*Latest run · &lt;id> · vs run &lt;id>*), its Δ against the previous comparable run; a metric block presented as a **table** (`presentation.kind = table`) renders the run's table spec with a `ref` column (every value a `nexus://` URI) as the row's link through `refHref` (a graph dataset version → the bench run page; DS-7012); a *reference* series is drawn dashed without markers (`chartSpecToOption({ dashed })`); a run-structured dashboard with no run yet says its `empty_state` in one `role=status` line with one door above the grid, the cards keeping their `—`.
 
 ## In the workshop
 
@@ -19,7 +19,7 @@ Also: <a href="/design-system/?path=/story/apps-nexbi-parts--chart">chart</a> ·
 
 ## States
 
-`chips` · `chart` · `block` · `grid-editable`
+`chips` · `chart` · `block` · `grid-editable` · `filter-bar-runs` · `filter-bar-runs-narrowed`
 
 ## Accessibility
 

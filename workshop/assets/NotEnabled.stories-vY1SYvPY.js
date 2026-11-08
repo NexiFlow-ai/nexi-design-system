@@ -1,0 +1,3 @@
+import{N as t}from"./NotEnabled-Bef7o9aP.js";import"./iframe-C_4ax-Jm.js";import"./preload-helper-PPVm8Dsz.js";import"./routes-CtGbDcx2.js";const n={title:"Apps/NexFactory/Not enabled",component:t,parameters:{ds:"DS-3011",workbench:{ns:"factory",path:"/factory?as=sam"},docs:{description:{component:"The module gate as the whole app ( · ): the kit's EmptyState (DS-3011) with the one door to NexCore → Blueprints."}}},args:{onOpenBlueprints:()=>{}}},e={name:"Organization without the module"},p=["Populated"];e.parameters={...e.parameters,docs:{...e.parameters?.docs,source:{originalSource:`{
+  name: "Organization without the module"
+}`,...e.parameters?.docs?.source}}};export{e as Populated,p as __namedExportsOrder,n as default};

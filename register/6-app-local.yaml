@@ -5,4 +5,1594 @@
 band: 6
 title: App-local components
 lead: "What one application owns on purpose. Rows arrive at S2–S3, one application at a time."
-rows: # ---------------------------------------------------------------- NexSales - id: DS-6101 name: Source chip owner: apps/sales component: "apps/sales/src/components/parts/SourceChip.tsx#SourceChip" stories: apps-nexsales-source-chip statement: >- Where a record lives and how fresh the copy is, next to its title: `NEXUS` for a native record; *from ‹provider› · ‹age›* for an external one read moments ago; *stale · ‹age›* when the last read is old; *‹provider› unavailable* when the source does not answer. Built on `Chip` (DS-3003) with the four semantic tones; glyph + text, never colour alone; the tooltip carries the exact verification time. Not a kit duplicate: the kit's Chip has no notion of provenance or age. states: [native, live, stale, unavailable] a11y: "the chip text is the status; the time is a `title` on a focusable span" copy: ["sales.source.nexus", "sales.source.from", "sales.source.stale", "sales.source.unavailable", "sales.source.verifiedAt"] source: [" 08-UX §", "ADR-0066"] status: adopted - id: DS-6102 name: Save ladder owner: apps/sales component: "apps/sales/src/components/parts/SaveLadder.tsx#SaveLadder" stories: apps-nexsales-save-ladder statement: >- The honest state of one write, in the log composer's footer (DS-6107; a FormInspector's footer elsewhere — amended 2026-10-11): draft · saving · waiting for ‹provider› · pending approval (names the approver) · saved (said only when the source confirmed and returned an id) · rejected (names the field) · conflict (mine · theirs; *Keep mine* · *Take theirs* · *Merge*) · reconciling · not saved (*Try again*) · ‹provider› unavailable · denied (read-only record type). A dot + sentence; `role="status"`, polite for the quiet states, assertive for the ones that need a hand. Not a kit duplicate: `EditBar` (DS-3033) has editing/saving only; the ladder is the write-through contract of a system of record. states: [draft, saving, pending_external, pending_approval, saved, rejected, conflict, reconciling, not_saved, unavailable, denied] a11y: "`role=status` · `aria-live` polite/assertive by state; the three conflict actions are real buttons" copy: ["sales.ladder.*"] source: [" 08-UX §", "…", "ADR-0066"] status: adopted - id: DS-6103 name: Sales Today (Overview page) owner: apps/sales component: "apps/sales/src/components/screens/TodayScreen.tsx#TodayScreen" stories: apps-nexsales-today statement: >- Today is an instance of the **Overview page** (DS-7006, the NexCore cockpit — amended 2026-10-11 twice: the owner found three columns overloaded, then asked for the NexCore Overview idiom): a `wide` frame with the health line in the header (`StatusDot` + small age, as NexCore's *operational*); the **Sales pulse** frame (`PulseStrip` — Accounts ─ Opportunities ─ Quotes waiting ─ Follow-ups, each a door; `live` when the provider is connected; the foot line: planned · waiting · overdue · going quiet); three `Stat`s (planned today · open pipeline as money · going quiet, with overdue as the toned delta); then two `nexus-cc-two` rows of `Section`s — *Planned today* (`StatusList`: account · kind · contact · time, row → account with the Log composer open) · *Waiting on me* (the attention list: title · account · assignee · due, dot red when overdue, the task reference as the door to NexTasks) · *Going quiet* (`StatusList`: account · relationship · owner · *n d quiet*, amber ≥30 d, red ≥60 d) · *Recent* (the recent list: who · kind · account · outcome · ago). Only kit classes; no app-local stylesheet. The org-admin sees the pulse figures and the quiet empty state, never the lists. states: [populated-connected, populated-native, empty-setup-door, org-admin-d423, loading, error, denied, offline] source: [" 08-UX §J1", "", "", "DS-7006"] status: adopted - id: DS-6104 name: Activity timeline owner: apps/sales component: "apps/sales/src/components/screens/AccountScreen.tsx#AccountScreen" stories: apps-nexsales-account-page statement: >- The account's activity stream (amended 2026-10-11): the log composer (DS-6107) at the top, then **Next** — planned interactions and open follow-ups in one list, soonest first — and **History**, done interactions newest first. One row grammar for both: a glyph (open = planned or follow-up, filled = done) · when · kind or title · outcome chip · who · with whom · the summary · the next step with its follow-up door. The stream is the *Activity* view of the page; Deals · Quotes · Documents are its sibling views (`LocalTabs`, DS-2006). The source chip (DS-6101) on the page line says where these came from; when the source is unavailable the list stays, marked as the last copy. Not a kit duplicate: no kit export shows a dated sequence with a planned/done glyph. **Deals** (amended 2026-10-13, S2-B · ADR-0066 A2) lists the account's deals · requests · leads · tasks as work rows (DS-6109) read as the person off every board they hold, with the shut-door line first — never a sales table; *Quote this* on an open request opens DS-7002 *New quote* prefilled. states: [connected, native, stale, source-unavailable, empty, deals, deals-empty, deals-tasks-away, deals-no-board, deals-board-hidden, quote-from-request, quotes, documents] source: [" 08-UX §J2", "", "", "ADR-0066 A2", ""] status: adopted - id: DS-6105 name: Pipeline boards owner: apps/sales component: "apps/sales/src/components/screens/PipelineScreen.tsx#PipelineScreen" stories: apps-nexsales-pipeline statement: >- **The board is VibeBan's** (amended 2026-10-12 — ADR-0066 A1 · (3); the owner: *"the pipeline must be a VibeBan capability, not a duplicate in the sales system"*): an opportunity is a VibeBan item of the pack's type on a *Pipeline* board (`nexus://tasks/project_template/sales-pipeline`), and the board — stages, cards, drag, limits, the sum — is NexTasks' own screen (DS-6201 card facts · rollups). NexSales draws no board: the screen is the projection sales-api composes as the person (`GET /sales/pipeline`) — one `DataTable` row per board (*board ↗ · key · open deals · pipeline sum*, `mixed` when the currencies disagree, *not yours to read* when the person may list but not read it), the row a door into NexTasks' Board tab. No board → `EmptyState` with the one door *New board in NexTasks*; NexTasks away → said as such. **Leads** and **Requests** (amended 2026-10-13, S2-B · ADR-0066 A2) are two more views of the same screen (`LocalTabs`, DS-2006): the open leads off the person's *Leads* boards (`nexus://tasks/project_template/leads`) and the open requests off their Pipeline boards, each a `DataTable` of work rows (DS-6109 words: key · title ↗ · the type's facts · stage · the quote a request became) and a door into the item; no Leads board → the one door *New Leads board in NexTasks* (quiet — the page's one primary is the Pipeline's). A lead converts into a deal in VibeBan (ADR-0043 A5), never here. The 2026-10-11 app-local board (columns · rails · drag · Shift+arrows · `⋯ Move to…`) is retired; its measures live in VibeBan's `.nexus-tasks-board`. states: [boards-connected, boards-native, boards-two, board-hidden, no-board, no-board-cannot-act, tasks-away, leads, leads-no-board, leads-tasks-away, requests, requests-empty, empty, loading, error, denied, offline] a11y: "a table with a caption; the board link says *opens in NexTasks* to a reader; the empty state's one action is a real link; the unavailable line is plain text, not an error" source: [" 08-UX §J5", "", "ADR-0066 A1", "ADR-0067 A1", ""] status: adopted - id: DS-6106 name: Setup door owner: apps/sales component: "apps/sales/src/components/screens/SetupDoor.tsx#SetupDoor" stories: apps-nexsales-setup-door statement: >- The first screen of an empty organization: one question — start in NEXUS, or connect the system that already holds the customers — as two radio cards and one primary button. One door in; no wizard, no tour. Built on `EmptyState` (DS-3011) `variant="card"` with a `starting` list would hide the choice; the radio pair is the choice. states: [native-chosen, connect-chosen] a11y: "a `fieldset` with a legend; native radios; the button label changes with the choice" source: [" 08-UX §J9b", ""] status: adopted - id: DS-6107 name: Log composer owner: apps/sales component: "apps/sales/src/components/parts/LogInteractionForm.tsx#LogInteractionForm" stories: apps-nexsales-log-composer statement: >- The interaction is written **in the activity stream**, not in a side panel (proposed 2026-10-11, replacing the S0 FormInspector — the owner found the page overloaded with the panel open). Closed, it is one quiet line at the top of *Activity* — `+ Log a call, a meeting or a note…`. Open, it is one bordered block: a head (title · `×`), one row of four compact fields — kind · contact · when · outcome (`Field` + `Select compact`) — the summary (the only required field; its hint is the placeholder), an optional *Plan the next step* switch that reveals *next step · due*, and a footer where the save ladder (DS-6102) sits at the left and *Cancel · Save* (`Button size="toolbar"`) at the right. The header's *Log interaction* opens the same composer. With AI off the last line says so (08). Esc closes while nothing is in flight; the composer closes itself once the source confirmed the write. Built on `Field` · `Select` · `Switch` · `Button` · `IconButton` · `Hint`. Not a kit duplicate: `FormInspector` (DS-3032) is a panel; `EditBar` (DS-3033) has no fields. states: [closed-line, draft, saving, pending_external, saved, pending_approval, rejected, conflict, not_saved, unavailable, denied] a11y: "a `form` labelled by its title; the summary takes focus on open; the required field is announced on submit; Esc returns focus to the opener; the ladder is the `role=status` of the write" copy: ["sales.log.start", "sales.log.title", "sales.log.aiOff", "sales.form.*", "sales.ladder.*"] source: [" 08-UX §J3", "…", "", ""] status: proposed # DS-6108 *Composer-line door* (proposed 2026-10-12, (1)) was withdrawn the same day at the owner's walk-through #. Every NexSales record door is DS-7002 *Create in the Inspector* — the form # first, the first field focused, the look-alike check on blur — rendered in `Apps/NexSales/Record doors`. # The id is not reused. - id: DS-6109 name: Work rows owner: apps/sales component: "apps/sales/src/components/parts/WorkRows.tsx#WorkRows" stories: apps-nexsales-work-rows statement: >- **Deals, leads and requests are VibeBan's**: one row grammar for every VibeBan item NexSales lists on the account page (*Deals* view) and the Pipeline screen (*Leads* · *Requests* views) — *key · title · the kind's facts · stage · amount · the door*. The rows are read as the person (`tasks.items.list` through sales-api); the title, the stage's name and every field are tasks-api's words, and what the person may not read is simply not there. A deal shows its `amount` and close date; a lead its company and channel, and *became a deal* with the deal's door once converted (`fields.converted_to`, the declared conversion of ADR-0043 A5 — done in VibeBan, never here); a request what it wants by when and, once a quote answers it, the quote's title as a link (`fields.quote_ref`, written by sales-api as the person) — or *Quote this* while none does and the person may quote (the one door into DS-7002 *New quote*, prefilled; the quote carries `request_ref`). `WorkDoorState` is the honest line above the lists when the door is shut: NexTasks away · no board yet · a board the person may list but not read (named, `role=status`, not an error). Built on `EmptyState` · `StatusDot` · `Chip` · `Button`; the list is the `.nexus-sales-rows` grammar of DS-6104. Not a kit duplicate: no kit export lists typed items of a sibling app with their doors and a per-kind action. Never a NexSales record — no table, no cache, no stage of its own. states: [deals, requests, requests-read-only, leads, one-account, empty, tasks-away, no-board, board-hidden] a11y: "a list; every row's door is a real link naming the key to a reader; *Quote this* is a button; the shut-door line is `role=status`; the stage's tone is redundant to its name (DS-0001)" copy: ["sales.work.*", "sales.section.leads", "sales.section.tasks", "sales.leads.emptyBody", "sales.leads.newBoard", "sales.requests.emptyBody", "sales.quotes.forRequest"] source: [" 08-UX §J2 · §J5", "", "", "ADR-0066 A2", "ADR-0043 A5", "", ""] status: proposed # ---------------------------------------------------------------- S3-B WP-2…WP-6 (proposed 2026-10-11): the five # applications brought to the register — VibeBan · NexBI · NexMap · NexCare · NexCore. Each row names what the app owns # on purpose and is the proof the part is not a kit duplicate. Pending the owner's approval. - id: DS-6201 name: Work-item glyphs and property fields owner: apps/tasks component: "apps/tasks/src/components/tasks/common.tsx#PriorityChip · StageDot · TypeGlyph · BlockedGlyph · HealthDot · ActorChip · DueLabel · ItemRow; DateField · EstimateField · EnterField · Description · ShowMore; FieldRows.tsx#FieldRows · FieldInputs · CardFacts · RollupLine; FieldSpecEditor.tsx#FieldSpecList · FieldSpecEditor" stories: apps-nextasks-parts statement: >- The atoms every VibeBan list, board card and Inspector row is built from. Priority (`‼ ! · ◦` + the word), stage (`○ ◔ ◑ ◕ ● ⊘`), type (epic · story · task · bug glyphs), blocked (`n` + direction), health (`StatusDot` with the word) — glyph + text, never colour alone. `ActorChip` is a human, an agent or a service with its kind; `DueLabel` says overdue · today · the date. The property fields are the Inspector's editors — bare at rest, framed on hover/focus (`quiet`), Enter commits, Esc reverts; `EstimateField` carries the project's unit. `ShowMore` is the page foot (*n of total · Show more*). **Typed item fields**: a type's `fields[]` (text · number · money · date · choice · yes/no · reference) are Inspector rows under the built-in ones in the same quiet idiom (`FieldRows` — money is a number and a 3-letter currency; a reference shows its prefix and takes the id; a `financial` row is absent for a viewer, *Not set* for an editor); the create form shows them as `Field`s (`FieldInputs`, required marked, a problem named at its row); a board card carries up to three `show_on_card` values as a label-less facts strip (`CardFacts`, the label is the title — DS-6105's *account · amount · closes*); a column head says each `rollup: sum` once after the count pill (`RollupLine`; *mixed* when the currencies disagree). Settings › Types edits a type's fields (`FieldSpecEditor`: label en · uk, kind, key locked once saved, required / at a stage category, on the card, sum, sensitivity, a choice's options one per line, a reference's prefix; ≤ 16) and reads them as one quiet line each (`FieldSpecList`). Built on `Chip` (DS-3003), `StatusDot` (DS-3004), `Field` (DS-3020), `Select`, `Switch`, `PropertyRow` and `Menu` (DS-3005); not a kit duplicate — the kit has no notion of a work item's priority, stage, type, estimate or typed field. states: [glyphs, rows, fields, more, typed-fields, field-specs] a11y: "every glyph is `role=img` with an `aria-label` and a `title`; the fields are labelled inputs; a fact carries `aria-label` *label: value*; an unparsable value is `aria-invalid` with a `role=alert` line" copy: ["tasks.priority.*", "tasks.stage.*", "tasks.type.*", "tasks.health.*", "tasks.due.*", "tasks.palette.*", "tasks.fields.*"] source: [" 08-UX", "", "", "ADR-0043 A4", " S1-A4"] status: adopted - id: DS-6301 name: Dashboard blocks owner: apps/bi component: "apps/bi/src/components/bi/Block.tsx#BlockCard · Grid.tsx#Grid · common.tsx#BlockChart · SeriesTable · MetricStatusDot · CertifiedChip · LinkRow · OpenInGraphLink" stories: apps-nexbi-parts statement: >- What NexBI owns: the block card (title · figure or chart · the *Data* twin · the trace door; `studio` adds the selection ring and the handles), the 12-column grid it sits on (drag · resize · keyboard, ~150 lines — no library, UX_PROPOSAL; a live region announces every move), the chart through `@nexus/ui`'s ECharts adapter and its accessible table twin (`SeriesTable`, the *Data* tab). `MetricStatusDot` (draft · proposed · certified · deprecated) and `CertifiedChip` are `StatusDot`/`Chip` with the metric vocabulary; `LinkRow` is the discovery row (DS-7001) with a meta column; `OpenInGraphLink` is the door to NexGraph. Not a kit duplicate: the kit has no grid, no block and no chart card. states: [chips, chart, block, grid-editable] a11y: "the chart is `role=img` with the title as its name and the table as its twin; grid items are focusable with arrow-key move and resize announced" copy: ["bi.metric.status.*", "bi.dataset.certified", "bi.dataset.uncertified", "bi.block.*", "bi.grid.*"] source: [" 08-UX", "UX_PROPOSAL", "", ""] status: adopted - id: DS-6401 name: Workspace furniture owner: apps/map component: "apps/map/src/components/workspace/labels.tsx#KindGlyph · StatusLine · MapControls · LayersPanel · ShortcutsSheet · Tooltip" stories: apps-nexmap-parts statement: >- Everything that floats over NexMap's WebGL canvas and is DOM, not map: the kind glyphs (shipment · vessel · aircraft · hub by kind), the status line (cursor · zoom band · what is on screen · loading), the map controls (layers · zoom · reset north — `IconButton`s in a dock), the layers panel (a floating surface, DS-7015, with one switch per layer and the unplaced count as a door), the keyboard sheet (`?`) and the hover tooltip (feature · cell · zone · event · lane — one grammar, `role=presentation`, never focusable). Layers and dock tokens: `--nexus-z-dock` · `--nexus-z-popover`; the canvas itself is not a story (WebGL) — UAT-3 compares the running workspace to these. Not a kit duplicate: the kit has no map, no layers and no hover card. states: [glyphs, controls, layers, shortcuts, hover] a11y: "controls are labelled buttons with `aria-keyshortcuts`; the layers panel is a dialog that returns focus; the status line is `role=status`" copy: ["map.kind.*", "map.status.*", "map.controls.*", "map.layers.*", "map.shortcuts.*", "map.tooltip.*"] source: [" 08-UX–5", "", ""] status: adopted - id: DS-6501 name: Conversation parts owner: apps/care component: "apps/care/src/components/inbox/Timeline.tsx#Timeline · SummaryCard · Composer.tsx#Composer · ConversationInspector.tsx#ConversationInspector" stories: apps-nexcare-parts statement: >- NexCare's conversation: the timeline (customer · agent · assistant · tool · system entries, each labelled by who said it and whether the customer saw it — internal entries are visibly internal), the handoff summary card (what the assistant checked as a tick list, its reason codes, the sentiment labelled *model-inferred* — rule 85, a feature never a verdict), the composer (reply vs internal note as one segmented choice; the assistant's draft carries its provenance into the send) and the conversation Inspector (identity · facts · case · journey; one primary — *Create case*). Not a kit duplicate: `TurnCard` (DS-5xxx) is NexChat's own turn; a care timeline has two parties and a tool lane. states: [thread, summary, reply, read-only, inspector] a11y: "the timeline is a `list` of labelled entries; the composer is a `form` with the mode as a radiogroup; the inspector is `complementary` and returns focus on close" copy: ["care.timeline.*", "care.summary.*", "care.composer.*", "care.inspector.*"] source: [" 08-UX–6", "rule 85"] status: adopted - id: DS-6601 name: Governance parts owner: apps/core component: "apps/core/src/components/screens/ProjectsScreen.tsx#ClassificationChip · TraceInspector.tsx#RecordStatus · SpanTree · SpanDetail" stories: apps-nexcore-parts statement: >- The classification chip (public · confidential · dsk · secret · top_secret — tone + the word), the record status dot (a trace record's lifecycle word), and the trace Inspector's two halves: the span tree (turn → run → call, a time bar per span, container spans fold) and the span detail (the record as fields — refs · statuses · timings · counts · digests, never content; payloads fetched only when opened, redactions named, classification shown; `denied` and `capture off` are honest rungs). Built on `Chip` · `StatusDot` · `Inspector` (DS-3030). Not a kit duplicate: the kit has no span tree. states: [chips, trace, trace-payloads, trace-denied, trace-capture-off] a11y: "the span tree is a `tree` with `aria-level` and arrow keys; the detail is labelled by the span; payload previews are `pre` with the classification announced first" copy: ["core.classification.*", "core.trace.*"] source: [" 08-UX", " FR-OBS-004", ""] status: adopted - id: DS-6602 name: Auth doors owner: apps/core component: "apps/core/src/components/auth/AuthScreens.tsx#SignUpScreen · SignInScreen · VerifyScreen · WelcomeScreen · CreateOrganizationScreen" stories: apps-nexcore-auth statement: >- The five doors into NEXUS: sign up · sign in · verify · welcome · create an organization — one centred card in the bare shell (`BareShell`: no launcher, no dock), one primary action per card, the platform's offers (Google · the dev inbox) only when it says so; the reason a door is closed is one sentence from the server's reason code. Built on `Field` · `Button` · `LinkButton` · `Restriction`; `.nexus-cc-bare` is the only app-local measure. Not a kit duplicate: the kit has no auth card. states: [sign-up, sign-in, verify, welcome, create-organization] a11y: "a `main` with one `h1`; the form's first field takes focus; errors are `role=alert` next to the field" copy: ["core.auth.*"] source: [" 08-UX", ""] status: adopted
+rows:
+  # ---------------------------------------------------------------- NexSales
+  - id: DS-6101
+    name: Source chip
+    owner: apps/sales
+    component: "apps/sales/src/components/parts/SourceChip.tsx#SourceChip"
+    stories: apps-nexsales-source-chip
+    statement: >-
+      Where a record lives and how fresh the copy is, next to its title: `NEXUS` for a native record; *from ‹provider›
+      · ‹age›* for an external one read moments ago; *stale · ‹age›* when the last read is old; *‹provider›
+      unavailable* when the source does not answer. Built on `Chip` (DS-3003) with the four semantic tones; glyph +
+      text, never colour alone; the tooltip carries the exact verification time. Not a kit duplicate: the kit's Chip
+      has no notion of provenance or age.
+    states: [native, live, stale, unavailable, waiting, unavailable-since]
+    a11y: "the chip text is the status; the time is a `title` on a focusable span; *waiting* is a `role=status` live region"
+    copy: ["sales.source.nexus", "sales.source.from", "sales.source.stale", "sales.source.unavailable", "sales.source.verifiedAt", "factory.source.*"]
+    source: [" 08-UX §", "", " "]
+    status: adopted
+
+  - id: DS-6102
+    name: Save ladder
+    owner: apps/sales
+    component: "apps/sales/src/components/parts/SaveLadder.tsx#SaveLadder"
+    stories: apps-nexsales-save-ladder
+    statement: >-
+      The honest state of one write, in the log composer's footer (DS-6107; a FormInspector's footer elsewhere —
+      amended 2026-10-11): draft · saving · waiting for ‹provider› · pending
+      approval (names the approver) · saved (said only when the source confirmed and returned an id) · rejected (names
+      the field) · conflict (mine · theirs; *Keep mine* · *Take theirs* · *Merge*) · reconciling · not saved (*Try
+      again*) · ‹provider› unavailable · denied (read-only record type). A dot + sentence (`StatusDot`, DS-3004 —
+      WP-1, 2026-10-29); the recovery actions are one `ActionRow` of quiet links under the sentence (DS-7016);
+      `role="status"`, polite for the quiet states, assertive for the ones that need a hand. Not a kit duplicate: `EditBar` (DS-3033) has
+      editing/saving only; the ladder is the write-through contract of a system of record.
+    states: [draft, saving, pending_external, pending_approval, saved, rejected, conflict, reconciling, not_saved, unavailable, denied]
+    a11y: "`role=status` · `aria-live` polite/assertive by state; the three conflict actions are real buttons (`LinkButton` renders a `button`)"
+    copy: ["sales.ladder.*"]
+    source: [" 08-UX §", "…", ""]
+    status: adopted
+
+  - id: DS-6103
+    name: Sales Today (Overview page)
+    owner: apps/sales
+    component: "apps/sales/src/components/screens/TodayScreen.tsx#TodayScreen"
+    stories: apps-nexsales-today
+    statement: >-
+      Today is an instance of the **Overview page** (DS-7006, the NexCore cockpit — amended 2026-10-11 twice: the
+      owner found three columns overloaded, then asked for the NexCore Overview idiom): a `wide` frame with the health
+      line in the header (`StatusDot` + small age, as NexCore's *operational*); the **Sales pulse** frame (`PulseStrip`
+      — Accounts ─ Opportunities ─ Quotes waiting ─ Follow-ups, each a door; `live` when the provider is connected; the
+      foot line: planned · waiting · overdue · going quiet); three `Stat`s (planned today · open pipeline as money ·
+      going quiet, with overdue as the toned delta); then two `nexus-cc-two` rows of `Section`s — *Planned today*
+      (`StatusList`: account · kind · contact · time, row → account with the Log composer open) · *Waiting on me*
+      (the attention list: title · account · assignee · due, dot red when overdue, the task reference as the door to
+      NexTasks) · *Going quiet* (`StatusList`: account · relationship · owner · *n d quiet*, amber ≥30 d, red ≥60 d)
+      · *Recent* (the recent list: who · kind · account · outcome · ago). Only kit classes; no app-local stylesheet.
+      The org-admin sees the pulse figures and the quiet empty state, never the lists.
+    states: [populated-connected, populated-native, empty-setup-door, org-admin-d423, loading, error, denied, offline]
+    source: [" 08-UX §J1", "", "", "DS-7006"]
+    status: adopted
+
+  - id: DS-6104
+    name: Activity timeline
+    owner: apps/sales
+    component: "apps/sales/src/components/screens/AccountScreen.tsx#AccountScreen"
+    stories: apps-nexsales-account-page
+    statement: >-
+      The account's activity stream (amended 2026-10-11): the log composer (DS-6107) at the top, then **Next** —
+      planned interactions and open follow-ups in one list, soonest first — and **History**, done interactions newest
+      first. One row grammar for both: a glyph (open = planned or follow-up, filled = done) · when · kind or title ·
+      outcome chip · who · with whom · the summary · the next step with its follow-up door. The stream is the
+      *Activity* view of the page; Deals · Quotes · Documents are its sibling views (`LocalTabs`, DS-2006). The
+      source chip (DS-6101) on the page line says where these came from; when the source is unavailable the list
+      stays, marked as the last copy. Not a kit duplicate: no kit export shows a dated sequence with a planned/done
+      glyph. **Deals** lists the account's deals · requests · leads · tasks
+      as work rows (DS-6109) read as the person off every board they hold, with the shut-door line first — never a
+      sales table; *Quote this* on an open request opens DS-7002 *New quote* prefilled.
+    states: [connected, native, stale, source-unavailable, empty, deals, deals-empty, deals-tasks-away, deals-no-board, deals-board-hidden, quote-from-request, quotes, documents]
+    source: [" 08-UX §J2", "", "", " A2", ""]
+    status: adopted
+
+  - id: DS-6105
+    name: Pipeline boards
+    owner: apps/sales
+    component: "apps/sales/src/components/screens/PipelineScreen.tsx#PipelineScreen"
+    stories: apps-nexsales-pipeline
+    statement: >-
+      **The board is VibeBan's** (amended 2026-10-12 — A1 · (3); the owner: *"the pipeline must be a
+      VibeBan capability, not a duplicate in the sales system"*): an opportunity is a VibeBan item of the pack's type
+      on a *Pipeline* board (`nexus://tasks/project_template/sales-pipeline`), and the board — stages, cards, drag,
+      limits, the sum — is NexTasks' own screen (DS-6201 card facts · rollups). NexSales draws no board: the screen
+      is the projection sales-api composes as the person (`GET /sales/pipeline`) — one `DataTable` row per board
+      (*board ↗ · key · open deals · pipeline sum*, `mixed` when the currencies disagree, *not yours to read* when
+      the person may list but not read it), the row a door into NexTasks' Board tab (DS-7001; `↗` the owning app,
+      ). No board → `EmptyState` with the one door *New board in NexTasks*
+      NexTasks away → said as such. **Leads** and **Requests** are two more
+      views of the same screen (`LocalTabs`, DS-2006): the open leads off the person's *Leads* boards
+      (`nexus://tasks/project_template/leads`) and the open requests off their Pipeline boards, each a `DataTable`
+      of work rows (DS-6109 words: key · title ↗ · the type's facts · stage · the quote a request became) and a door
+      into the item; no Leads board → the one door *New Leads board in NexTasks* (quiet — the page's one primary is
+      the Pipeline's). A lead converts into a deal in VibeBan, never here. The 2026-10-11 app-local
+      board (columns · rails · drag · Shift+arrows · `⋯ Move to…`) is retired; its measures live in VibeBan's
+      `.nexus-tasks-board`.
+    states: [boards-connected, boards-native, boards-two, board-hidden, no-board, no-board-cannot-act, tasks-away, leads, leads-no-board, leads-tasks-away, requests, requests-empty, empty, loading, error, denied, offline]
+    a11y: "a table with a caption; the board link says *opens in NexTasks* to a reader; the empty state's one action is a real link; the unavailable line is plain text, not an error"
+    source: [" 08-UX §J5", "", " A1", " A1", ""]
+    status: adopted
+
+  - id: DS-6106
+    name: Setup door
+    owner: apps/sales
+    component: "apps/sales/src/components/screens/SetupDoor.tsx#SetupDoor"
+    stories: apps-nexsales-setup-door
+    statement: >-
+      The first screen of an empty organization: one question — start in NEXUS, or connect the system that already
+      holds the customers — as two radio cards and one primary button. One door in; no wizard, no tour.
+      Built on `EmptyState` (DS-3011) `variant="card"` with a `starting` list would hide the choice; the radio pair
+      is the choice.
+    states: [native-chosen, connect-chosen]
+    a11y: "a `fieldset` with a legend; native radios; the button label changes with the choice"
+    source: [" 08-UX §J9b", ""]
+    status: adopted
+
+  - id: DS-6107
+    name: Log composer
+    owner: apps/sales
+    component: "apps/sales/src/components/parts/LogInteractionForm.tsx#LogInteractionForm"
+    stories: apps-nexsales-log-composer
+    statement: >-
+      The interaction is written **in the activity stream**, not in a side panel (proposed 2026-10-11, replacing the
+      S0 FormInspector — the owner found the page overloaded with the panel open). Closed, it is one quiet line at
+      the top of *Activity* — `+ Log a call, a meeting or a note…`.
+      Open, it is one bordered block: a head (title · `×`), one row of four compact fields — kind · contact · when ·
+      outcome (`Field` + `Select compact`) — the summary (the only required field; its hint is the placeholder), an
+      optional *Plan the next step* switch that reveals *next step · due*, and a footer where the save ladder
+      (DS-6102) sits at the left and *Cancel* (`LinkButton`) · *Save* (`Button size="toolbar"`, the one primary of the
+      composer — DS-7016, WP-1) at the right. The header's *Log
+      interaction* opens the same composer. With AI off the last line says so (08). Esc closes while
+      nothing is in flight; the composer closes itself once the source confirmed the write. Built on `Field` ·
+      `Select` · `Switch` · `Button` · `LinkButton` · `IconButton` · `Hint`. Not a kit duplicate: `FormInspector` (DS-3032) is a
+      panel; `EditBar` (DS-3033) has no fields.
+    states: [closed-line, draft, saving, pending_external, saved, pending_approval, rejected, conflict, not_saved, unavailable, denied]
+    a11y: "a `form` labelled by its title; the summary takes focus on open; the required field is announced on submit; Esc returns focus to the opener; the ladder is the `role=status` of the write"
+    copy: ["sales.log.start", "sales.log.title", "sales.log.aiOff", "sales.form.*", "sales.ladder.*"]
+    source: [" 08-UX §J3", "…", "", ""]
+    status: adopted
+
+  # DS-6108 *Composer-line door* (proposed 2026-10-12, (1)) was withdrawn the same day at the owner's walk-through
+  # (: *"UI of quick creation looks so ugly … we always have the right nav for creating and reviewing
+  # entities like in Graph, Care, BI"*). Every NexSales record door is DS-7002 *Create in the Inspector* — the form
+  # first, the first field focused, the look-alike check on blur — rendered in `Apps/NexSales/Record doors`.
+  # The id is not reused.
+
+  - id: DS-6109
+    name: Work rows
+    owner: apps/sales
+    component: "apps/sales/src/components/parts/WorkRows.tsx#WorkRows"
+    stories: apps-nexsales-work-rows
+    statement: >-
+      **Deals, leads and requests are VibeBan's** (proposed 2026-10-13 — S2-B · A2
+      ): one row grammar for every VibeBan item NexSales lists on the account page (*Deals* view) and the
+      Pipeline screen (*Leads* · *Requests* views) — *key · title · the kind's facts · stage · amount · the door*
+      . The rows are read as the person (`tasks.items.list` through sales-api); the
+      title, the stage's name and every field are tasks-api's words, and what the person may not read is simply not
+      there. A deal shows its `amount` and close date; a lead its company and channel, and
+      *became a deal* with the deal's door once converted (`fields.converted_to`, the declared conversion of
+      A5 — done in VibeBan, never here); a request what it wants by when and, once a quote answers it, the
+      quote's title as a link (`fields.quote_ref`, written by sales-api as the person) — or *Quote this* while none
+      does and the person may quote (the one door into DS-7002 *New quote*, prefilled; the quote carries
+      `request_ref`). `WorkDoorState` is the honest line above the lists when the door is shut: NexTasks away ·
+      no board yet · a board the person may list but not read (named
+      `role=status`, not an error). Built on `EmptyState` · `StatusDot` · `Chip` · `Button`; the list is the
+      `.nexus-sales-rows` grammar of DS-6104. Not a kit duplicate: no kit export lists typed items of a sibling app
+      with their doors and a per-kind action. Never a NexSales record — no table, no cache, no stage of its own.
+    states: [deals, requests, requests-read-only, leads, one-account, empty, tasks-away, no-board, board-hidden]
+    a11y: "a list; every row's door is a real link naming the key to a reader; *Quote this* is a button; the shut-door line is `role=status`; the stage's tone is redundant to its name (DS-0001)"
+    copy: ["sales.work.*", "sales.section.leads", "sales.section.tasks", "sales.leads.emptyBody", "sales.leads.newBoard", "sales.requests.emptyBody", "sales.quotes.forRequest"]
+    source: [" 08-UX §J2 · §J5", "", "", " A2", " A5", "", ""]
+    status: adopted
+  # ---------------------------------------------------------------- S3-B WP-2…WP-6 (proposed 2026-10-11): the five
+  # applications brought to the register — VibeBan · NexBI · NexMap · NexCare · NexCore. Each row names what the app owns
+  # on purpose and is the proof the part is not a kit duplicate. Pending the owner's approval.
+
+  - id: DS-6201
+    name: Work-item glyphs and property fields
+    owner: apps/tasks
+    component: "apps/tasks/src/components/tasks/common.tsx#PriorityChip · StageDot · TypeGlyph · BlockedGlyph · HealthDot · ActorChip · DueLabel · ItemRow; DateField · EstimateField · EnterField · Description · ShowMore; FieldRows.tsx#FieldRows · FieldInputs · CardFacts · RollupLine; FieldSpecEditor.tsx#FieldSpecList · FieldSpecEditor"
+    stories: apps-nextasks-parts
+    statement: >-
+      The atoms every VibeBan list, board card and Inspector row is built from. Priority (`‼ ! · ◦` + the word),
+      stage (`○ ◔ ◑ ◕ ● ⊘`), type (epic · story · task · bug glyphs), blocked (`n` + direction), health (`StatusDot`
+      with the word) — glyph + text, never colour alone. `ActorChip` is a human, an agent or a service with
+      its kind; `DueLabel` says overdue · today · the date. The property fields are the Inspector's editors — bare at
+      rest, framed on hover/focus (`quiet`), Enter commits, Esc reverts; `EstimateField` carries the project's unit.
+      `ShowMore` is the page foot (*n of total · Show more*). **Typed item fields** (amended 2026-10-12
+      S1-A4 · A4): a type's `fields[]` (text · number · money · date · choice · yes/no · reference) are
+      Inspector rows under the built-in ones in the same quiet idiom (`FieldRows` — money is a number and a 3-letter
+      currency; a reference shows its prefix and takes the id; a `financial` row is absent for a viewer, *Not set*
+      for an editor); the create form shows them as `Field`s (`FieldInputs`, required marked, a problem named at its
+      row); a board card carries up to three `show_on_card` values as a label-less facts strip (`CardFacts`, the
+      label is the title — DS-6105's *account · amount · closes*); a column head says each `rollup: sum` once after
+      the count pill (`RollupLine`; *mixed* when the currencies disagree). Settings › Types edits a type's fields
+      (`FieldSpecEditor`: label en · uk, kind, key locked once saved, required / at a stage category, on the card,
+      sum, sensitivity, a choice's options one per line, a reference's prefix; ≤ 16) and reads them as one quiet
+      line each (`FieldSpecList`). Built on `Chip` (DS-3003), `StatusDot` (DS-3004), `Field` (DS-3020), `Select`,
+      `Switch`, `PropertyRow` and `Menu` (DS-3005); not a kit duplicate — the kit has no notion of a work item's
+      priority, stage, type, estimate or typed field.
+    states: [glyphs, rows, fields, more, typed-fields, field-specs]
+    a11y: "every glyph is `role=img` with an `aria-label` and a `title`; the fields are labelled inputs; a fact carries `aria-label` *label: value*; an unparsable value is `aria-invalid` with a `role=alert` line"
+    copy: ["tasks.priority.*", "tasks.stage.*", "tasks.type.*", "tasks.health.*", "tasks.due.*", "tasks.palette.*", "tasks.fields.*"]
+    source: [" 08-UX", "", "", " A4", " S1-A4"]
+    status: adopted
+
+  # ---------------------------------------------------------------- NexGraph (S3-B WP-7 · UAT-3 — proposed 2026-10-28 after
+  # `APPROVED -B-WP7-UAT1`,). What NexGraph owns on purpose: the knowledge vocabulary (a claim's status, a tier
+  # the human gate's inspectors), the evidence readers, and the Studio stage as it is today — the stage changes in the
+  # Graph Studio slice, which amends DS-6003 before any code. = 2 (the raw `nexus-cc-*` class the kit's
+  # own primitives emit through a pass-through), every other FIT CSS rule 0 for `apps/graph`. Pending the owner's word.
+
+  - id: DS-6001
+    name: Knowledge glyphs and inspectors
+    owner: apps/graph
+    component: "apps/graph/src/components/graph/common.tsx#Status · TierChip · VisibilityChip · MiniTable; ClaimInspector.tsx#ClaimInspector; MergeInspector.tsx#MergeInspector; GraphLegend.tsx#GraphLegend · StageStatus; TypeLegend.tsx#TypeLegend; SavedViews.tsx#ViewsMenu · SaveViewPanel"
+    stories: apps-nexgraph-parts-common
+    statement: >-
+      The vocabulary every NexGraph list, Inspector and stage line is built from. `Status` is a claim's lifecycle
+      as a
+      `StatusDot` tone **and** the word, with the *platform* scope said when the claim is the platform's; `TierChip` is
+      the knowledge tier (Project · platform) on `Chip`; ** S2 amendment:** `VisibilityChip` is a version's
+      visibility on `Chip` — *Shadow* (`warn`: a candidate under measurement that no reader opens — its row is a name
+      and the chip, no content door, no diff) · *Superseded* (`muted`: the live twin a shadow replaced at activation);
+      a live version carries no chip; the same word sits beside a shadow run's state on the Pipeline list and the run
+      page (`run-mode-shadow`), never "shadow mode"; `MiniTable` is the kit's `DataTable` as it is (: no cell
+      override, numbers right-aligned, a `caption`). `ClaimInspector` is the human gate on one claim — the evidence
+      passage, the model's proposal as a *proposed* fact with its model pin, **one primary** (*Verify*, opening the
+      confirm `ActionPanel` that names the human scope and the closed reason codes) and *Return · Look again* as
+      secondaries in an `ActionRow` (DS-7016); a question answered this sitting is *spent*; `MergeInspector` is the *same
+      thing?* twin — two columns, the differing rows marked, *Same thing · Different* and the effects named before the
+      POST. `GraphLegend` filters the stage by type with the counts; `StageStatus` is the stage's `role=status` line
+      (*n of total shown · m lit · edges not drawn*); `TypeLegend` is the colour-cluster key; `ViewsMenu`
+      and `SaveViewPanel` are a saved view's `Menu` (DS-3005) and its `ActionPanel` (name · what it keeps · replace).
+      Built on `StatusDot` (DS-3004), `Chip` (DS-3003), `DataTable` (DS-3030), `Inspector` (DS-7010), `ActionRow`/
+      `ActionPanel` (DS-7016), `Menu` (DS-3005); not a kit duplicate — the kit has no claim, no tier, no stage.
+    states: [statuses, tiers, visibility, mini-table, claim-verified, claim-contested, claim-proposed, merge-open, merge-viewer, legend, stage-status, type-legend, views-menu, save-view, replace-view]
+    a11y: "a status is text beside its dot, never colour alone; an Inspector is a `complementary` region that returns focus on close; the legend's filters are toggle buttons with `aria-pressed`; the stage line is `role=status`; the views menu is a `Menu` with roving focus"
+    copy: ["graph.status.*", "graph.tier.*", "graph.visibility.*", "graph.claim.*", "graph.merge.*", "graph.legend.*", "graph.stage.*", "graph.views.*"]
+    source: [" 08-UX–5", " G", "", "", "", "", "WP-7 · · ", " S2"]
+    status: adopted
+
+  - id: DS-6002
+    name: Evidence readers
+    owner: apps/graph
+    component: "apps/graph/src/components/graph/Artifacts.tsx#ArtifactsGallery; VersionDiff.tsx#VersionDiffPanel; ProcessingConfig.tsx#ProcessingConfigInspector; RetrievalConfig.tsx#RetrievalConfigSections; EntityExplain.tsx#EntityExplain; DatasetPublish.tsx#TablePanel; DoorImage.tsx#DoorImage"
+    stories: apps-nexgraph-parts-readers · apps-nexgraph-parts-processingconfig
+    statement: >-
+      The readers of what a run produced, each a door from a row or a bar, never a page of its own: `ArtifactsGallery`
+      (the page renders as the parser saw them and every figure with the vision model's *proposed* words and its model
+      pin — S12-d,); `VersionDiffPanel` (*what changed* between two versions — one sentence, before → after
+      counts, the folded groups; the first version says everything is new); `ProcessingConfigInspector` (the
+      active configuration version and its runs; an editor saves a draft, the owner activates; ** S1 amendment:**
+      the same Inspector hosts `RetrievalConfigSections` — the resolver's eleven dials as a second *Active · Draft* pair with
+      its own version line `rtp_…@N`, the one cross-field rule inline, *Activate for new answers* for the owner; its sections
+      use the `rule` idiom, …1903 · …1903; ** S2 amendment:** a saved processing draft offers the
+      owner *Run as shadow* beside *Activate* — a secondary door that orders one shadow run per live document and
+      receipts the count; 409 `SHADOW_CAP` · `SHADOW_PENDING` speak in the owner's words; an editor sees neither door
+      and one restriction line · · J2); `EntityExplain`
+      (where an entity's relations come from, grouped by kind, the documents of an edge — S11c); `TablePanel` (a
+      table's publish-as-dataset door — the series v1 · v2, verified, the address, revoke keeps the row — S7);
+      `DoorImage` (an image that comes through a door with the credential — loading · failed · bytes). Each names the
+      restriction a reader lacks as a `Restriction` line, never a greyed button. Built on `Inspector`
+      `Facts`, `DataTable`, `ActionRow`/`ActionPanel`, `States`; not a kit
+      duplicate — the kit has no artifact, no version, no configuration, no dataset series.
+    states: [artifacts, table-publish, version-diff, processing-config, shadow-draft, shadow-refused, shadow-editor, retrieval-defaults, retrieval-draft, retrieval-invalid, retrieval-active, retrieval-viewer, retrieval-denied, entity-explain, door-image, door-refused]
+    a11y: "a gallery is a list of `figure`s with `figcaption`; a diff's before → after is text, not an arrow glyph alone; a panel is a `dialog` or an Inspector section that returns focus; a refused door is a `Restriction` line, not `aria-disabled` chrome"
+    copy: ["graph.artifacts.*", "graph.diff.*", "graph.config.*", "graph.retrieval.*", "graph.explain.*", "graph.datasets.*", "graph.door.*"]
+    source: [" · S7 · S11c · S12-d", "", "", "", "", "WP-7 · ", " S1", " S2"]
+    status: adopted
+
+  - id: DS-6003
+    name: Studio stage
+    owner: apps/graph
+    component: "apps/graph/src/components/graph/explorer/GraphExplorer2D.tsx#GraphExplorer2D; GraphCards.tsx#HoverCard · SearchHits; KnowledgeMap.tsx#KnowledgeMap"
+    stories: apps-nexgraph-parts-studio-stage
+    statement: >-
+      The Studio's stage **as it is today** — the level-0 force-directed graph on a 2D canvas (a disc per type, a fixed
+      type colour, hulls named by the colour cluster, the legend that filters, the status line that counts
+      ), the `HoverCard` in the same frame (name · type · relations on stage; `role=presentation`, never focusable)
+      `SearchHits` under the box (the server's hits with type and mentions, 150 ms debounce; no hits is a sentence) and
+      the `KnowledgeMap` outline (the three lanes — lexical · subject · domain — as a list twin of the stage). The
+      canvas itself is not a story (jsdom draws nothing); the DOM around it is — UAT-3 compares the running stage to
+      these. **This row is the baseline the Graph Studio slice amends** (·: an analysis surface on
+      graph-review practice — overview → zoom/filter → details on demand, named analyst views with the numbers beside
+      the picture — and the *promote to corporate knowledge* door); nothing here is final. Built on `Field`,
+      `IconButton`, `Menu`, `States`; the palette is the owner-approved G set in `graph.css`, read by the Studio
+      slice into `tokens.css` as a data palette or kept app-local by the owner's word.
+    states: [explorer-2d, knowledge-map, search-hits, hover-card]
+    a11y: "the stage is a focusable `role=application` region with arrow-key walking, Enter selects, Shift+Enter opens, Esc backs out; the hover card is presentational (the Inspector is the accessible twin); search hits are a labelled list, their states `role=status`; the outline is an SVG `group` of `role=button` rows with `aria-pressed` and `aria-expanded`"
+    copy: ["graph.studio.*", "graph.stage.*", "graph.search.*", "graph.map.*"]
+    source: [" 08-UX", "UX-R8", " G", "", "", "", ""]
+    status: adopted
+
+  - id: DS-6004
+    name: Bench run reader
+    owner: apps/graph
+    component: "apps/graph/src/components/graph/Bench.tsx#BenchRunChips · BenchStats · BenchMetrics · SectionTable · ItemsTable; screens/BenchScreen.tsx#BenchScreen; screens/BenchRunScreen.tsx#BenchRunScreen"
+    stories: apps-nexgraph-bench · apps-nexgraph-benchrun · apps-nexgraph-parts-bench
+    statement: >-
+      The Runs area's bench pages (S4 · 08-UX_UAT §R — no navigation item: a door from the
+      Pipeline line): **the list** `/graph/runs/bench` — every benchmark run the harness published into this Project,
+      newest first, a row = when · the run with its chips · corpus hash (the policy pair in its title) · questions · the numbers;
+      the arm and corpus filters return past twelve runs; a row opens **the run page**
+      `/graph/runs/bench/{run_id}` — one header line (back · *Run* and the id · chips · when), the seven numbers as the
+      `nexus-cc-span-stats` fact row (questions · fact coverage · cite@k · false evidence · p50 · p95 · reranked), the
+      record as `Facts` (corpus · policy · purpose · the question set as a URI · by status · build · published), the
+      **per-section table** ordered by a *Sort by* `Select` (fact coverage first; a row filters the items), the **items**
+      (question id · section · language · status word beside its dot · facts `hits/total` or *false evidence · clean*
+      for a negative · cited page · latency · reason codes as `xs` chips). `?section=` keeps one section's items, named
+      by a removable `Chip` — what a dashboard's section row deep-links to. The chips are words: *Indicative* (`warn`)
+      while any row is `llm_proposed` with the note *indicative until reviewed* (TBD-916, never a floor); `⚠ reranker`
+      (`warn`) when the reranker was away on more than 5 % of the rows, with the note that the run is left out of
+      comparisons; *Revoked* (`muted`). **An external benchmark run is one
+      more row:** a *Bench* chip (`neutral`) names the dataset (`mine1` · `multiconer_v2` · …), the corpus cell reads the
+      dataset pin (`mine1@0089147b…`) and links nowhere — the dataset was purged after the run; the run page carries the
+      external note (`graph.bench.external.note`); `⚠ judge` (`warn`) when the judge route was away on more than 5 % of
+      the rows, the twin of `⚠ reranker`, with the same *left out of comparisons* note. Every cell is an id, a code or a
+      number the server computed; the pages never see a question, a gold fact, a dataset sentence or an answer
+      . Read-only — nobody edits a measurement. **:** on an external
+      run only, a ***Bench metrics*** `Facts` block under the seven numbers — one fact per non-null metric_set
+      column of the run (`graph.bench.metric.*`, uk = en), the published reference systems' numbers beside it in
+      `nexus-cc-muted` (*0,41 · xlmr_large 0,61 · xlmr_base 0,66*; `unmapped` is a count, summed); a platform run
+      shows no block. ***suspect*** (`warn`, (a)) on both pages when every measured, non-reference
+      row returned nothing, with the note *a harness fault until proven otherwise* and the five means greyed
+      (`BenchStats[data-suspect]`) — computed by the server at read time (`counts.harness_suspect`), so a run reached
+      by any door says it.
+      Built on `PageFrame` (DS-3020, dense on the run page), `DataTable` (DS-3030 — no cell override, numbers
+      right-aligned, a caption), `Facts` (DS-3018), `Chip` (DS-3003), `StatusDot` (DS-3004), `Select` (DS-3012),
+      `Toolbar`, `States` (DS-7005 · DS-7006); not a kit duplicate — the kit has no run, no section, no bench.
+    states: [list-populated, list-empty, list-many, list-external, run-populated, run-external, run-external-metrics, run-suspect, run-section, run-flagged, run-revoked, loading, error, denied, offline]
+    a11y: "the list and the items are real tables with a caption; rows that open something are focusable with `aria-selected`; the sort is a labelled `Select`, not a header click; a status is a word beside its dot; a flag is a word beside its glyph; the notes are `role=note`; the section filter is a `Chip` with a named Remove"
+    copy: ["graph.bench.*"]
+    source: [" 08-UX_UAT §R · §S9", " · · ", " · ", " · ", "", "", " UX_PROPOSAL (the drill)", " S4b design note–1.8 · "]
+    status: proposed
+
+  # ---------------------------------------------------------------- NexForge
+  - id: DS-6021
+    name: Scene cards and the New scene door
+    owner: apps/forge
+    component: "apps/forge/src/components/scenes/SceneCards.tsx#SceneCards · ScenePreviewThumb; NewSceneStart.tsx#NewSceneStart; screens/ScenesScreen.tsx#ScenesScreen; screens/NewSceneScreen.tsx#NewSceneScreen"
+    stories: apps-nexforge-scene-cards
+    statement: >-
+      The library as cards: a card earns its place over a table row by
+      carrying the scene's **picture** — `ScenePreviewThumb` draws the footprints of the current version from the same
+      rows the server lists, so a
+      scene is recognised before it is read; title · project · template · updated · counts · role (`Chip`) complete
+      it; the whole card opens for a pointer, the title link is the keyboard and screen-reader path. The library's
+      one header line is title · count · *New scene*; the search, the Project filter and the cards | table control
+      exist only past one screen. An empty library *is* the New scene door: NexChat's one-line
+      composer on the stage with the starting points one quiet row beneath — no form, no mode switcher; `/forge/new`
+      is the same door with `←` and the Project carried over. Built on `Chip` (DS-3003), `PageLine` (DS-2004),
+      `DataStateView` (DS-7005); not a kit duplicate — the kit has no card with a picture and no door.
+    states: [populated, many, empty-is-the-door, loading, error, denied, offline, viewer, thumb, thumb-blank, door, door-in-a-project, door-voice-unavailable]
+    a11y: "each card is an `article` named by its title link; the thumbnail is `role=img` named *Preview of ⟨title⟩* (blank: *Blank*); the role chip is text; the door's line is the kit composer with its accessible name; the starting points are real buttons"
+    copy: ["forge.scenes.*", "forge.scenes.card.*", "forge.scenes.col.*", "forge.scenes.count.*", "forge.scenes.project.*", "forge.scenes.view.*", "forge.start.*", "forge.template.*", "forge.state.*"]
+    source: [" 08-UX", "", "", "", "", "WP-9"]
+    status: adopted
+    proof: apps-nexforge-scene-cards--cards
+
+  - id: DS-6022
+    name: Feedback card
+    owner: apps/forge
+    component: "apps/forge/src/components/scene/FeedbackCard.tsx#FeedbackCard"
+    stories: apps-nexforge-feedback-card
+    statement: >-
+      The one card over the composer that answers a spoken or typed turn on a scene (08 §3.3 — one card, one primary,
+      the `Why` fold beneath): a **proposal** to apply (the utterance quoted, the engine's level naming the weight — a
+      level-3 change lists what it touches and asks to be read; *Apply* the primary, *Modify* · *Cancel* in an
+      `ActionRow`), a **Which one?** with its options as buttons and their hints while the candidates glow on the
+      canvas, **Done** with undo, an **answer** to a question, **not understood** with three things one could say
+      instead (each sends itself), an **error** in the wording. Busy disables the secondaries and marks the
+      primary. Until WP-9 this was `TurnCard`, a twin of the kit's chat turn card by name only; it is not
+      that card — it carries no thread, no toolbar, no rating — and not `AskSurface` (DS-4002) either, because the
+      scene's conversation is the scene's own, its receipt the canvas. Built on `ActionRow` (DS-7016)
+      `Button` · `LinkButton` (DS-3001), `Chip` (DS-3003), `IconButton`, `WhyToggle`.
+    states: [proposal, proposal-level-3, proposal-applying, choice, done, answer, not-understood, error]
+    a11y: "the card is a `region` named by its kind; its arrival is announced once through the dock's polite live region; one primary; the options of a choice are real buttons with the hint in `aria-describedby`; undo is a button, never a link; Esc dismisses"
+    copy: ["forge.proposal.*", "forge.turn.*", "forge.turn.source.*", "forge.composer.*", "forge.error.*"]
+    source: [" 08-UX", "", "", "", "CONSISTENCY-AUDIT K1", "WP-9"]
+    status: adopted
+    proof: apps-nexforge-feedback-card--proposal
+
+  - id: DS-6023
+    name: Scene workspace furniture
+    owner: apps/forge
+    component: "apps/forge/src/components/scene/ViewSwitch.tsx#ViewSwitch; SceneTitle.tsx#SceneTitle; ElementPalette.tsx#ElementPalette; ColorKey.tsx#ColorKey; ObjectsList.tsx#ObjectsList; ConversionPanel.tsx#ConversionPanel; Composer.tsx#Composer; SelectionBar.tsx#SelectionBar; RelationBar.tsx#RelationBar; SceneInspector.tsx#SceneInspector; ThreeDView.tsx#ThreeDView; PresentView.tsx#PresentView; screens/SceneScreen.tsx#SceneScreen"
+    stories: apps-nexforge-scene-workspace-parts
+    statement: >-
+      What sits around the canvas on the Scene page (08 §3) and is NexForge's on purpose. The header line: the title
+      typed over in place (DS-7021; a scene born from the door asks for its name first), the view switch (Board ·
+      Diagram · 3D · Present — a view the scene cannot show is disabled with the reason), *Objects* · *Details* · `⋯`.
+      On the canvas: the Board's tools on the left edge with their keys (`ElementPalette`), the colour key — the
+      meanings this scene gave its hues — and the two bars that float over a
+      selection: `SelectionBar` (colour · shape · text position · arrange · lock · more → meaning · duplicate · details
+      · convert · delete) and `RelationBar` (colour · line · direction · kind · words · more), both composed of the
+      kit's `ScenePop` (DS-4011). Under the canvas: the Objects list (`o`) as the kit's `DataTable` sharing the
+      selection, and the conversion panel — the preview as a `DataTable`, *Create* the primary, an error as
+      `Hint`. The dock: NexChat's one-line composer (`@` agent · the mic with its three states, · Enter sends
+      *Stop* while thinking) — dictation ≠ command. The Inspector: a door, never a wall
+      one object: `Field` for the name · `Select` for the meaning · `PropertyList` · the binding · convert; a selection:
+      what applies to all; nothing selected: layers · versions · history; a viewer reads the same under a `Restriction`.
+      `ThreeDView` and `PresentView` are the kit's `Scene3D` (DS-4010) and the camera track over the Board (`← → Space`
+      step, `Esc` exits) with NexForge's labels. Not a kit duplicate: the kit has no scene vocabulary; every control is
+      the kit's (`Field` · `Select` · `DataTable` · `ActionRow` · `LinkButton` · `IconButton` · `Inspector` ·
+      `Restriction` · `Hint`); every number a token (WP-9: 34 raw colours · 11 radii · 31 spacings · 9 type sizes · 4
+      layers/shadows · 4 `!important` · 3 cell and 5 input overrides → 0).
+    states: [views, views-disabled, title, title-read-only, title-naming, palette, colour-key, colour-key-none, objects, objects-empty, conversion-backlog, conversion-graph, composer-idle, composer-thinking, composer-voice-unavailable, composer-read-only, composer-door, inspector-scene, inspector-object, inspector-bound, inspector-selection, inspector-read-only, inspector-empty, 3d, present, selection-bar, relation-bar]
+    a11y: "the view switch is a `radiogroup` of real buttons; the title is a button that becomes a labelled input; the palette and the bars are `toolbar`s with `aria-haspopup` / `aria-expanded` on what opens a pop; the Objects list is the kit table with the selection as `aria-selected`; the composer is a labelled textbox with the mic's state in its name and a polite live region for what was heard; the Inspector is a `complementary` region that returns focus to the element's menu on close; Present traps nothing — `Esc` leaves"
+    copy: ["forge.view.*", "forge.scene.*", "forge.tool.*", "forge.color.*", "forge.bar.*", "forge.bar.kind.*", "forge.bar.order.*", "forge.bar.textPos.*", "forge.relbar.*", "forge.relbar.direction.*", "forge.relbar.line.*", "forge.style.*", "forge.style.fill.*", "forge.style.stroke.*", "forge.objects.*", "forge.convert.*", "forge.composer.*", "forge.inspector.*", "forge.geometry.*", "forge.version.*", "forge.history.*", "forge.present.*", "forge.preset.*", "forge.semantic.*", "forge.kind.*", "forge.relation.*"]
+    source: [" 08-UX", "", "", "", "", "", "", "", "", "", "CONSISTENCY-AUDIT T4 · T6 · L1 · F1 · F4 · M1 · D1 · K1", "WP-9"]
+    status: adopted
+    proof: apps-nexforge-scene-workspace-parts--views
+
+  - id: DS-6301
+    name: Dashboard blocks
+    owner: apps/bi
+    component: "apps/bi/src/components/bi/Block.tsx#BlockCard · Grid.tsx#Grid · common.tsx#BlockChart · SeriesTable · MetricStatusDot · CertifiedChip · LinkRow · OpenInGraphLink"
+    stories: apps-nexbi-parts
+    statement: >-
+      What NexBI owns: the block card (title · figure or chart · the *Data* twin · the trace door; `studio` adds the
+      selection ring and the handles), the 12-column grid it sits on (drag · resize · keyboard, ~150 lines — no
+      library, UX_PROPOSAL §6; a live region announces every move), the chart through `@nexus/ui`'s ECharts adapter
+      and its accessible table twin (`SeriesTable`, the *Data*
+      tab). `MetricStatusDot` (draft · proposed · certified · deprecated) and `CertifiedChip` are `StatusDot`/`Chip`
+      with the metric vocabulary; `LinkRow` is the discovery row (DS-7001) with a meta column; `OpenInGraphLink` is
+      the door to NexGraph. Not a kit duplicate: the kit has no grid, no block and no chart card. ** (
+      contracts 1.205.0):** the filter bar gains a *toggle* filter (the kit `Switch`, DS-3012 — *Valid runs only*, on by
+      its default, `?f.<id>=off` turns it off) and, on a dashboard whose entity has `runs`, *Previous run* in *Compare*
+      — the dashboard's `default_compare` is the option marked *Default*, an absent `cmp` is that default, `cmp=none`
+      the person's *No comparison*, *Reset* returns to the default; a KPI reads **the latest run** and names it
+      (*Latest run · <id> · vs run <id>*), its Δ against the previous comparable run; a metric block presented as a
+      **table** (`presentation.kind = table`) renders the run's table spec with a `ref` column (every value a `nexus://`
+      URI) as the row's link through `refHref` (a graph dataset version → the bench run page; DS-7012); a *reference*
+      series is drawn dashed without markers (`chartSpecToOption({ dashed })`); a run-structured dashboard with no run
+      yet says its `empty_state` in one `role=status` line with one door above the grid, the cards keeping their `—`.
+    states: [chips, chart, block, grid-editable, filter-bar-runs, filter-bar-runs-narrowed]
+    a11y: "the chart is `role=img` with the title as its name and the table as its twin; grid items are focusable with arrow-key move and resize announced"
+    copy: ["bi.metric.status.*", "bi.dataset.certified", "bi.dataset.uncertified", "bi.block.*", "bi.grid.*", "bi.filter.compare.previous_run", "bi.filter.latestRun", "bi.filter.vsRun", "bi.filter.deltaRunTitle", "bi.filter.kind.toggle", "bi.dashboard.empty.*"]
+    source: [" 08-UX", "UX_PROPOSAL", "", "", " S4b design note–1.6 · · "]
+    status: adopted
+
+  - id: DS-6401
+    name: Workspace furniture
+    owner: apps/map
+    component: "apps/map/src/components/workspace/labels.tsx#KindGlyph · StatusLine · MapControls · LayersPanel · ShortcutsSheet · Tooltip"
+    stories: apps-nexmap-parts
+    statement: >-
+      Everything that floats over NexMap's WebGL canvas and is DOM, not map: the kind glyphs (shipment · vessel ·
+      aircraft · hub by kind), the status line (cursor · zoom band · what is on screen · loading), the map controls
+      (layers · zoom · reset north — `IconButton`s in a dock), the layers panel (a floating surface, DS-7015, with one
+      switch per layer and the unplaced count as a door), the keyboard sheet (`?`) and the hover tooltip (feature ·
+      cell · zone · event · lane — one grammar, `role=presentation`, never focusable). Layers and dock tokens:
+      `--nexus-z-dock` · `--nexus-z-popover`; the canvas itself is not a story (WebGL) — UAT-3 compares the running
+      workspace to these. Not a kit duplicate: the kit has no map, no layers and no hover card.
+    states: [glyphs, controls, layers, shortcuts, hover]
+    a11y: "controls are labelled buttons with `aria-keyshortcuts`; the layers panel is a dialog that returns focus; the status line is `role=status`"
+    copy: ["map.kind.*", "map.status.*", "map.controls.*", "map.layers.*", "map.shortcuts.*", "map.tooltip.*"]
+    source: [" 08-UX–5", "", ""]
+    status: adopted
+
+  - id: DS-6501
+    name: Conversation parts
+    owner: apps/care
+    component: "apps/care/src/components/inbox/Timeline.tsx#Timeline · SummaryCard · Composer.tsx#Composer · ConversationInspector.tsx#ConversationInspector"
+    stories: apps-nexcare-parts
+    statement: >-
+      NexCare's conversation: the timeline (customer · agent · assistant · tool · system entries, each labelled by
+      who said it and whether the customer saw it — internal entries are visibly internal), the handoff summary card
+      (what the assistant checked as a tick list, its reason codes, the sentiment labelled *model-inferred* — rule 85,
+      a feature never a verdict), the composer (reply vs internal note as one segmented choice; the assistant's draft
+      carries its provenance into the send) and the conversation Inspector (identity · facts · case · journey; one
+      primary — *Create case*). Not a kit duplicate: `TurnCard` (DS-5xxx) is NexChat's own turn; a care timeline has
+      two parties and a tool lane.
+    states: [thread, summary, reply, read-only, inspector]
+    a11y: "the timeline is a `list` of labelled entries; the composer is a `form` with the mode as a radiogroup; the inspector is `complementary` and returns focus on close"
+    copy: ["care.timeline.*", "care.summary.*", "care.composer.*", "care.inspector.*"]
+    source: [" 08-UX–6", "rule 85"]
+    status: adopted
+
+  - id: DS-6601
+    name: Governance parts
+    owner: apps/core
+    component: "apps/core/src/components/screens/ProjectsScreen.tsx#ClassificationChip · TraceInspector.tsx#RecordStatus · SpanTree · SpanDetail"
+    stories: apps-nexcore-parts
+    statement: >-
+      The classification chip (public · confidential · dsk · secret · top_secret — tone + the word), the record status
+      dot (a trace record's lifecycle word), and the trace Inspector's two halves: the span tree (turn → run → call,
+      a time bar per span, container spans fold) and the span detail (the record as fields — refs · statuses ·
+      timings · counts · digests, never content; payloads fetched only when opened, redactions named, classification
+      shown; `denied` and `capture off` are honest rungs). Built on `Chip` · `StatusDot` · `Inspector` (DS-3030).
+      Not a kit duplicate: the kit has no span tree.
+    states: [chips, trace, trace-payloads, trace-denied, trace-capture-off]
+    a11y: "the span tree is a `tree` with `aria-level` and arrow keys; the detail is labelled by the span; payload previews are `pre` with the classification announced first"
+    copy: ["core.classification.*", "core.trace.*"]
+    source: [" 08-UX", " FR-OBS-004", ""]
+    status: adopted
+
+  - id: DS-6602
+    name: Auth doors
+    owner: apps/core
+    component: "apps/core/src/components/auth/AuthScreens.tsx#SignUpScreen · SignInScreen · VerifyScreen · WelcomeScreen · CreateOrganizationScreen"
+    stories: apps-nexcore-auth
+    statement: >-
+      The five doors into NEXUS: sign up · sign in · verify · welcome · create an organization — one centred card in
+      the bare shell (`BareShell`: no launcher, no dock), one primary action per card, the platform's offers (Google ·
+      the dev inbox) only when it says so; the reason a door is closed is one sentence from the server's reason code.
+      Built on `Field` · `Button` · `LinkButton` · `Restriction`; `.nexus-cc-bare` is the only app-local measure.
+      Not a kit duplicate: the kit has no auth card.
+    states: [sign-up, sign-in, verify, welcome, create-organization]
+    a11y: "a `main` with one `h1`; the form's first field takes focus; errors are `role=alert` next to the field"
+    copy: ["core.auth.*"]
+    source: [" 08-UX", ""]
+    status: adopted
+
+  # ---------------------------------------------------------------- NexChat channels · Telegram
+  - id: DS-6603
+    name: Connected channels
+    owner: apps/core
+    component: "apps/core/src/components/channels/ConnectedChannels.tsx#ConnectedChannelsPanel · ChannelRow"
+    stories: apps-nexcore-connected-channels
+    statement: >-
+      The *Connected channels* tab of the person's Account: one `ChannelRow`
+      per messenger — a glyph · the provider's name · its state as `StatusDot` (connected · not connected · waiting
+      for Telegram · unreachable · disconnected) · the facts of the link (the account as the messenger shows it, never
+      a numeric subject · since · last active · the organizations · the current project) · the one action the state
+      allows: **Connect** (the only primary) · **Disconnect** with the confirmation in place (`ActionPanel`, never a
+      modal,) · *Open Telegram* with the minutes left while a request is pending · nothing while revoked. Then
+      the notification toggles per kind (`Switch`) and the quiet hours (two compact `Select`s) — the S5 contract drawn
+      now. The row reused `readOnly` is the People inspector's panel (`PersonChannelsPanel`): the admin sees that a
+      channel exists and its state, never the chat, and **Revoke** is the panel's own. No token or link secret
+      is ever printed. Not a kit duplicate: no kit export shows an identity link with its one action.
+    states: [populated, pending, unreachable, disconnecting, quiet-hours, disconnected, empty, loading, error, denied, offline]
+    a11y: "each row is an `article` named after the provider; the state is text in a `StatusDot`, never colour alone; the pending note is `role=status`; the confirmation moves focus to its heading and closes on Escape"
+    copy: ["core.channels.*", "core.account.tab.channels"]
+    source: [" 08", "", "", "", "", "", "", ""]
+    status: adopted
+
+  - id: DS-6604
+    name: Channel link confirmation
+    owner: apps/core
+    component: "apps/core/src/components/channels/ChannelLinkScreen.tsx#ChannelLinkScreen · ChannelStepUpScreen.tsx#ChannelStepUpScreen"
+    stories: apps-nexcore-channel-link · apps-nexcore-channel-step-up
+    statement: >-
+      The one page of the telegram-first ceremony after the five doors (DS-6602): a centred card in `BareShell` —
+      *Link this Telegram account to your Nexi identity?* with two identity lines (`Facts`: the messenger's account ·
+      the signed-in person and organization), **Link** (the only primary) · *Not me*; then *Linked — return to
+      Telegram* with the way back. The refusals are one sentence each with no second door: expired · already linked
+      (either side, with a link to the Account page) · a WebView (*open this page in your browser* with **Copy link**
+      Google never runs in a WebView,) · error · offline. Nothing on the page is a secret: the
+      token stays in the URL the person opened and is never printed. Not a kit duplicate: the kit has no
+      confirmation card for an identity link. **The step-up face**: the
+      same card at `/channels/telegram/step-up?token=` — *Verify it is you* (the only primary; sends the person
+      through the provider again with `prompt=login` and back) · *Verifying…* (the button disabled) · *Verified —
+      return to Telegram* · the refusals one sentence each: expired · not yours
+      one more sign-in (the session predates the request) · WebView · error · offline.
+    states: [confirm, done, expired, already-linked-telegram, already-linked-user, webview-refused, error, offline, step-up-verify, step-up-verifying, step-up-verified, step-up-expired, step-up-not-yours, step-up-one-more-sign-in]
+    a11y: "a `main` with one `h1` that states the question; the identity lines are a `dl`; a refusal is `role=alert`, the done line `role=status`; one primary action; the verifying card is `aria-busy`"
+    copy: ["core.channels.link.*", "core.channels.step_up.*"]
+    source: [" 08", "", "", "", "", "", "", "", "", DS-6602, " A1"]
+    status: adopted
+
+  - id: DS-6605
+    name: Channels settings
+    owner: apps/core
+    component: "apps/core/src/components/channels/ChannelsSettingsScreen.tsx#ChannelsSettingsScreen · ChannelPolicyCard"
+    stories: apps-nexcore-channels-settings
+    statement: >-
+      `/core/channels`: one header line, then one `ChannelPolicyCard` per provider
+      the contour has — the glyph · the name · the bot's public handle · the delivery state as `StatusDot` (receiving ·
+      stale · not receiving; never the word webhook) · two `Stat`s (connected people · messages today) · the *enabled*
+      `Switch` (the change is the commit) · a `fieldset` the switch disables: the ceiling `Select` over the canonical
+      ladder's reachable steps with the one
+      sentence *Telegram relays messages through Telegram's servers* · what people may do (`CheckList`) · the
+      inline-approval level `Select` (never · 1 · 2 · 3) · the actions kept to Nexi as removable `Chip`s. The empty
+      state is the honest *not set up on this installation*; `policy_unavailable` is the fail-closed state said aloud
+      . No secret is here. Not a kit duplicate: a policy card over a fixed set of controls.
+    states: [populated, off, empty, loading, error, denied, offline, policy-unavailable]
+    a11y: "the card is an `article` named after the provider; the disabled fieldset carries `disabled`, not a visual only; every control has a visible label; the delivery state is text"
+    copy: ["core.channels.settings.*"]
+    source: [" 08", "", "", "", "", "", ""]
+    status: adopted
+
+  # ---------------------------------------------------------------- NexFactory
+  - id: DS-6701
+    name: Readiness gates
+    owner: apps/factory
+    component: "apps/factory/src/components/parts/ReadinessGates.tsx#ReadinessGates"
+    stories: apps-nexfactory-readiness-gates
+    statement: >-
+      The engine's verdict on one production order, said as a list of gates: a verdict line (*Ready* · *Ready with
+      risk* · *Blocked* · *Unknown* — the verdict is a tone of `Chip`, DS-3003, never colour alone; the count *n of 7
+      verified*), then one row per gate in policy order — glyph · the gate's name · its one-sentence reason · *required*
+      / *optional* — `verified` ✓, `failed` ✕ with the reason the fact fails, `unknown` ? with the fact that is missing
+      and the source that did not answer. Deterministic: the component only renders what the
+      evaluator computed; a missing fact never reads as *ready*; a done order shows *not evaluated*. Not a kit
+      duplicate: no kit export shows a verdict over a fixed list of pass/fail/unknown rules. S2: the block is
+      **live** — *Re-evaluating* keeps the last record visible, dimmed, while a `role=status` line says *Evaluating…*
+      and announces the new verdict when a different record arrives; *Changed by* names the gate and the
+      fact the engine recorded; the cause of the run (*after a source sync* · *asked by a person* …) closes the foot.
+    states: [blocked, unknown, ready, ready-with-risk, changed-by, reevaluating, not-evaluated]
+    a11y: "an `ol` labelled *gates* with one `li` per gate; the glyph is `aria-hidden`, the result is a word in the row; the evidence of a gate is a labelled `ul`; one `role=status` `aria-live=polite` line for *Evaluating…* and the new verdict (A11Y-2903)"
+    copy: ["factory.readiness.*", "factory.verdict.*", "factory.evidence.*"]
+    source: [" ", "", "", "", "", "", ""]
+    status: proposed
+
+  - id: DS-6702
+    name: Availability rows
+    owner: apps/factory
+    component: "apps/factory/src/components/parts/AvailabilityRows.tsx#AvailabilityRows"
+    stories: apps-nexfactory-availability-rows
+    parent: DS-7001
+    statement: >-
+      What the order needs and what the plant has, one `DataTable` (DS-7001) row per material: material · required ·
+      available · the lots that cover it (lot id · quantity · state — *released* · *quarantined* · *expired* — a `Chip`
+      per lot) · the shortfall when the available quantity is short · the source chip (DS-6101) with the stock's
+      verification time. A quarantined lot never counts as available; a stale stock read is said as such on the row,
+      not hidden. Not a kit duplicate: the kit's table has no notion of a lot or of coverage. S2: the rows are the
+      records door's projection as read — the quarantine story proves the lot is named and the coverage says
+      what it holds back; the stale story proves the source chip says *stale*.
+    states: [populated, quarantine, covered, stale, empty]
+    a11y: "a `DataTable` with a caption; the lots are a labelled `ul` in the cell; the lot state and the shortfall are text, never colour alone"
+    copy: ["factory.availability.*", "factory.source.*"]
+    source: [" ", "", ""]
+    status: proposed
+
+  - id: DS-6703
+    name: Order state chip
+    owner: apps/factory
+    component: "apps/factory/src/components/parts/OrderStateChip.tsx#OrderStateChip"
+    stories: apps-nexfactory-order-state-chip
+    parent: DS-3003
+    statement: >-
+      Where a production order stands — *planned* · *released* · *in progress* · *on hold* · *done* · *cancelled* —
+      and, beside it, the readiness verdict when the order is not yet released (*ready* · *ready with risk* ·
+      *blocked* · *unknown*): two `Chip`s (DS-3003) with the register's tones, text first, the glyph decoration.
+      One vocabulary for the list, the inspector, the page line and the overview counts. Not a kit duplicate: the
+      pairing and the vocabulary are the app's.
+    states: [states, verdicts]
+    a11y: "text in the chip is the state; no colour-only meaning"
+    copy: ["factory.order.state.*", "factory.verdict.*"]
+    source: [" ", "", ""]
+    status: proposed
+
+  - id: DS-6704
+    name: Site tree
+    owner: apps/factory
+    component: "apps/factory/src/components/parts/SiteTree.tsx#SiteTree"
+    stories: apps-nexfactory-site-tree
+    parent: DS-2001
+    statement: >-
+      The plant as the person may see it — site › line › work centre — one nested list with the counts
+      that matter today on each node (orders in progress · blocked · exceptions open) and the source chip (DS-6101)
+      on the site line; a work centre whose equipment status is down is said as *down · since ‹time›*. Read as the
+      person: a line the person's project does not include is not drawn. Not a kit duplicate: the kit's tree
+      has no per-node counts or source.
+    states: [populated, build, down]
+    a11y: "a labelled nested `ul`/`li` (site › area › work centre); the counts are text, the down state is a word"
+    copy: ["factory.overview.*", "factory.source.*"]
+    source: [" ", "", ""]
+    status: proposed
+
+  # ---------------------------------------------------------------- NexFactory
+  - id: DS-6705
+    name: Readiness policy editor
+    owner: apps/factory
+    component: "apps/factory/src/components/parts/ReadinessPolicyEditor.tsx#ReadinessPolicyEditor"
+    stories: apps-nexfactory-readiness-policy-editor
+    parent: DS-3007
+    statement: >-
+      The tenant's readiness policy: the gates in the order the engine runs them, a `required`
+      switch per gate (DS-7003, labelled by the gate), the version line (*Policy v2 · saved 3 d ago by Olena · note*)
+      and the versions before it. Editing is the `EditBar`'s (DS-3007): *Edit policy* wakes the switches and the order
+      arrows and a note of ≤ 400 characters; *Save* writes **a new version** — the old one is never changed — and the
+      line under the bar says what the service did (*Version 2 saved · 6 open orders re-evaluate*; the worker within
+      `reeval_s`, the order pages follow their live region). A reader without `factory.policy.manage` sees the policy
+      and a `Restriction` (DS-3009), never a disabled control; a refusal on save is the server's word on the bar.
+      Not a kit duplicate: the kit's EditBar has no notion of a versioned, ordered rule set.
+    states: [populated, editing, saving, versions, permission-denied, refused]
+    a11y: "an `ol` labelled *gates of the policy*; each `required` switch is `role=switch` named by its gate; the order arrows are icon buttons with the gate in their label; the saved note is `role=status`; the save error is `role=alert` on the bar"
+    copy: ["factory.policy.*", "factory.settings.*", "factory.gate.*"]
+    source: [" S2-ARCHITECTURE", "", "", "", "A11Y-2903", ""]
+    status: proposed
+
+  - id: DS-6706
+    name: Exception filing form
+    owner: apps/factory
+    component: "apps/factory/src/components/parts/ExceptionFilingForm.tsx#ExceptionFilingForm"
+    stories: apps-nexfactory-exception-filing-form
+    parent: DS-3010
+    statement: >-
+      A person files a production exception on the linked board, as themselves, from the order page (
+      A3): one inline `ActionPanel` (DS-3010) at the top of the order's stream — the kind (the board's closed
+      vocabulary, suggested from the failed gate) · the severity · the gate it concerns (optional; a failed or unknown
+      gate first) · a note of ≤ 400 characters. The answer is the item (*Filed as FAC-18 · in VibeBan ↗*) or the open
+      item that already exists for this order and kind (the fingerprint rule — nothing is filed twice); the engine's own
+      filings never pass through here. Refusals are the server's words: *not allowed* (the PEP), *the board is not
+      linked* (`BOARD_NOT_LINKED` · `PROJECT_REQUIRED`), *VibeBan did not answer — nothing filed*. Not a kit duplicate:
+      the kit's panel has no notion of a board item, a gate or a fingerprint.
+    states: [draft, filing, filed, existing, denied, board-not-linked, unavailable]
+    a11y: "a `form` `role=group` labelled by its heading (focus moves to it on open, Esc closes); every select is a labelled `Field`; the note's error is `role=alert`; the outcome line is `role=status`"
+    copy: ["factory.file.*", "factory.exceptionKind.*", "factory.severity.*", "factory.gate.*"]
+    source: [" S2-ARCHITECTURE", "", "", " A3", "", ""]
+    status: proposed
+
+  - id: DS-6707
+    name: Source mapping table
+    owner: apps/factory
+    component: "apps/factory/src/components/parts/SourceMappingTable.tsx#SourceMappingTable"
+    stories: apps-nexfactory-source-mapping-table
+    parent: DS-3005
+    statement: >-
+      Settings › Mapping: one row per canonical entity of the
+      manufacturing family — the source's object beside it, the fields' count line (*9 of 9 mapped · 6 required*), the
+      row's state **as a word** (*Mapped* · *Missing — required* · *Not available in this source* · *Proposed*; never
+      colour alone, A11Y-2905) and the fields on demand (a disclosure per row: canonical · codec · the source's field).
+      The version line says *Mapping v3 · approved 12 d ago by Ihor* or *proposed just now · not approved yet*; every
+      row carries *Unverified* while the template is. *Discover* asks the source for its own description
+      and proposes a version — a template, never a model; *Edit* wakes a text field per canonical field and a *Not
+      available in this source* switch per field, plus the whole-set word for a set the source lacks; *Approve*
+      writes the person's version or is refused with the rows still missing (`MAPPING_INCOMPLETE`, listed as the
+      service names them). A reader sees a `Restriction`, never a disabled control. The only label on the screen is
+      the connection's display name. Settings › Source beside it (`SourceHealthPanel`, same stories id
+      family) carries the health line as a `role=status`, the checkpoints and *Check now* · *Sync now* · *Reconcile*.
+      Not a kit duplicate: the kit's table has no notion of a canonical ↔ source row, a required field or an approval.
+    states: [populated, fields, proposed, editing, refused-incomplete, approving, discovering, no-mapping, not-connected, permission-denied]
+    a11y: "a `table` with a caption; the row's entity is a `th scope=row`; each disclosure is an icon button named by the entity with `aria-expanded` / `aria-controls`; every source field input is labelled by its canonical field; the missing rows are a `role=alert`; the approval outcome is `role=status`"
+    copy: ["factory.mapping.*", "factory.entity.*", "factory.health.*", "factory.sync.*", "factory.settings.*"]
+    source: [" S3-ARCHITECTURE S3-F", "", "", "", "", "", "", "A11Y-2905", ""]
+    status: proposed
+
+  - id: DS-6708
+    name: Field schema editor
+    owner: apps/factory
+    component: "apps/factory/src/components/parts/FieldSchemaEditor.tsx#FieldSchemaEditor"
+    stories: apps-nexfactory-field-schema-editor
+    parent: DS-3007
+    statement: >-
+      Settings › Fields: the tenant's custom fields, one record type at a time (a
+      `Select` of the seven importable kinds), as rows — key · label en · label uk (both, nothing exists in one
+      language) · type (string · number · boolean · date · enum) · required · *financial* (the value lands in the
+      bucket only `factory.financial` reads) · the enum's options. The version line says *v2 · saved 3 d ago by
+      Olena*. Editing is the `EditBar`'s: *Edit* wakes the rows, *Add field* appends one, *Save* writes **a new
+      version** — the old one is never changed; a key must be `[a-z][a-z0-9_]*` and unique and an enum needs an
+      option — the row says so before the service does (a `role=alert` beside the input), the service's refusal is
+      said on the bar. A reader sees the fields and a `Restriction`, never a disabled control. Not a kit duplicate:
+      the kit has no notion of a versioned schema with a sensitivity per field.
+    states: [populated, empty, editing, invalid, saving, saved, error, read-only]
+    a11y: "a `table` with a caption; every input in a row is labelled (visually hidden) by its column; a bad key is `aria-invalid` with `aria-describedby` its `role=alert`; the switches are `role=switch` named *required for {key}* / *financial for {key}*; the saved note is `role=status`"
+    copy: ["factory.fields.*", "factory.recordType.*", "factory.policy.version", "factory.policy.savedBy"]
+    source: [" S3-ARCHITECTURE S3-G", "", "", ""]
+    status: proposed
+
+  - id: DS-6709
+    name: Field policy table
+    owner: apps/factory
+    component: "apps/factory/src/components/parts/FieldPolicyTable.tsx#FieldPolicyTable"
+    stories: apps-nexfactory-field-policy
+    parent: DS-3005
+    statement: >-
+      Settings › Field policy: read-only. One line names the relations that read the financial
+      bucket (`factory.lead` · `factory.admin`) and the action the PEP checks (`factory.financial`); one row per record
+      type lists the restricted fields — the built-in ones (*unit_cost*, *customer_label*) with *built-in*, the custom
+      fields the schema marked *financial* with *custom field* (Settings › Fields). A record type with nothing
+      restricted says *nothing restricted*. Nothing here is editable: the relations are NexCore's, the fields are the
+      schema's — the page is the explanation of what a planner does not see and why, never a switch; the
+      `Restriction` under it says so. Not a kit duplicate.
+    states: [populated, builtin-only, loading, error, permission-denied]
+    a11y: "a `table` with a caption; the record type is a `th scope=row`; the restricted fields are a list; the readers line is plain text — nothing interactive"
+    copy: ["factory.fieldPolicy.*", "factory.fields.financial", "factory.recordType.*"]
+    source: [" S3-ARCHITECTURE S3-G", "", ""]
+    status: proposed
+
+  - id: DS-6710
+    name: Import panel
+    owner: apps/factory
+    component: "apps/factory/src/components/parts/ImportPanel.tsx#ImportPanel"
+    stories: apps-nexfactory-import
+    parent: DS-3007
+    statement: >-
+      Settings › Import: a file of records becomes a *batch* the person
+      reviews, tries, commits and may undo as a whole. **File**: the record type, the Project (one of the person's,
+      ), a CSV or JSON file ≤ 2 MB / 5 000 rows — *Preview* uploads it once; the bytes are never kept, only the
+      derived rows. **Review**: the proposed mapping per column (a ranker over column names — never a model; every
+      candidate with its score is shown, the person's `Select` is final), the counts *new · update · rejected* as
+      chips, the rejected rows with the reason per field, the first rows with their state as a word. *Dry run* reports
+      what a commit would write and writes nothing (the batch stays previewed); *Commit* asks once (`ActionPanel`)
+      and writes. **Recent batches**: every batch with its state as a word (*previewed · committed · undone · partly
+      undone*), its counts, and *Undo* on a committed one — created rows removed, updated rows restored; a row another
+      actor edited since is named and stays (`ROLLBACK_PARTIAL`), never silently overwritten. A reader sees the recent
+      batches and a `Restriction`; in the connected world the door says the owner is external and offers nothing. Not
+      a kit duplicate: the kit has no upload-review-commit-undo ladder.
+    states: [file, previewing, review, dry-run-done, confirming, committing, committed, undone, partly-undone, rejected-file, external-owner, read-only, recent-empty]
+    a11y: "the file input is a labelled `Field` with a hint; the mapping and rows tables carry captions and `th scope=row`; every target `Select` is named *target for {column}*; errors are `role=alert`; the panel is `aria-busy` while a door runs; the confirm is the kit's `ActionPanel`"
+    copy: ["factory.import.*", "factory.recordType.*", "factory.action.discard"]
+    source: [" S3-ARCHITECTURE S3-G", "", "", "", ""]
+    status: proposed
+
+  # ---------------------------------------------------------------- NexCore · Platform Operations (S0 · UAT-1 — proposed 2026-10-17; `APPROVED ` by the product owner 2026-10-18 07:53 — rows stand as proposed until the design-system owner of adopts them)
+  - id: DS-6801
+    name: Fleet KPI strip
+    owner: apps/core
+    component: "apps/core/src/components/platform/Parts.tsx#FleetKpiStrip"
+    stories: apps-nexcore-platform-parts
+    parent: DS-3040
+    statement: >-
+      Platform Operations › Overview: seven `Stat`s over the whole contour — organizations (by
+      status in the hint) · members · active this month (MAU, defined in an `abbr`) · NXC consumed 30 d · NXC reserved
+      · NXC owed to customers (defined as *a liability, not revenue*) · cloud cost this month (estimated and
+      reconciled named side by side, never one blended figure). Every number dated (*as of*). A composition of the
+      kit's `Stat` with the fleet's definitions — not a kit duplicate; the definitions are the row.
+    states: [populated, empty-contour, loading, error, offline]
+    a11y: "each number is a labelled `Stat`; a defined term is an `abbr` with its definition as `title`; nothing interactive"
+    copy: ["core.platform.kpi.*", "core.platform.asOf", "core.billing.nxc"]
+    source: [" 00-EPIC A", "", "", "US-3802"]
+    status: proposed
+
+  - id: DS-6802
+    name: Wallet buckets bar
+    owner: apps/core
+    component: "apps/core/src/components/platform/Parts.tsx#WalletBucketsBar"
+    stories: apps-nexcore-platform-parts
+    parent: DS-3040
+    statement: >-
+      A wallet as four buckets: *available* and *reserved* as two `Stat`s, the active
+      price-book version as a chip, the kit's `Bands` showing the share of each bucket (promotional · prepaid ·
+      contract commitment · adjustments), and one card per bucket with its remaining NXC and — for an expiring lot —
+      the date it expires. A bucket with nothing in it is still listed. Read by the customer (Billing & credits) and
+      the operator (an organization's NXC & Billing) alike; the customer never sees a ledger term. Not a kit
+      duplicate: the kit has no wallet idiom.
+    states: [trial-low, prepaid, contract-commit, fresh-promo, exhausted]
+    a11y: "the buckets are a list; the bands are `aria-hidden` and the legend carries the numbers; the expiry is text"
+    copy: ["core.billing.available", "core.billing.reserved", "core.billing.bucket.*", "core.billing.expires", "core.billing.priceBook", "core.platform.asOf"]
+    source: [" 00-EPIC E", "", "", "", "", ""]
+    status: proposed
+
+  - id: DS-6803
+    name: Estimated-vs-reconciled cost card
+    owner: apps/core
+    component: "apps/core/src/components/platform/Parts.tsx#CostCard"
+    stories: apps-nexcore-platform-parts
+    parent: DS-3040
+    statement: >-
+      Cloud cost for one organization or the contour: *estimated* and
+      *reconciled* as two `Stat`s each with its *as of*; one line saying when the cost export last landed (or that the
+      contour has none); when the reconciled number is missing and an export is known, the card is in its **stale**
+      state and says the export is late — it never derives a reconciled figure from the estimate; a BYOC organization
+      says *customer-operated infrastructure — no NEXUS cost* and shows no number. The allocation drivers (rated
+      units · sandbox seconds · storage bytes · active members with weight and share) open in a `details`. The
+      companion `MoneyFive` shows the five money numbers (committed · consumed · owed · direct cost · gross margin)
+      separately, with the basis of the cost named. Not a kit duplicate.
+    states: [reconciled, stale, customer-cloud, no-export]
+    a11y: "two labelled `Stat`s; the export line is text; the drivers are a native `details`/`summary`; stale is a word, not only a colour"
+    copy: ["core.platform.cost.*", "core.platform.money.*", "core.platform.asOf"]
+    source: [" 00-EPIC J·K", "", "", "", "", "", ""]
+    status: proposed
+
+  - id: DS-6804
+    name: Usage timeline
+    owner: apps/core
+    component: "apps/core/src/components/platform/Parts.tsx#UsageTimeline"
+    stories: apps-nexcore-platform-parts
+    parent: DS-3030
+    statement: >-
+      Usage by `UsageServiceCode` over thirty days: one row per service and
+      surface — the service's name and its code, the surface (Chat · VibeBan automation · NexBI · NexGraph …), the
+      units, the NXC or the chip *counted, not priced* for a code the active book does not price (the owner's
+      *count now, price later*), a `Sparkline` of the daily units, and for the operator the meter's source. A row any
+      child of which was not metered says *partly unmetered*. A toggle replaces the sparklines with the plain table
+      (the a11y alternative, DS-7008). A composition of the kit's `DataTable` and `Sparkline` — the vocabulary and the
+      honesty chips are the row.
+    states: [populated, as-table, empty, loading, error]
+    a11y: "a `DataTable` with a caption; the sparkline is decorative and the units column carries the number; the toggle is a labelled checkbox"
+    copy: ["core.platform.usage.*", "core.billing.usage.title"]
+    source: [" 00-EPIC D", "", "", "", "", "", ""]
+    status: proposed
+
+  - id: DS-6805
+    name: Ledger table
+    owner: apps/core
+    component: "apps/core/src/components/platform/Parts.tsx#LedgerTable"
+    stories: apps-nexcore-platform-parts
+    parent: DS-3030
+    statement: >-
+      The append-only ledger of one wallet: one row per entry — when · the entry kind as
+      a chip (grant · reserve · release · settle · expire · adjust · reverse) · the bucket · the signed NXC · the
+      execution it belongs to · the reference (a reason code, the price-book version, or *compensates {id}* linking a
+      correction to the row it compensates). Nothing is edited or deleted here: a correction is two visible rows.
+      Operator-only (the customer's page shows buckets and usage, never the ledger). A composition of `DataTable` and
+      `Chip` — the append-only idiom is the row.
+    states: [populated, with-compensation, empty, loading, error]
+    a11y: "a `DataTable` with a caption that states the append-only rule; times are `time` elements; the compensation link names its target"
+    copy: ["core.platform.ledger.*", "core.billing.bucket.*"]
+    source: [" 00-EPIC E", "", "", "", ""]
+    status: proposed
+
+  - id: DS-6806
+    name: Operator scope banner
+    owner: apps/core
+    component: "apps/core/src/components/platform/Parts.tsx#OperatorScopeBanner"
+    stories: apps-nexcore-platform-parts
+    parent: DS-3051
+    statement: >-
+      One line at the top of every Platform Operations screen: *you are in the
+      platform operator scope · metadata and money only · every action is recorded*, with the contour as a chip.
+      It is the visible boundary of a scope that sees no customer content — the reason the person is
+      here is said, once, on every screen, never in a tooltip. Not a kit duplicate: `Restriction` says what a person
+      may not do; this says what a scope is.
+    states: [with-contour, without-contour]
+    a11y: "a `p` with `role=note`; plain text; nothing interactive"
+    copy: ["core.platform.banner", "core.platform.contour"]
+    source: [" 00-EPIC B", "", "", "", ""]
+    status: proposed
+
+  # ---------------------------------------------------------------- NexCore · Request a demo → an organization
+  - id: DS-6607
+    name: Request doors
+    owner: apps/core
+    component: "apps/core/src/components/auth/RequestDemo.tsx#RequestDemoScreen · RequestConfirmedScreen"
+    stories: apps-nexcore-request-a-demo
+    parent: DS-6602
+    statement: >-
+      The two public pages of, anonymous, in the same centred card as the
+      five doors (`AuthFrame`, DS-6602) with an eyebrow (*Request a demo*): `/request` — one column of `Field`s
+      (DS-3010: your name · work e-mail · organization · your role) · the organization size as a `Segmented` choice
+      (DS-3065) · country as a `Select` (DS-3011) · phone (optional) · the goal as a textarea with a counter (≤ 1 500)
+      · the note *we will read your request and write back to this address* · **Send request →** (the one primary);
+      then *Check your mail* with *Send again*. The refusals are one sentence each (`role=alert`): could not send ·
+      too many requests today · offline (the kit's state). `/request/confirm`
+      *We have your request, {name}* (the same sentence for an already-used link) · *This link no longer works* with
+      one way back. A honeypot field off the page and off the tab order. Props-driven: the page holds the
+      draft and validates what a browser can; the rung is the caller's. Not a kit duplicate: the kit has no public
+      form card. No mechanism word; uk = en.
+    states: [form, validation, sending, check-your-mail, error, rate-limited, offline, confirmed, already-confirmed, expired]
+    a11y: "a `main` with one `h1`; every label bound; the first error takes focus on submit with `aria-describedby`; the busy button is `aria-busy`; the sent sentence is `role=status`, a refusal `role=alert`; the honeypot is `aria-hidden` with `tabindex=-1`"
+    copy: ["core.request.*"]
+    source: [" 00-EPIC B", "", "", "", "08-UX_UAT–", ""]
+    status: proposed
+
+  - id: DS-6608
+    name: Organization request queue
+    owner: apps/core
+    component: "apps/core/src/components/platform/OrganizationRequests.tsx#OrganizationRequestsPage · OrganizationRequestInspector"
+    stories: apps-nexcore-platform-operations-organization-requests
+    parent: DS-7001
+    statement: >-
+      Platform Operations › Organizations › **Requests**: the tab beside the registry
+      (`LocalTabs`, DS-3023) under one header line and the operator-scope banner (DS-6806); the status scope
+      as one `Segmented` line with counts (DS-3065 — *Pending* by default · *Approved* · *Declined* · *All*); a
+      `DataTable` (DS-3030: requested · organization · name · size · country · language · status); the row opens the
+      `Inspector` (DS-3031 · DS-7001) with four `InspectorSection`s — *Request* (name · work e-mail · role · phone) ·
+      *Organization* (name · size · country · language) · *Their words* (the goal, read-only body text — its only
+      reader,) · *Timeline* (submitted · confirmed · decided by id) — and, while pending, **Approve** (the one
+      primary) and **Decline** in the footer. Each confirms in place with an `ActionPanel` (DS-3034 · DS-7004, never a
+      modal): Approve pre-fills the organization name (2–80) and the region from the country, both editable
+      Decline asks for a reason kept with the record and never sent to the person. An approved row ends in
+      *Approved · Open organization →* (the registry page); a declined one in *Declined* with its decider. Empty is
+      *No requests yet* (or *none with this status*); denied is the 404 face of `OperatorGate` — the tab does not
+      exist for anyone but a `provider_owner`. Not a kit duplicate: the composition is the row.
+    states: [populated, populated-all, empty, empty-scope, loading, error, denied, offline, inspector, approve-panel, approve-refused, decline-panel, approved-row, declined-row]
+    a11y: "the scope is a `fieldset` with a visually hidden `legend`; the table's rows are focusable and `aria-selected`; the inspector is an `aside` whose focus lands on the title and returns to the row; a panel's focus moves to its heading and returns to its trigger; errors are `role=alert`, pending `role=status`"
+    copy: ["core.platform.orgs.tab.*", "core.platform.requests.*"]
+    source: [" 00-EPIC D", "", "", "", "", "08-UX_UAT", "", "", "", ""]
+    status: proposed
+
+  - id: DS-6609
+    name: Mail preview
+    owner: apps/core
+    component: "apps/core/src/components/mail/MailPreview.tsx#MailPreview · OrganizationRequestMail"
+    stories: apps-nexcore-mails-organization-request
+    statement: >-
+      The branded mail of core-api as a story fixture: the envelope (to · subject)
+      the wordmark, the 480 px white card with one `h1`, the body, at most one button, the button's target as text,
+      the quiet footer, and the text alternative every mail carries — the same shape as the inline-styled HTML the
+      server sends, drawn in tokens (no raw colour, no `dangerouslySetInnerHTML`). `OrganizationRequestMail` is the
+      four mails of in the request's language: *Confirm your request* (one
+      button) · *New organization request — {organization}* to the provider owner (name · organization · size ·
+      country · language; never the goal, never the phone) · *Your organization is ready* (the organization bold in
+      the sentence; one button *Proceed to your organization*) · *About your request* (declined — neutral, no
+      button, no reason). S1 writes the Python twins; the stories are their UAT-1. Not a kit duplicate: the workshop
+      had no mail idiom.
+    states: [confirm, new-request, ready, declined, chrome]
+    a11y: "the card is an `article` named by the subject; one `h1`; the button is a real link; the text alternative is a `details`"
+    copy: ["core.mail.footer", "core.mail.footer.operator", "core.mail.preview.*", "core.mail.oreq.*"]
+    source: [" 00-EPIC E", "", "", "08-UX_UAT", "", "", ""]
+    status: proposed
+
+  # ---------------------------------------------------------------- Spin (S1 · the fork's brand contract — proposed 2026-10-26 under and; the owner adopts the row with APPROVED UAT-1 (EPIC-037 S1);)
+  - id: DS-6900
+    name: Spin — the fork's brand contract
+    owner:../spin
+    component: "spin/brand/tokens.json → spin/scripts/spin-brand.mjs → web/src/shared/styles/brand.css · desktop/src/shared/styles/globals/brand.css · mobile/lib/shared/theme/brand_color_scheme.dart"
+    stories: spin-brand
+    statement: >-
+      The one exemption of rule 32 and its price. Spin is a controlled fork of Buzz in its own repository
+      its clients are Buzz's — React + Tailwind/shadcn (`desktop/`, the invite landing in `web/`, `admin-web/`) and
+      Flutter. The kit `@nexus/ui` is **not** imported (Flutter cannot
+      one rule for all). What applies instead is the **brand**: every token of `packages/ui/src/tokens.css` is exported
+      by `nexus/scripts/brand/export-tokens.mjs` to `spin/brand/tokens.json` (Light · Graphite · the spacing, type,
+      radius and control scales; the source's sha256 pinned), and the fork's `scripts/spin-brand.mjs` derives Buzz's
+      theme layers from that file — the shadcn variables (`--background` ← bg · `--foreground`/`--primary` ← text ·
+      `--muted`/`--accent` ← bg-subtle/bg-muted · `--destructive` ← error · `--border` ← border · `--ring` ← the one
+      accent · `--chart-n` ← data-n · `--radius` ← radius-sm) and the Flutter `ColorScheme`s (`tertiary` = the accent)
+      never edited by hand; `just brand --check` is the drift test. The rules travel with the tokens:
+      black · white · graphite · one accent (selected · running · focus) · no gradient · no decorative skin (what Buzz
+      draws beyond the brand is removed, not restyled); typography, spacing and borders over colour; the
+      state ladder (DS-7006) on every screen; the copy rules of DS-0xxx (no mechanism in copy · not-found sameness ·
+      uk = en — Buzz ships `en` only, the fork adds `uk` to every client); the a11y contract (44 px targets · AA
+      contrast · visible focus · live regions for new messages). Spin screens are stories in the fork's own workshop
+      (`desktop/` Storybook) and Flutter goldens (`mobile/test/goldens`, 390 × 844, Light and Graphite) — the fork's
+      UAT-1, mirrored here as `spin-brand` (the tokens as swatches, the two themes, the drift test's output). Not a kit
+      duplicate: nothing of the kit renders in Spin; the row exists so the brand has one owner and one source.
+    states: [light, graphite, drift-ok, drift-failed]
+    a11y: "the brand carries the kit's contract into the fork: AA contrast of every mapped pair (text/bg · text-muted/bg · error/bg · accent/bg ≥ 3:1 as a ring), 44 px targets on mobile, focus visible as the accent ring, new messages announced politely; the fork's goldens and the VoiceOver/TalkBack walk are the proof"
+    copy: ["spin.* (the fork's own catalogue, en + uk)"]
+    source: [" 00-EPIC B", "", "", "", "", "", "", "AGENTS.md UX"]
+    status: proposed
+
+  #
+  - id: DS-6915
+    name: Spin — Pebble, the Nexi animal
+    owner:../spin
+    component: "spin/brand/mascot/pebble.svg → desktop/src/spin/SpinBrand.tsx#NexiPebble · mobile/lib/spin/spin_brand.dart#NexiPebble"
+    stories: spin-brand
+    statement: >-
+      Nexi's face in **Spin only** (the desktop and the phone chat): an imaginary animal — a filled graphite stone with
+      two paper eyes, the brand pink dot (the dot of the mark, DS-1061) on its forehead, two short legs; one ink, paper,
+      one dot — no gradient, no clipart, no third colour. It is **Nexi's avatar** (the DM *To: Nexi*, Nexi's events in
+      a room, the *Meet Nexi* page), the face of Nexi's empty states (*nothing here yet*) and of the *Nexi grows* stages
+      . Never in the body of
+      a message, never beside a person's avatar as decoration, never animated beyond the kit's motion tokens. Sizes:
+      16 · 24 · 32 · 48 · 96 (the SVG scales; at 16 px only the stone, the eyes and the dot remain). Graphite theme:
+      ink and paper swap, the dot stays. **Not for NexiFlow**: the suite's Nexi stays the wordmark and the mark
+      (DS-1061); `@nexus/ui` carries no mascot; the asset lives in the fork (`spin/brand/mascot/`) and the register
+      row exists so it has one owner and one source. The other three proposals (Noot · Spindle · Comet) are kept in
+      `nexus/docs/epic-037-nexi-open-chat/evidence/uat-0/mascot/` as not chosen.
+    states: [light, graphite, size-16, size-48, empty-state, grows-stage]
+    a11y: "an image with the accessible name `Nexi` (`role=img` / `semanticsLabel`); decorative beside the word *Nexi* (`aria-hidden`); the pink dot is never the only carrier of a state"
+    copy: ["spin.nexi.* (en + uk)"]
+    source: [" -9", "", "", " (the stages)", DS-1061, DS-6900]
+    status: proposed
+
+  # ---------------------------------------------------------------- Spin on the kit (S7 · UAT-1 — proposed 2026-11-02 after `APPROVED UAT-3 (EPIC-037 S6)`; the owner adopts the rows with APPROVED UAT-1 (EPIC-037 S7); the design-system owner's word is the same word until)
+  - id: DS-6920
+    name: Spin — the sidebar
+    owner: packages/ui
+    component: "packages/ui/src/ask/RoomSidebar.tsx#RoomSidebar"
+    stories: apps-nexi-spin-sidebar
+    statement: >-
+      The left column of the Nexi desktop, on NexChat's sidebar idiom (DS-2001's 248 px column, the kit's rows): the
+      brand row with Search (⌘K); the personal ↔ organization switch (DS-6923) only when the person has more than one
+      workspace; **Nexi pinned first** — the wordmark for a face, her unread count, and when the person has not
+      connected their Nexi account the row says *Not connected yet* and carries the one button ('s shape
+      S3-B's ceremony behind it); then *Rooms* (`#name` rows, the unread count as a number, Nexi's mark on the rooms
+      she is in, muted rows quieter, the doors *Browse rooms* and *New room* in the group row) and *People* (a face
+      with one letter — a picture only from the organization's directory, S8, never a relay URL — the unread count,
+      *New message*); the host's dock at the foot (DS-2002). One highlight per column (the open row). Buzz's community
+      rail, its pinned header, Starred, Forums, the relay card and the update card are not drawn — what the fork hides
+      is hidden, not greyed. Presentational: the host owns the lists, the open row and every door.
+    states: [personal, organization, switch-open, nexi-unbound, empty, loading, error, offline]
+    a11y: "an `aside` named *Rooms and people*; the switch is a `menu` button (`aria-haspopup`, `aria-expanded`) over `menuitemradio`s; the sections are `section`s with headings; the open row is `aria-current=page`; the unread count is a number with its label, never a colour alone; the skeleton is `status`; the error `alert`; targets 34 px"
+    copy: ["room.sidebar.*", "room.nexi.connect", "room.retry"]
+    source: [" 00-EPIC §S7", "", " Q2 · Q3", " (a)", "", "", "", DS-2001, DS-2002, DS-5022, DS-6923]
+    status: adopted
+    proof: apps-nexi-spin-sidebar--organization
+
+  - id: DS-6921
+    name: Spin — the room header
+    owner: packages/ui
+    component: "packages/ui/src/ask/RoomHeader.tsx#RoomHeader"
+    stories: apps-nexi-spin-room-header
+    statement: >-
+      DS-2005's header line applied to a room: **one line** — the glyph (`#`, a person's face, the wordmark for Nexi),
+      the title, one quiet line of topic beside it, then at the right *Nexi is here* (a chip, when she is a member),
+      the members chip (a door), search in the room, `⋯` (the host's menu — details · members · mute · leave, the last
+      in the danger colour). A chat with a person is the same line with their face and their status; the chat with
+      Nexi has no members and no leave; a thread's header is *Thread* and its close. No eyebrow, no lead, no tabs, no
+      sentence about the product.
+    states: [room, room-plain, menu-open, direct, nexi, thread]
+    a11y: "a `header` with an `h1`; the chips say their number (*6 members*); `⋯` is a `menu` button that returns focus; the close button is named *Close thread*; icon buttons 32 px with names"
+    copy: ["room.header.*", "room.thread.title"]
+    source: [" 00-EPIC §S7", "", DS-2005, DS-5023, "", ""]
+    status: adopted
+    proof: apps-nexi-spin-room-header--room
+
+  - id: DS-6922
+    name: Spin — Settings on the kit
+    owner: packages/ui
+    component: "packages/ui/src/ask/SpinSettings.tsx#SpinSettingsSheet · #SettingsNexiAccount · #SettingsModels · #SettingsChoice"
+    stories: apps-nexi-spin-settings
+    statement: >-
+      The desktop's Settings as one sheet (DS-2010 — settings are sheets; the kit's `Sheet`, wide): the sections at
+      the left under two group labels — *Personal*: Profile · Nexi account · Models; *App*: Appearance · Language ·
+      Notifications · Shortcuts · Updates — one panel at the right. Nothing of the surfaces the fork hides (Agents ·
+      Harnesses · Compute · Templates · Hosted communities · Archive) is drawn. **Nexi account** is the person's link
+      connected (who · which organization · since when) with *Disconnect*; not connected with the
+      one button; linking with the trace and *Finish in the browser*; failed with *Try again* — no key, no console,
+      no nsec. **Models** is the one place: *Auto* first (recommended
+      the bench picks, never taste,), then the connections the person's organization holds in Synapse (name
+      provider; one that *needs a key in Nexi* is not pickable), *Manage in Nexi* opens NexCore's Synapse page (the
+      reuse seam, K-2) — keys are never typed in Spin. *Profile* is the name and the key's backup row (the
+      picture comes from the directory, S8). Appearance · Language · Notifications use the suite's one radio idiom
+      (`SettingsChoice`). The suite's own `SettingsSheet` lives in `@nexus/app-shell`, which the fork does not vendor;
+      this sheet draws the same idiom from the same tokens.
+    states: [models, models-loading, models-error, models-unbound, nexi-connected, nexi-unbound, nexi-linking, nexi-error, profile, appearance, notifications, updates]
+    a11y: "the sheet is a `dialog` named *Settings*; the sections are a vertical `tablist`, the panel a `tabpanel` named by its section; choices are `radiogroup`s; linking is `status` with `aria-busy`; a failure `alert`; Escape closes and focus returns"
+    copy: ["settings.title", "settings.sections", "room.settings.*", "room.nexi.connect", "room.retry"]
+    source: [" 00-EPIC §S7", "-2", "", "", " K-1 · K-2", "", "", "", DS-2010, DS-3067]
+    status: adopted
+    proof: apps-nexi-spin-settings--models
+
+  - id: DS-6923
+    name: Spin — the personal ↔ organization switch
+    owner: packages/ui · mobile/lib (Flutter, the same experience — S4)
+    component: "packages/ui/src/ask/RoomSidebar.tsx#WorkspaceSwitch"
+    stories: apps-nexi-spin-sidebar
+    statement: >-
+      One identity holds a **personal** workspace and every organization that bound it (— `admin_bound`, or
+      the invite redeemed). The switch is a row under the brand — the workspace's face (a round one for *Personal*,
+      a square one for an organization), its name, *Personal* / *Organization* in small type, a chevron — drawn
+      **only when there is more than one workspace**: *Spin is first a chat for individuals; the switch appears when
+      the person's company runs Nexi Spin*. Its menu lists *Personal* first, always, then each
+      organization with its unread count while another is open, the open one checked, and *Join an organization…*
+      last (Buzz's redemption behind it). Switching changes the rooms, the people **and** the organization of every
+      Nexi turn (the `channels.spin` row of that organization, S2) — the host does that; the row only says which one
+      is open. The phone draws the same menu from the drawer's header (S4, one experience on both clients).
+    states: [hidden-one-workspace, personal, organization, open, switching]
+    a11y: "a button with `aria-haspopup=menu` named *Workspace: ⟨name⟩. Switch*; the menu's items are `menuitemradio` with `aria-checked`; Escape and a click outside close it and focus returns to the button"
+    copy: ["room.sidebar.switch.*", "room.sidebar.personal", "room.sidebar.organization", "room.sidebar.personal.hint", "room.sidebar.organization.hint", "room.sidebar.join"]
+    source: [" ", " Q3", " (a)", "", "S2 `channels.spin`", DS-6920]
+    status: adopted
+    proof: apps-nexi-spin-sidebar--switch-open
+
+  # ---------------------------------------------------------------- NexChat · working and building
+  - id: DS-6901
+    name: Add tool door
+    owner: apps/chat
+    component: "apps/chat/src/components/builders/AddToolDoor.tsx#AddToolDoor"
+    stories: apps-nexchat-add-tool-door
+    statement: >-
+      The one door an agent's *Tools* tab opens on *Add tool*: an `Inspector` (DS-3031; a full-screen sheet under 720 px —
+      (a)) listing what the organization already has in three groups — *Connected* (a healthy connection
+      shared or the person's own) · *Platform* (`nexus-base`) · *Custom* (this organization's imports, requests
+      included) — as `RowList` rows (DS-3035): `ProviderMark` (DS-3066) · name · chips (*Read-only* / *Makes changes* ·
+      *Approval* · a `≤ ceiling`) · exactly one trailing control the server allowed: *Add* · *Connect ⟨provider⟩ →*
+      (a user-delegated consent) · a reason chip with no button (above the ceiling, blocked) · *Awaiting review* (the
+      person's own request). A `SearchField` only past 12 rows; the Ask line (*What should ⟨agent⟩ be able to do?*, DS-4001)
+      arrives with S4 under. The quiet way out is an `ActionRow`: *Connect a new API* · *Ask an administrator*.
+      Never a key field here. Not a kit duplicate: the kit has the Inspector and the rows; the grouping, the one-control
+      rule and the preflight-shaped actions are NexChat's.
+    states: [populated, empty, loading, error, viewer, connect-provider, reason-chip, search-past-12, ask-answer, narrow]
+    a11y: "`role=dialog` with `aria-labelledby` (the kit); focus lands on the search or the first row; Esc closes and returns focus to *Add tool*; the rows are a list, the action a real button, the reason a chip (text)"
+    copy: ["agent.tools.door.*"]
+    source: [" 08-UX_UAT", "", "", "", "", "", " (a)"]
+    status: adopted
+
+  - id: DS-6902
+    name: API setup page
+    owner: apps/chat
+    component: "apps/chat/src/components/builders/ToolSetup.tsx#ToolSetup"
+    stories: apps-nexchat-tool-setup
+    statement: >-
+      *Connect a new API* as **the request's own resource page** under the Configure hub (amending (a):
+      `/projects/{id}/tools/new` · `/projects/{id}/tools/{request_id}`, two lines of chrome — the hub's breadcrumb and one
+      `BuilderHead` `← Tools · Connect a new API · Draft saved ⟨time⟩` — never a third `←`; the component is the body
+      below that head): an ordered list of four sections that reveal in order —
+      *Source* (an OpenAPI document by URL or file; the parse line *⟨title⟩ · ⟨host⟩ · N actions*; when an existing
+      integration owns the host, a `RadioCard` pair with *Add actions to ⟨name⟩* as the default — never a duplicate by
+      default) · *Actions* (two `fieldset`s of native checkboxes: *Reads data* ticked by default, *Makes changes* unticked
+      with *Needs review*; a *Technical* disclosure per row) · *Connection* (**exactly one of three shapes, the preflight's
+      answer** — DS-7019: *Use ⟨shared connection⟩* · *Add a key* (`SecretInput`, write-only, admins) · *Ask an
+      administrator to connect it* (a note; never a key field); *Rights could not be read* shows no key field) · *Review*
+      (`Facts`: API · hosts · actions · connection · next). A sticky footer *Save draft · Back · Continue / Send for
+      review*; *Draft saved ⟨time⟩* polite. Refusals are plain words with the code under `details`, focus kept on the
+      field. Not a kit duplicate: the kit's form inspector is one form; this is a stepped page whose third step is shaped
+      by an authorization answer.
+    states: [source-empty, source-read, source-existing-match, source-refused, actions, actions-suggested, connection-ask-admin, connection-add-key, connection-use-existing, connection-rights-unavailable, review, draft-restored, key-saved, send-failed, narrow]
+    a11y: "`ol` of `section aria-labelledby`; the open heading takes focus and `aria-current=step`; the parse line and the saved note are `aria-live=polite`; the actions are native checkboxes in `fieldset`s; refusals `role=alert` linked by `aria-describedby`; `SecretInput` (DS-3015) with `autocomplete=new-password`"
+    copy: ["agent.tools.setup.*"]
+    source: [" 08-UX_UAT", "…", "", "", "", "", " (a)", " (a)", ""]
+    status: adopted
+
+  - id: DS-6903
+    name: Tool request status
+    owner: apps/chat
+    component: "apps/chat/src/components/builders/ToolRequestStatus.tsx#ToolRequestStatus"
+    stories: apps-nexchat-tool-request-status
+    statement: >-
+      What *Send for review* leaves behind, and the bell's deep link — the body of the request's page (: the API's
+      name and its status word are the page's one `BuilderHead` — *Awaiting review* · *Approved — added to ⟨agent⟩* ·
+      *Needs changes — "⟨note⟩"* · *Expired* · *Cancelled* — under the hub's breadcrumb; this component draws no head of
+      its own): the meta *requested by you · ⟨time⟩ · REQ-⟨id⟩*; the connection line with a `StatusDot`; one line per tool (*usable once
+      connected* → *Connected*, with *Try it* on a read tool once approved — re-homed); an `ActionRow` of what the
+      person may do (*Edit request · Cancel request · Done*; *Send again* after a note; *Start again from the draft* when
+      expired; an administrator's own setup ends in *Enable N read actions* — (a)). Another person's request is
+      *not found*. Not a kit duplicate: a status page of one governed object, not a detail Inspector.
+    states: [awaiting, approved, needs-changes, expired, cancelled, admin-enable]
+    a11y: "the status word is in the page's `h1` text (the `BuilderHead`); the connection `StatusDot` carries its label; the tool lines are a list; the action row holds real buttons; a change of status is announced politely on re-read"
+    copy: ["agent.tools.request.*"]
+    source: [" 08-UX_UAT", "…", "", " (a)", ""]
+    status: adopted
+
+  - id: DS-6904
+    name: Capability request card
+    owner: apps/tasks
+    component: "apps/tasks/src/components/inbox/CapabilityRequestCard.tsx#CapabilityRequestCard"
+    stories: apps-nextasks-capability-request-card
+    statement: >-
+      The one Inbox card for a request a person filed and a builder or administrator decides — the existing
+      `capability_binding` approval with two steps: who asks what for which agent/Project (an `article` named by that
+      line, with the time) · the subject line (`ProviderMark` · API · host · *new integration* / the automation's
+      what · when · using · tells) · the counts with *actions* and *note* disclosures · the connection row with its door
+      (*Connect in Core →*, step 1) · the decision (*Needs changes* with a required note · *Approve* / *Enable*, **enabled
+      only once a healthy connection exists**, with the reason beside it while it waits). An administrator without a
+      Project relation sees the projection only — the agent and the Project by name, never thread content. Not
+      a kit duplicate: the Inbox card idiom of DS-7010 with a gated second step.
+    states: [integration-no-connection, integration-connected, integration-approved, automation, automation-needs-changes, admin-without-relation]
+    a11y: "an `article` labelled by its title line; the disclosures are `details`; the note field is required and `role=alert` when missing on submit; the gated button is `aria-disabled` with a visible reason, never silently disabled"
+    copy: ["inbox.capability.*"]
+    source: [" 08-UX_UAT", "…", "", "", "", ""]
+    status: adopted
+
+  - id: DS-6905
+    name: Project header (NexChat)
+    owner: apps/chat
+    component: "apps/chat/src/components/workspace/ProjectHeaderView.tsx#ProjectHeaderView (S0 presentational; S1 wires ProjectHeader.tsx to it)"
+    stories: apps-nexchat-project-header
+    statement: >-
+      One 52 px row and nothing else: `● ⟨Project⟩ ▾ · CLASSIFICATION / ⟨chat title⟩`. **No builder tabs**: the
+      Project's areas are not navigation for the people who talk here. The name menu carries *Project details
+      View artifacts · N · Automations · N* *· Configure project…* (owners and editors only, hidden
+      — never greyed — until the role is known; `aria-disabled` offline) *· Pin · Archive project…* (owner). A Personal
+      chat shows *● Personal* with no classification and *Pin* alone. narrows DS-2005's NexChat exemption
+      to this header. Not a kit duplicate: the header line of a conversation, not of a resource page.
+    states: [viewer, editor-menu, personal, role-pending, offline]
+    a11y: "the name is a `button` with `aria-haspopup=menu` and `aria-expanded`; the menu items are `menuitem`s; the chat title's button opens *About this conversation*; the classification is text"
+    copy: ["project.menu.automations", "project.menu.configure", "sidebar.personal"]
+    source: [" 08-UX_UAT", "", "", "", "", "", "", "", ""]
+    status: adopted
+
+  - id: DS-6906
+    name: Configure hub
+    owner: apps/chat
+    component: "apps/chat/src/components/builders/ConfigureHub.tsx#ConfigureHub · AutomationsTable.tsx#AutomationsTable · ToolsScreen.tsx#ToolsScreen"
+    stories: apps-nexchat-configure-hub
+    statement: >-
+      The builders' one place for a Project's resources: a `PageLine` breadcrumb *← ⟨Project⟩ · Configure* with the
+      trailing link *Available from the organization · N →* (NexCore's catalogue, nothing copied), a `LocalTabs` row
+      **Agents · Skills · Flows · Tools · Automations** (, arrow keys; *Automations* hidden until S4
+      its page under the reduced chrome for every role), the `←` returning to the chat the door was pressed on
+      and the existing screens unchanged as the
+      bodies (an agent keeps its eight-tab detail; the Studio its focus mode; routes kept). *Tools* is the same
+      projection the door reads (DS-6901) as a page: the three groups, a `⋯` of only what the person may do, the two
+      doors *Connect a new API* · *Ask an administrator*, the Track A setup page as the tab's body. **The row (
+      S3 — `APPROVED UAT-1 (EPIC-045 S3)` 2026-11-01 16:50) is one line:** mark · name · *· N actions* (the names when three fit, the count
+      otherwise) · *· N agents* only when > 0 · the state word **only where it differs from the group's default**
+      (*Connected · shared* under CONNECTED and *Always available* under PLATFORM say nothing; *yours* · *Not connected*
+      · *Awaiting review …* · *Needs changes …* with their links) · **the acts as icon buttons**. The effect · *Approval* · `≤ ceiling` chips are
+      the Inspector's (DS-6908), never the row's. **PLATFORM is one disclosure** — *Platform · N — always available*,
+      collapsed until pressed or searched — whose rows carry the **Lucide glyph of their kind** in the mark square
+      (`KindMark`: actions · artifacts · dataset · web · flows · goal · graph · …), never a monogram. **A barred row**
+      (above the ceiling · blocked by governance) is **last in its group with one reason chip in the server's words and
+      nothing to press**. No column grid: the name and the meta share the line and truncate; the trailing cell takes what
+      it needs; below 720 px it may wrap under the name. **The acts are icon buttons in three fixed columns** (`+` *Add
+      to an agent* · `▷` *Try it* · `↗` *Open in Core*; ✎ *Edit request* · ✕ *Cancel request* on a request row) — only
+      the acts the server granted, each named (tooltip and accessible name), always in the tab order, quiet
+      until the row is hovered or focused; the `⋯` menu is gone from this row (the owner, UAT-1 (S3)). *Automations* lists the Project's automations (name · schedule in words · face · last run ·
+      owner · *Pause / Resume · Open* · *Enable · Needs changes*) with *+ New automation*; **every member** reaches the
+      same rows from the name menu under a reduced chrome — *← ⟨Project⟩ · Automations*, no other tab, no action.
+      A viewer on any other tab's URL meets the existing 403. Not a kit duplicate: the kit gives the line and the tabs;
+      the hub is the composition one app owns.
+    states: [agents, skills, flows, tools, tools-row-actions, tools-platform-open, tools-platform-toggle, tools-many, tools-empty, tools-error, tools-search, tools-search-platform, tools-setup, tools-member, marks-and-chips, automations, automations-member, automations-empty, catalogue-link, loading, error, denied, narrow]
+    a11y: "the back link first in the tab order; `role=tablist` with arrow keys; the catalogue link names its destination; the table's actions are buttons named with the row; the members' chrome has one `h1`; the Platform disclosure is a button with `aria-expanded` and `aria-controls` inside the group's `h3`; a kind glyph is `aria-hidden` beside the name as text; a barred row's reason is text in a chip, never colour alone"
+    copy: ["project.configure.*", "project.configure.tools.*"]
+    source: [" 08-UX_UAT", "…", "", "", "", "", "", ""]
+    status: adopted
+
+  - id: DS-6907
+    name: Recent row
+    owner: apps/chat
+    component: "apps/chat/src/components/workspace/RecentRow.tsx#RecentRow (S0; S1 wires Sidebar.tsx and ProjectsDrawer.tsx to it)"
+    stories: apps-nexchat-sidebar-recent
+    statement: >-
+      The sidebar's *Recent* is the person's own conversations **across every Project and their Personal chats** (
+      (a): opened or written in; `scope=mine`), newest first; each row carries where it lives as a trailing **mark**
+      the Project's accent dot — the same dot as its row under PROJECTS — or the person
+      glyph for *Personal*, the words in the tooltip and in the link's accessible name; a hand-off chat's asked-from
+      is the app's Lucide glyph in its accent (`AppIcon`, DS-1050) the same way — never the wide chip, which
+      stays on the header. The title keeps the row. The Project's own list under its chevron stays the filter; the
+      drawer's *All chats* (wide) keeps the words and a Project chip filter past 12 rows. The personal Project
+      never appears under PROJECTS — only its chats. *Configure project* is the second item of the Project's `···`
+      menu (after *New chat in this project*) for owners and editors, never a row under the chats
+      absent for others. *No chats yet.* is now true when shown. Not a kit duplicate: the sidebar row is NexChat's
+      the marks are the delta.
+    states: [recent-across-projects, recent-project-only, recent-empty, recent-loading, recent-error, project-chats, asked-from-mark, personal-hidden, configure-row, viewer]
+    a11y: "the place and the asked-from are marks with the words visually hidden inside the link's accessible name (*Керамопласт — статус, Operations* · *Weekend plan, from VibeBan · Board, Personal*) and in a `title` tooltip; the sidebar's `nav` landmarks unchanged; *Configure project* is a `menuitem` with an `aria-label` naming the Project"
+    copy: ["sidebar.personal", "sidebar.configure", "sidebar.configureFor", "turn.context.from"]
+    source: [" 08-UX_UAT", "…", "", "", "", "", "", ""]
+    status: adopted
+
+  - id: DS-6908
+    name: Tool Inspector
+    owner: apps/chat
+    component: "apps/chat/src/components/builders/ToolInspector.tsx#ToolInspector"
+    stories: apps-nexchat-tool-inspector
+    statement: >-
+      One tool, opened from a Tools row (DS-6906): the mark (a provider's glyph or monogram; a platform kind's Lucide
+      glyph) and the name · **the posture line** (, S3 — proposed at UAT-1 (S3): the *Read-only* / *Makes changes*
+      · *Approval* · `≤ ceiling` chips that left the row) · *Actions* (one line per action: name · its chip; the
+      description only when it says more than the name; **one** *Technical* / *Hide technical* toggle in the section's
+      aside opening every action's `METHOD /path · operationId` together) · *Connection* (the state word with its door
+      — *Connect in Core →* for an administrator, *Connect ⟨provider⟩ →* for the person's own consent; a reason chip
+      above the ceiling or blocked by governance, in the server's words) · *Used by* (the Project's agents, each a link)
+      · *Request* (the DS-6903 face when one exists) · the foot: *Add to an agent…* (a `Select` of the Project's agents →
+      the existing bind door,) · *Try it* · *Open in Core* (`can_enable_tools`). Only what the
+      person may do is drawn. Not a kit duplicate: the kit's Inspector with a tool's sections.
+    states: [connected, technical-open, descriptions, platform, blocked, connected-yours, awaiting, needs-changes, not-connected, above-ceiling, add-to-agent, uk, narrow]
+    a11y: "`role=dialog` labelled by the tool's name (the kit); sections as `InspectorSection`; the *Technical* toggle carries `aria-expanded` and `aria-controls` of the action list; the agent `Select` labelled; the links name their destination"
+    copy: ["agent.tools.inspector.*"]
+    source: [" S0-UX-DRAFT", "", "", "", "", "", ""]
+    status: adopted
+
+  # ---------------------------------------------------------------- S0 — Platform Customer Care & Escalation
+  - id: DS-6909
+    name: Help & support
+    owner: apps/core
+    component: "apps/core/src/components/support/HelpSupportScreen.tsx#HelpSupportScreen"
+    stories: apps-nexcore-help-support
+    parent: DS-3040
+    statement: >-
+      NexCore › Help & support — the page every member of an organization can always find (
+      works at 0 % credits and for a suspended organization's running session). One header line: the title
+      the *New request* button (opens the Support drawer, DS-5021). Two sections: *My organization's cases* — a
+      `DataTable` of `SUP-n` · title · state · *expected reply by …* · last update
+      a row opens its public updates; *Support access* — the grant rows (DS-6910). The page shows the customer
+      projection only: no internal note, no assignee, no engineering detail, no item key other than `SUP-n`.
+      Not a kit duplicate: `PageFrame` + `Section` + `DataTable` with the support definitions as the row.
+    states: [populated, empty, loading, error, offline, suspended-session, no-credits]
+    a11y: "one `h1`; the table's rows are links named by `SUP-n` and title; the *expected reply* cell carries a text date; *New request* is a `Button` that names the drawer it opens"
+    copy: ["core.support.help.*", "core.support.cases.*"]
+    source: [" 08-UX_UAT ·", "", "", "", "", ""]
+    status: proposed
+
+  - id: DS-6910
+    name: Support access row
+    owner: apps/core
+    component: "apps/core/src/components/support/SupportAccessRow.tsx#SupportAccessRow"
+    stories: apps-nexcore-help-support
+    parent: DS-6909
+    statement: >-
+      One support access grant as the customer sees it: *support asked to read ⟨resource⟩
+      for ⟨duration⟩ — ⟨reason⟩*, the case `SUP-n`, who asked (first name), when. States — *pending* with *Approve* ·
+      *Refuse* (two `Button`s of one weight; *Approve* is `aria-disabled` with the honest reason *you can approve only
+      what you can read yourself* when the reader lacks `read` on the resource,) · *waiting for NEXUS support's
+      supervisor* (the second approval at `confidential` and above) · *active* with a text countdown, the reads list
+      (resource · when · by first name) and *Revoke* · *expired* · *revoked* (by whom, when) · *refused*. A grant
+      names one case and ≤ 10 resources; a new grant is a new row — nothing here re-activates. No mechanism word.
+    states: [pending, pending-cannot-approve, pending-second-approval, active, active-with-reads, expired, revoked, refused]
+    a11y: "a `li` of the access list named by the resource and the state; *Approve* / *Refuse* / *Revoke* carry the resource in their accessible names; the countdown is text updated at most once a minute (`aria-live=off`); the reason for a disabled *Approve* is in `aria-describedby`"
+    copy: ["core.support.access.*"]
+    source: [" 08-UX_UAT", "", "", "", "", "", "", "", ""]
+    status: proposed
+
+  - id: DS-6911
+    name: Platform diagnostics panel
+    owner: apps/care
+    component: "apps/care/src/components/inbox/PlatformDiagnostics.tsx#PlatformDiagnosticsPanel"
+    stories: apps-nexcare-support-diagnostics
+    parent: DS-6501
+    statement: >-
+      The provider desk's Inspector section for a `service_case` or a conversation whose Customer is an organization
+      the permanent line *metadata only — content needs the customer's grant*
+      `Facts` — organization · platform status · commercial status · component · error code · occurrences · failed
+      runs 24 h · MAU · NXC available; the connections as name · provider · health `StatusDot` · last probe; the
+      correlation refs as short read-only labels; the button *Request access to content* (opens the grant request
+      form, DS-6916). Under the panel, from S4, the case's **grant strip** (DS-6916) — every grant with its state and
+      *Open run* / *Open conversation* when `active`. The panel draws `SupportDiagnostics` and nothing else — a content
+      field cannot be rendered because the contract has none. *Denied* for an agent without the platform
+      support role; *empty* when the organization has no signals. From S5 the actions row carries
+      *Escalate to engineering* (A4 — a human act): pressed once, the case's refs land as one `product_incident`
+      through core-api and the row reads *Being worked on by engineering · ‹incident›* (`role=status`); a failure is
+      one sentence and the button again; a case that already carries an `incident_ref` opens in the escalated state.
+    states: [populated, empty, loading, error, denied, with-grants, escalating, escalated, escalate-error]
+    a11y: "a `region` named *Platform diagnostics*; the metadata line is text, not a tooltip; health dots carry text; refs are plain text; *Request access to content* and *Escalate to engineering* are `Button`s; the escalated line is `role=status`, the failure `role=alert`"
+    copy: ["care.support.diagnostics.*"]
+    source: [" 08-UX_UAT", "", "", "", "", "", "", ""]
+    status: proposed
+
+  - id: DS-6912
+    name: Autonomy badge · Red-line banner
+    owner: apps/care
+    component: "apps/care/src/components/inbox/SupportSignals.tsx#AutonomyBadge"
+    stories: apps-nexcare-support-signals
+    parent: DS-3030
+    statement: >-
+      Two signals of the engine on a support conversation. The **autonomy
+      badge** is a `Chip` with the level the engine chose — *Answer* (A0) · *Diagnose* (A1) · *Safe repair* (A2) ·
+      *Needs approval* (A3) · *Engineering* (A4) — and a `title` with its one-line meaning; a model never chooses it.
+      The **red-line banner** (`role=status`) for a supervisor names the red line, *routed to the security queue* and
+      *the assistant said its one line and nothing more*; for a `support_agent` the conversation is hidden and only
+      *restricted — handled by a supervisor* is drawn, never the red line's name.
+    states: [A0_answer, A1_diagnose, A2_safe_repair, A3_approval, A4_engineering, red-line-supervisor, red-line-agent]
+    a11y: "the badge is a `Chip` with text and a `title`; the banner is `role=status` with the red line as text; the agent's line is text only"
+    copy: ["care.support.autonomy.*", "care.support.redline.*"]
+    source: [" 08-UX_UAT", "", "", "", "", ""]
+    status: proposed
+
+  - id: DS-6913
+    name: Organization › Support tab
+    owner: apps/core
+    component: "apps/core/src/components/platform/OrganizationSupport.tsx#OrganizationSupportTab"
+    stories: apps-nexcore-platform-operations-organization-support
+    parent: DS-3040
+    statement: >-
+      The sixth tab of Platform Operations › Organization, under `platform.support.read` (
+      ): `Stat`s — open cases · SLA at risk · incidents affecting · last case; a short `DataTable` of the
+      organization's `service_case`s (`SUP-n` · fingerprint component · state · opened · expected reply); two links
+      — *Open customer project ↗* (the provider's VibeBan project, provider-tenant permission) · *Open support desk ↗*
+      — never impersonation. The tab is absent for a role without `platform.support.read`; the Overview strip (*n
+      incidents · m organizations*) is a `Stat` pair of the same read. No customer content, no person's name.
+    states: [populated, empty, loading, error, stale, absent]
+    a11y: "a `tabpanel` named *Support*; the links name their destination and open in the same tab; every number is a labelled `Stat` with *as of*"
+    copy: ["core.platform.support.*"]
+    source: [" 08-UX_UAT ·", "", "", "", "", ""]
+    status: proposed
+
+  - id: DS-6914
+    name: Public verify step
+    owner: apps/care
+    component: "apps/care/src/components/portal/PublicVerify.tsx#PublicVerifyStep"
+    stories: apps-nexcare-support-public-verify
+    parent: DS-5016
+    statement: >-
+      The public support door's verification for a member of a suspended organization:
+      *your organization e-mail* → *Send code* → one neutral line *If this address belongs to an organization on
+      NEXUS, a code was sent* — identical whether the address is known or not → a six-digit code → *Verify* → *You are
+      speaking as ⟨organization⟩ — not signed in* with the line that no content and no balance is available here.
+      Three wrong codes → *Too many attempts — try again in 15 minutes*. Nothing tenant-specific is said before
+      verification. Rendered inside the care widget's public portal.
+    states: [ask-email, code-sent, enter-code, verified, cooldown, offline]
+    a11y: "every input has a visible label; the code input is `inputmode=numeric` `autocomplete=one-time-code`; the neutral line is `role=status`; keyboard-complete; errors announced"
+    copy: ["widget-i18n supportVerify*"]
+    source: [" 08-UX_UAT J8", "", "", "", "T-3918", ""]
+    status: proposed
+
+  # ---------------------------------------------------------------- NexCare · the grant's provider face (S4 — proposed 2026-10-29 after `APPROVED UAT-2 (EPIC-039 S4)`; the owner adopts the row with APPROVED UAT-3; DS-6915 was taken by Spin's Pebble between the S4 architecture and the code, hence 6916)
+  - id: DS-6916
+    name: Support grant request & viewer
+    owner: apps/care
+    component: "apps/care/src/components/inbox/SupportGrant.tsx#GrantRequestForm · #GrantStrip · #GrantedRunView · #GrantedThreadView"
+    stories: apps-nexcare-support-grant
+    parent: DS-6911
+    statement: >-
+      The provider desk's face of a `SupportAccessGrant` (·
+      ), under *Platform diagnostics*. **The request form** — opened by *Request access to content*: the
+      case's `flow_run · thread` refs from the diagnostics as checkboxes (short labels, never content), one pasted
+      reference, hours 1–24 (default 4), the reason the customer will read; *Send request* · *Cancel*; idle ·
+      validating · sent (`role=status`, names the case by its customer alias) · error (`role=alert`, the 422's words —
+      *outside what can be asked*). **The grant strip** — the case's grants newest first with the state word
+      (*Waiting for the customer* · *Needs a supervisor's confirmation* · *Active* · *Expired* · *Revoked by the
+      customer* · *Refused by the customer*), hours and when asked, the reason, each scoped ref; *Open run* / *Open
+      conversation* only on an `active` grant; nothing when the case has no grant. **The viewers** — render and
+      forget: mounted on *Open*, fetched once with the person's own session under the customer's access, held in
+      component state, unmounted on *Close*; the permanent line *shown while open — nothing here is kept, copied or
+      added to a note*; a run is its Flow, status, start, failure code and steps; a conversation is its title and
+      turns (*Customer* · *NEXUS*). A 404 reads as *No such run* / *No such conversation* — the same words whether
+      the run never existed, lies outside the grant or the grant ended. No mechanism word (header · PDP
+      tenancy); no principal ref, organization id or work-item id is drawn.
+    states: [form-idle, form-no-refs, form-validating, form-sent, form-error, strip, strip-empty, viewer-loading, viewer-populated, viewer-not-found, viewer-offline]
+    a11y: "the form is a `form` named *Request access to content — ⟨case⟩*; every input has a visible label and its hint in `aria-describedby`; the scope is a `fieldset` with a `legend`; errors are `role=alert`; *Open run* / *Open conversation* carry the ref in their accessible names; a viewer is a `section` named by the resource with a *Close* button; the forget line is text"
+    copy: ["care.support.grant.* (en · uk)"]
+    source: [" evidence/uat-2/S4-ARCHITECTURE a · c · e ·", "", "", "", "", "", "", "", "", DS-6911]
+    status: proposed
+
+  # ---------------------------------------------------------------- NexCare · the safe-action card (S5 — proposed 2026-10-29 after `APPROVED UAT-3 (EPIC-039 S4)`; the owner adopts the row with APPROVED UAT-3)
+  - id: DS-6917
+    name: Safe-action card
+    owner: apps/care
+    component: "apps/care/src/components/widget/SafeActionCard.tsx#SafeActionCard"
+    stories: apps-nexcare-support-safe-action-card
+    parent: DS-5016
+    statement: >-
+      The widget's card beside the assistant's line when the engine may run one catalogue action for the customer
+      the action's verb in the frame's
+      language, the resource's short label, the one sentence *As your organization, within your credits. Nothing else
+      changes.*, *Yes, ⟨verb⟩* and *Not now* — *Not now* is always present and costs nothing. A press writes the
+      consent at the edge before any door is called; while it runs the buttons wait (`aria-busy`); the outcome is one
+      calm `role=status` line — *Done — ⟨action⟩ completed.* · *⟨action⟩ did not complete. A person from our team
+      will look into it.* · *⟨action⟩ could not run right now. A person from our team will confirm the next step with
+      you.* · *A person from our team will confirm this with you.* (A3) — and the card is spent; a second *Yes*
+      needs a new turn. The refusal code, a ref, a mechanism word (consent · grant · PDP) never reach the customer.
+      One card per turn; never for a Visitor; never drawn on a red-line turn. uk = en (de falls back to en
+      for the row's label).
+    states: [offered, running, done-succeeded, done-failed, done-refused, done-needs-approval]
+    a11y: "a `section` named *A repair I can run for you*; two buttons with their verbs; a running card sets `aria-busy` and disables both; the outcome is `role=status` and announced on the frame's polite live region"
+    copy: ["widget-i18n safeAction*"]
+    source: [" 08-UX_UAT J6", "", "", "", "", "", "", "DS-6914"]
+    status: proposed
+  - id: DS-6918
+    name: Question review card
+    owner: apps/tasks
+    component: "apps/tasks/src/components/inbox/QuestionReviewCard.tsx#QuestionReviewCard · QuestionReviewLive.tsx#QuestionReviewLive"
+    stories: apps-nextasks-question-review-card
+    parent: DS-7010
+    statement: >-
+      The reviewer's one screen for a `question_batch` approval (S5 · ·
+      ): the Inbox card idiom with a table as its body, opened from the Inbox as a *resource page* (
+      `?review=⟨approval_id⟩`; seven columns do not fit the Inspector's 440 px, and a `?open=` deep link is sent on to
+      the page). Head: *Review ⟨n⟩ questions · ⟨section⟩*, the source's classification chip, the requester and the time —
+      on the page the one header line (`←` · title · chip · Ask) carries the title and chip and the card keeps the meta
+      line (`chrome="page"`). Body: the row table (DS-3030) — *id · lang · category ·
+      question · gold facts · gold page · decision*. *question* is read-only text in the row's language (that is the
+      job); *gold facts* is the count with a ✓ when the validator found every phrase verbatim, *negative* for a row
+      without gold; *gold page* is the page id, a door to the page as ingested when the app has one; *decision* is a
+      `keep | drop` segmented choice (DS-3065's radio group, default keep) with the reason `Select` (DS-3011) beside a
+      drop — `not_answerable_from_page · ambiguous · duplicate · wrong_section · bad_gold`. Twins sit adjacent; a
+      decision on one never moves the other. Foot: the validator's line (*Validator: 0 problems · 4 negatives · twins
+      consistent*), then *Reject* and *Approve ⟨kept⟩ · Drop ⟨dropped⟩*; a drop without a reason is a row the batch
+      cannot close on — Approve waits with *1 drop needs a reason* beside it, never a bare disabled button. Approve
+      writes every row's pick (`decision.rows[]`) and closes; Reject declines the batch whole (no row, no record —
+      a). The requester sees the picks read-only and *You cannot review your own batch*; an expired
+      batch is the standard expired line; a decided batch shows the picks read-only with who and when and the tally.
+      The text of a question lives only in the approval's payload: never in a pick, an event or a log.
+    states: [populated, page-chrome, drop-needs-reason, loading, error, permission-denied, expired, decided, offline]
+    a11y: "a `h2` title (the page line's `h1` in page chrome); the table is the kit's with a caption; one row has focus (roving, `aria-selected`, outlined) and `↑/↓` move it, `k` keeps, `d` drops and moves focus into the reason, `r` opens the reason of a dropped row, `⌘⏎` / `Ctrl⏎` approves (`aria-keyshortcuts` on Approve); every decision cell is a native radio group with a hidden legend naming the row; the reason is the kit's combobox named *Reason for dropping ⟨id⟩*; a waiting Approve is `aria-disabled` and described by its reason; the decided line is `role=status`; refusals in tasks-api's words as `role=alert`"
+    copy: ["tasks.inbox.question.* (en · uk)", "tasks.inbox.live.decideError.* (en · uk)"]
+    source: [" 02 …", " 08 row B · J4", " evidence/uat-2/S5-QUESTION-REVIEW-DESIGN.md", "", "DS-3030", "DS-3065", "DS-3011", "DS-7010"]
+    status: proposed
+
+  # ---------------------------------------------------------------- S3 — the one-field ask
+  - id: DS-6919
+    name: Ask an administrator
+    owner: apps/chat
+    component: "apps/chat/src/components/builders/AskAdministrator.tsx#AskAdministratorPanel"
+    stories: apps-nexchat-ask-administrator
+    parent: DS-3035
+    statement: >-
+      *Ask an administrator* (, amended at S3 UAT-3 — the owner on the running stack, 2026-11-02: *as an
+      administrator looks strange form for whole screen*) is **one field where the person is**: the kit's Inspector
+      (DS-3035) with the eyebrow *Request*, the title *Ask an administrator*, the subtitle naming the Project — or *for
+      ⟨agent⟩ · ⟨Project⟩* when the agent's door asked — one required textarea *What should the administrator connect*
+      with its hint, and the footer *Send for review* (primary) · *Cancel*. On the Project's Tools
+      tab it opens beside the list in the Inspector slot (the list stays; DS-6906); on an agent's Tools tab it is the
+      door's own content (DS-6901) — *Cancel* returns to the door. Never a page, never an agent picker (: the
+      request belongs to the Project; an agent is named only when the door was the agent's). *Send* opens the request
+      (`kind = capability`) and sends it under one `send_key`; the request's page (DS-6903) follows. A refusal is the
+      server's word under the field, focus kept. Not a kit duplicate: the kit's Inspector with one field and two acts.
+    states: [populated, for-agent, required, sending, send-failed, uk, narrow]
+    a11y: "`role=dialog` labelled *Ask an administrator* (the kit); the textarea labelled, `required`, described by its hint and by the error when one; the submit is a `form=` button in the footer so ⏎ in the field sends; *Cancel* restores focus to the opener"
+    copy: ["project.configure.tools.ask_admin", "agent.tools.ask.*", "agent.tools.setup.ask.*", "agent.tools.setup.footer.send*"]
+    source: [" 02 (amended)", "", "", " A1", "DS-3035", "DS-6901", "DS-6906"]
+    status: proposed
+
+  # ---------------------------------------------------------------- S6 — the Tuning proposal card
+  - id: DS-6924
+    name: Tuning proposal card
+    owner: apps/tasks
+    component: "apps/tasks/src/components/inbox/TuningProposalCard.tsx#TuningProposalCard · TuningProposalLive.tsx#TuningProposalLive"
+    stories: apps-nextasks-tuning-proposal-card
+    parent: DS-7010
+    statement: >-
+      The owner's one screen for a `tuning_proposal` approval: the Inbox
+      card idiom with the tuner's best candidate against the baseline, opened from the Inbox as a *resource page*
+      . Head: *Activate
+      ⟨version⟩?* — the retrieval version going live, both when a processing dial changed too — the classification
+      chip, the requester and the time (`chrome="page"` keeps the meta line only). Then, in this order: **Change**
+      (`Facts` DS-3018: `⟨profile⟩ · ⟨dial⟩  old → new`, ≤ 12); **Goal** (`Facts`: *per-section fact coverage ≥ 0.60 ·
+      false evidence ≤ 5.0 %* and **met 11 / 14 sections**); **Overall** (`DataTable` DS-3030: metric · baseline ·
+      candidate · Δ — false evidence as a percentage, latencies in ms, the rest to two decimals; a Δ carries its sign
+      and its tone); **Per section** (`DataTable`: section · baseline · candidate · Δ · state — **regressions first**,
+      marked `◆ regression` in text, then met, then unmet — the contract's order, never re-sorted here). Foot: *Tried
+      ⟨n⟩ candidates · best shown · all in the decision record · Open decision · Runs: baseline / candidate* (the two
+      bench run pages of NexGraph, DS-6004, by their `dsv_…` id; the decision door is text until NexGraph's *Why* view
+      lands), then *Decline* and *Approve*. A proposal the tuner marked `approvable = false` keeps *Approve*
+      `aria-disabled` with the reason beside it (*guide/forge −0.03 regresses beyond 0.02*) — tasks-api refuses
+      `approve` on it too, never UI-only. **Self-approval is allowed**: the requesting owner may
+      approve their own tuner's proposal — the Flow and the model are what is gated, not the person; a non-decider
+      reads it with the standard restriction sentence. Approve → the Flow activates as the approver and
+      the line reads *Approved by you · ⟨time⟩ · rtp_default@2 is live*; Decline → *nothing changed — the draft stays
+      a draft*. Numbers, ids and closed enums only: no question text, no page text.
+    states: [populated, keyboard-approve, not-approvable, processing-candidate, page-chrome, permission-denied, expired, decided-approved, decided-declined, decision-refused, loading, live-approve, error, offline]
+    a11y: "a `h2` title (the page line's `h1` in page chrome); four `section`s each labelled by its `h3`; the two tables are the kit's with captions; a regression is named in text (`◆ regression`) — the colour is never the only carrier; `⌘⏎` / `Ctrl⏎` approves when approvable (`aria-keyshortcuts` on Approve); a waiting Approve is `aria-disabled` and described by its reason; the decided and expired lines are `role=status`; refusals in tasks-api's words as `role=alert`; the run doors are links named *baseline* / *candidate*"
+    copy: ["tasks.inbox.tuning.* (en · uk)", "tasks.inbox.live.decideError.NOT_APPROVABLE (en · uk)"]
+    source: [" 02 · ", " evidence/uat-2/S6-TUNING-LOOP-DESIGN.md", "", "DS-3018", "DS-3030", "DS-6918", "DS-7010"]
+    status: proposed

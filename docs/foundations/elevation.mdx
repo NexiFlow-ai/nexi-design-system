@@ -11,15 +11,15 @@ app: platform
 
 Borders separate; two shadows exist (the composer's and the floating `lg`) and only what floats — the composer, a menu, a dialog, the launcher — may use them. Glass and overlay tokens are the only translucency; the overlay blurs 12 px.
 
-Tokens: `--nexus-surface* · --nexus-glass-* · --nexus-overlay-* · --nexus-shadow-lg · --nexus-composer-shadow*`
+Tokens: `nexus-surface* · --nexus-glass-* · --nexus-overlay-* · --nexus-shadow-lg · --nexus-composer-shadow*`
 
 <Story id="design-system-foundations--surfaces" height={520} />
 
 ## DS-1031 — Layers and shadows
 
-Nine layers, each a token: raised 1 · sticky 10 · dock 20 · drawer 30 · popover 40 · menu 50 · dialog 60 · toast 70 · skip-link 100 (`--nexus-z-*`); a floating surface names its layer and never a number. Three shadows: `sm` (a hovered row or dragged block) · `md` (a menu, a picker, a popover) · `lg` (a dialog, the launcher) — the literal `0 18px 50px …` that twelve rules carry today becomes `md`.
+Nine layers, each a token: raised 1 · sticky 10 · dock 20 · drawer 30 · popover 40 · menu 50 · dialog 60 · toast 70 · skip-link 100 (`--nexus-z-*`); a floating surface names its layer and never a number. Three shadows: `sm` (a hovered row or dragged block) · `md` (a menu, a picker, a popover) · `lg` (a dialog, the launcher) — the literal `0 18px 50px …` that twelve rules carry today becomes `md`. The same three heights exist as `filter` values (`--nexus-lift-sm · md · lg`, S3-B WP-10) for an SVG element that lifts with `drop-shadow` where `box-shadow` cannot reach — NexForge's sticker at rest · hovered · dragged.
 
-Tokens: `--nexus-z-raised … --nexus-z-skip (new) · --nexus-shadow-sm · --nexus-shadow-md (new) · --nexus-shadow-lg`
+Tokens: `nexus-z-raised … --nexus-z-skip (new) · --nexus-shadow-sm · --nexus-shadow-md (new) · --nexus-shadow-lg · --nexus-lift-sm · --nexus-lift-md · --nexus-lift-lg (WP-10)`
 
 <Story id="design-system-foundations--layers" height={520} />
 

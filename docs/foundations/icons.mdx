@@ -1,6 +1,6 @@
 ---
 title: "Icons"
-description: "Lucide only, two sizes, always with an accessible name on the control."
+description: "Lucide only, two sizes, always with an accessible name on the control; the four status glyphs copy may carry."
 kind: reference
 app: platform
 ---
@@ -9,7 +9,13 @@ app: platform
 
 ## DS-1050 — Iconography
 
-Lucide only, 14 px inside a button or a row, 16 px on its own; always `aria-hidden` — the accessible name is on the control. Status is never an icon alone. No emoji in product UI.
+Lucide only, 14 px inside a button or a row, 16 px on its own; always `aria-hidden` — the accessible name is on the control. Status is never an icon alone. No emoji in product UI. **An icon is Lucide; a provider's logo is a `ProviderMark` (DS-3066)** — the one place a third party's glyph and colour appear.
 
 <Story id="kit-button--icon-only" height={520} />
+
+## DS-1062 — Status glyphs
+
+The only emoji the suite's copy may carry are four status glyphs with a fixed meaning: **✓** done · approved · connected; **✗** failed · rejected; **⏸** paused; **🎤** a voice note read back. They open a line (*✓ Connected to …*), never decorate one, and never stand alone — the sentence says the state in words too (never colour or glyph alone, DS-3003). No other pictograph appears in a `turn.*`, `goal.*`, `channel.*` or app copy key; the copy-fitness tests scan for it. Exclamation marks are not copy. The glyphs are the text characters, drawn by the platform's font — never an image, never a Telegram sticker.
+
+<Story id="conversation-channel-rendering--all" height={520} />
 

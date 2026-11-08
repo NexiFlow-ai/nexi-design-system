@@ -1,0 +1,1 @@
+const a={name:"Operations",accent:"var(--nexus-accent-sky)",classification:"CONFIDENTIAL"},s={name:"Personal",accent:"var(--nexus-accent-slate)",personal:!0},n={artifacts:8,automations:3},t="Ранкова нарада";export{n as H,a as O,s as P,t as a};
