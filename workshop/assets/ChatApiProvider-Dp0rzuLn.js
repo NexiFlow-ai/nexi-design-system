@@ -1,0 +1,1 @@
+import{r as e}from"./iframe-C_4ax-Jm.js";var t={};(t.NEXT_PUBLIC_CORE_WEB_URL||"").replace(/\/$/,"");var _={};(_.NEXT_PUBLIC_BI_WEB_URL||"").replace(/\/$/,"");const r=e.createContext(null),o=r;export{o as C};

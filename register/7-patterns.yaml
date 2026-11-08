@@ -3,5 +3,288 @@
 # own compositions; S2–S3: a screen story per app).
 band: 7
 title: Patterns
-lead: >- Ten compositions cover nearly every screen in the suite. A new screen names the pattern it follows in its acceptance criteria; a screen that follows none proposes an eleventh.
-rows: - id: DS-7001 name: Discovery list → Inspector statement: >- A page lists records in a `DataTable`; selecting a row opens the `Inspector` on the right with the record's properties and sections; Enter / double-click drills into the record's own page when it has one. The list keeps its selection and scroll while the panel is open; one Inspector at a time. components: [DS-3030, DS-3031, DS-3032, DS-3017] rests_on: [DS-2007, DS-0005] source: ["", ] status: adopted proof: kit-datatable--selectable - id: DS-7002 name: Create in the Inspector statement: >- *New …* in the header line opens a `FormInspector` empty; the form fills it; Submit in the footer creates the record and the panel becomes its detail Inspector. No separate "new" page, no modal. components: [DS-3033, DS-3010, DS-3011] rests_on: [DS-2007] source: [" R4"] status: adopted proof: kit-inspector--form - id: DS-7003 name: Edit in place statement: >- A detail surface reads by default; Edit turns its properties into controls; Save commits and shows *Saved*; Cancel on a dirty form asks inline. Switches commit on change without an Edit mode. components: [DS-3016, DS-3006, DS-3012, DS-3017] rests_on: [DS-0007] source: ["", ] status: adopted proof: kit-editbar--read - id: DS-7004 name: Confirmation statement: >- Reversible: an `ActionPanel` where the action was taken, one sentence naming the effect, one primary, Cancel. Destructive: the same panel with `danger`, a typed name and a `danger` primary. Never "Are you sure?". components: [DS-3034, DS-3001] rests_on: [DS-0007] source: [] status: adopted proof: kit-editbar--confirmation - id: DS-7005 name: The state ladder on every read statement: >- A screen's content region renders through `DataStateView`; loading is text, empty is quiet with ≤ 3 starting points, error and offline retry, denied and not found look alike. Tables render their own ladder inside the body. components: [DS-3043, DS-3040, DS-3041, DS-3042, DS-3030] rests_on: [DS-0005, DS-0006] source: [] status: adopted proof: kit-states--ladder - id: DS-7006 name: Overview page statement: >- A `wide` frame: the `PulseStrip` on top, a row of `Stat`s, then `Section`s with `StatusList`s and *View all →* links. Monochrome; no pie, no dashboard tiles with their own colours. components: [DS-3020, DS-3052, DS-3051, DS-3022, DS-3055, DS-3053] rests_on: [DS-2004, DS-0002] source: ["R2–"] status: adopted proof: kit-pageframe--sections - id: DS-7007 name: Settings surface statement: >- Settings are a `PropertyList`: one quiet row per property with the control as the value; grouped by `InspectorSection idiom="rule"` when there are more than six. No form cards, no helper paragraphs. components: [DS-3017, DS-3032, DS-3011, DS-3012] rests_on: [DS-0004] source: [""] status: adopted proof: kit-properties--properties - id: DS-7008 name: Empty collection statement: >- A collection with nothing in it shows the quiet `EmptyState` in place of the list: one title, the primary action the header line also offers, up to three starting points. A table header is never left bare. components: [DS-3041, DS-3030] rests_on: [DS-0005] source: [, " AC-3"] status: adopted proof: kit-states--quiet - id: DS-7009 name: Two-level page statement: >- Tabs for the first level, a `SideNav` column for the second, the content to its right; the active section in the URL. Never a tab row inside a tab panel. components: [DS-3023, DS-3024] rests_on: [DS-2006] source: [] status: adopted proof: kit-navigation--left-nav - id: DS-7010 name: List with controls statement: >- Above a collection that outgrows one screen: a `Toolbar` with a `SearchField`, compact `Select` filters and the primary action on the right; below the threshold the header line is the whole chrome. A filtered-to-empty list says what it filtered and offers *Clear filter*. components: [DS-3019, DS-3014, DS-3011, DS-3030, DS-3041] rests_on: [DS-0004] source: [] status: adopted proof: kit-forms--toolbar-row - id: DS-7011 name: Ask round trip statement: >- From any app's Ask bar a question goes to chat-api as that app's Project; the answer appears in the Ask panel with its provenance line; a hand-off opens NexChat with the *asked from* chip and *Back to <app>* returns. The conversation itself is governed by the Conversation Register (CR-xxxx), not here. components: ["@nexus/ui/ask#AskSurface"] rests_on: [DS-2008] source: ["", ""] status: adopted proof: conversation-ask-surface--action-proposed # ---------------------------------------------------------------- from the S1 style census - id: DS-7012 name: Link idioms statement: >- Three looks for three jobs: an *inline* link in running text (text colour, underlined, hover → secondary); a *row* link — the title cell of a table or row list (no underline, underline on hover, the row is the target); a *meta* link at 12 px secondary (*Open source chat*, *Why?*). A `<button>` that looks like a link is the inline look over a button with a 24 px target; a fourth tone, *quiet* (13 px · 500 · secondary, underline on hover), is the look of an action row (DS-7016). One class family `.nexus-link` (`.is-row` · `.is-meta`) and `.nexus-link-btn` (`.is-meta` · `.is-quiet`); nothing app-local. components: [DS-3030, DS-3035, DS-3063] rests_on: [DS-0001, DS-0004] source: ["UX-AUDIT",, ] status: adopted proof: kit-links--inline - id: DS-7013 name: Filter panel statement: >- When a list needs more than three filters, they leave the toolbar for a panel above (a wrapping row of labelled compact selects and chips, 12 px label over each) or beside the list; the toolbar keeps search and the primary action. Active filters show as removable chips with *Clear all*; a filtered-to-empty list says what it filtered. NexBI's `.nexus-bi-fbar` promoted; DS-7010 stays the ≤ 3 case. components: [DS-3019, DS-3014, DS-3003, DS-3041] rests_on: [DS-7010] source: ["UX-AUDIT",, " NexBI", ] status: adopted proof: kit-forms--filters - id: DS-7014 name: Form rhythm statement: >- Label (12 px · 500 · secondary) · 6 px · control (34 px, 13 px) · 6 px · hint or error (12 px); 16 px between fields; a two-column grid at 16 × 24 for short fields; a titled fieldset 24 px from its neighbours. One control height in a form (34), 32 in a toolbar, 40 only on the sign-in card. The focus ring is the accent ring token. "Wrong" is said once: the field's border and a `Hint tone="danger"` under it, linked by `aria-describedby`. `.nexus-field` (margin-based) is legacy. components: [DS-3010, DS-3011, DS-3012, DS-3013, DS-3014, DS-3015, DS-3036] rests_on: [DS-1011, DS-0004] source: ["UX-AUDIT",, ] status: adopted proof: kit-forms--rhythm - id: DS-7015 name: Floating surface statement: >- One anatomy for everything that floats over the page — a menu, a popover, the composer picker, a select's list: radius 12 · padding 6 · 1 px border · `--nexus-shadow-md` · items 32 px with 8 px inset and radius 8 at 13 px · separators 1 px with 4 px around · captions 12 px secondary; the picker adds a search row and sections, the popover glass. It names its layer (DS-1031), opens from its trigger's corner, closes on Escape and outside click, and returns focus. A select has three sizes — form 34 · toolbar 32 · quiet 26 — and its option hint is a prop, never hidden from outside. components: [DS-3005, DS-3014, DS-3060] rests_on: [DS-1031, DS-1020] source: ["UX-AUDIT",, ] status: adopted proof: kit-menu--floating-surface - id: DS-7016 name: Action rows statement: >- Secondary actions under content are a quiet row of links, never a row of buttons: 13 px · 500 · secondary colour · underline on hover · a `·` between · baseline-aligned under the text, 8 above. *View plan · Pause · Change goal · Stop* under a goal card; *Connect Gmail · Not now* in the sentence that names the obstacle; the footer of an inspector section, a row's expansion, a result line, the recovery line of a state. A bordered button keeps three jobs only — the one primary commit of a surface, a confirmation's pair, the header or toolbar line's named actions. A destructive action in a row is the last link, named by its verb, never red — it confirms by name. One component renders the row (`ActionRow` of `LinkButton tone="quiet"`); nothing app-local. components: [DS-3063, DS-3001, DS-3034] rests_on: [DS-0002, DS-0004, DS-0007, DS-7012] source: ["CONSISTENCY-AUDIT ·",, "owner 2026-10-10 18:42 — the goal card's working · a first result"] status: adopted proof: kit-links--quiet-action-row
+lead: >-
+  Ten compositions cover nearly every screen in the suite. A new screen names the pattern it follows in its
+  acceptance criteria; a screen that follows none proposes an eleventh.
+rows:
+  - id: DS-7001
+    name: Discovery list → Inspector
+    statement: >-
+      A page lists records in a `DataTable`; selecting a row opens the `Inspector` on the right with the record's
+      properties and sections; Enter / double-click drills into the record's own page when it has one. The list
+      keeps its selection and scroll while the panel is open; one Inspector at a time.
+    components: [DS-3030, DS-3031, DS-3032, DS-3017]
+    rests_on: [DS-2007, DS-0005]
+    source: ["", ]
+    status: adopted
+    proof: kit-datatable--selectable
+
+  - id: DS-7002
+    name: Create in the Inspector
+    statement: >-
+      *New …* in the header line opens a `FormInspector` empty; the form fills it; Submit in the footer creates the
+      record and the panel becomes its detail Inspector. No separate "new" page, no modal.
+    components: [DS-3033, DS-3010, DS-3011]
+    rests_on: [DS-2007]
+    source: [" R4"]
+    status: adopted
+    proof: kit-inspector--form
+
+  - id: DS-7003
+    name: Edit in place
+    statement: >-
+      A detail surface reads by default; Edit turns its properties into controls; Save commits and shows *Saved*;
+      Cancel on a dirty form asks inline. Switches commit on change without an Edit mode.
+    components: [DS-3016, DS-3006, DS-3012, DS-3017]
+    rests_on: [DS-0007]
+    source: ["", ]
+    status: adopted
+    proof: kit-editbar--read
+
+  - id: DS-7004
+    name: Confirmation
+    statement: >-
+      Reversible: an `ActionPanel` where the action was taken, one sentence naming the effect, one primary, Cancel.
+      Destructive: the same panel with `danger`, a typed name and a `danger` primary. Never "Are you sure?".
+    components: [DS-3034, DS-3001]
+    rests_on: [DS-0007]
+    source: []
+    status: adopted
+    proof: kit-editbar--confirmation
+
+  - id: DS-7005
+    name: The state ladder on every read
+    statement: >-
+      A screen's content region renders through `DataStateView`; loading is text, empty is quiet with ≤ 3 starting
+      points, error and offline retry, denied and not found look alike. Tables render their own ladder inside the
+      body.
+    components: [DS-3043, DS-3040, DS-3041, DS-3042, DS-3030]
+    rests_on: [DS-0005, DS-0006]
+    source: []
+    status: adopted
+    proof: kit-states--ladder
+
+  - id: DS-7006
+    name: Overview page
+    statement: >-
+      A `wide` frame: the `PulseStrip` on top, a row of `Stat`s, then `Section`s with `StatusList`s and
+      *View all →* links. Monochrome; no pie, no dashboard tiles with their own colours.
+    components: [DS-3020, DS-3052, DS-3051, DS-3022, DS-3055, DS-3053]
+    rests_on: [DS-2004, DS-0002]
+    source: ["R2 §8–§12"]
+    status: adopted
+    proof: kit-pageframe--sections
+
+  - id: DS-7007
+    name: Settings surface
+    statement: >-
+      Settings are a `PropertyList`: one quiet row per property with the control as the value; grouped by
+      `InspectorSection idiom="rule"` when there are more than six. No form cards, no helper paragraphs.
+    components: [DS-3017, DS-3032, DS-3011, DS-3012]
+    rests_on: [DS-0004]
+    source: [""]
+    status: adopted
+    proof: kit-properties--properties
+
+  - id: DS-7008
+    name: Empty collection
+    statement: >-
+      A collection with nothing in it shows the quiet `EmptyState` in place of the list: one title, the primary
+      action the header line also offers, up to three starting points. A table header is never left bare.
+    components: [DS-3041, DS-3030]
+    rests_on: [DS-0005]
+    source: [, " AC-3"]
+    status: adopted
+    proof: kit-states--quiet
+
+  - id: DS-7009
+    name: Two-level page
+    statement: >-
+      Tabs for the first level, a `SideNav` column for the second, the content to its right; the active section in
+      the URL. Never a tab row inside a tab panel.
+    components: [DS-3023, DS-3024]
+    rests_on: [DS-2006]
+    source: []
+    status: adopted
+    proof: kit-navigation--left-nav
+
+  - id: DS-7010
+    name: List with controls
+    statement: >-
+      Above a collection that outgrows one screen: a `Toolbar` with a `SearchField`, compact `Select` filters and
+      the primary action on the right; below the threshold the header line is the whole chrome. A filtered-to-empty
+      list says what it filtered and offers *Clear filter*.
+    components: [DS-3019, DS-3014, DS-3011, DS-3030, DS-3041]
+    rests_on: [DS-0004]
+    source: []
+    status: adopted
+    proof: kit-forms--toolbar-row
+
+  - id: DS-7011
+    name: Ask round trip
+    statement: >-
+      From any app's Ask bar a question goes to chat-api as that app's Project; the answer appears in the Ask panel
+      with its provenance line; a hand-off opens NexChat with the *asked from* chip and *Back to <app>* returns.
+      The conversation itself is governed by the Conversation Register (CR-xxxx), not here. The action card has two
+      variants: *confirm* — verb · resource · values · Confirm · Change · Cancel, something
+      runs after Confirm; *door* (`AskDoorCardView`) — title · one fact · a real link that opens a screen and runs
+      nothing · *Not now*; states proposed · done (receipt line) · blocked (the reason, the door to the fix) ·
+      dismissed (folded to one line). A door is a route of a closed list; the kit follows nothing else. **The
+      support door**: after a `not_on_screen · unreadable
+      no_route · no_destination` answer, a low-sufficiency `platform-docs` answer or `turn.state.stopped.credits`, the
+      door variant reads *Ask NEXUS support →* with one fact (*your question travels only if you choose*) and opens the
+      Support drawer (DS-5021); once per turn, never for a Visitor, never a model's pick.
+    components: ["@nexus/ui/ask#AskSurface", "@nexus/ui/ask#AskDoorCardView"]
+    rests_on: [DS-2008]
+    source: ["", "", "", " (support-door state, proposed)", ""]
+    status: adopted
+    proof: conversation-ask-surface--action-proposed
+
+  # ---------------------------------------------------------------- from the S1 style census
+  - id: DS-7012
+    name: Link idioms
+    statement: >-
+      Three looks for three jobs: an *inline* link in running text (text colour, underlined, hover → secondary); a
+      *row* link — the title cell of a table or row list (no underline, underline on hover, the row is the target);
+      a *meta* link at 12 px secondary (*Open source chat*, *Why?*). A `<button>` that looks like a link is the
+      inline look over a button with a 24 px target; a fourth tone, *quiet* (13 px · 500 · secondary, underline on
+      hover), is the look of an action row (DS-7016). One class family `.nexus-link` (`.is-row` · `.is-meta`) and
+      `.nexus-link-btn` (`.is-meta` · `.is-quiet`); nothing app-local.
+    components: [DS-3030, DS-3035, DS-3063]
+    rests_on: [DS-0001, DS-0004]
+    source: ["UX-AUDIT",, ]
+    status: adopted
+    proof: kit-links--inline
+
+  - id: DS-7013
+    name: Filter panel
+    statement: >-
+      When a list needs more than three filters, they leave the toolbar for a panel above (a wrapping row of
+      labelled compact selects and chips, 12 px label over each) or beside the list; the toolbar keeps search and
+      the primary action. Active filters show as removable chips with *Clear all*; a filtered-to-empty list says what
+      it filtered. NexBI's `.nexus-bi-fbar` promoted; DS-7010 stays the ≤ 3 case.
+    components: [DS-3019, DS-3014, DS-3003, DS-3041]
+    rests_on: [DS-7010]
+    source: ["UX-AUDIT",, " NexBI", ]
+    status: adopted
+    proof: kit-forms--filters
+
+  - id: DS-7014
+    name: Form rhythm
+    statement: >-
+      Label (12 px · 500 · secondary) · 6 px · control (34 px, 13 px) · 6 px · hint or error (12 px); 16 px between
+      fields; a two-column grid at 16 × 24 for short fields; a titled fieldset 24 px from its neighbours. One
+      control height in a form (34), 32 in a toolbar, 40 only on the sign-in card. The focus ring is the accent ring
+      token. "Wrong" is said once: the field's border and a `Hint tone="danger"` under it, linked by
+      `aria-describedby`. `.nexus-field` (margin-based) is legacy.
+    components: [DS-3010, DS-3011, DS-3012, DS-3013, DS-3014, DS-3015, DS-3036]
+    rests_on: [DS-1011, DS-0004]
+    source: ["UX-AUDIT",, ]
+    status: adopted
+    proof: kit-forms--rhythm
+
+  - id: DS-7015
+    name: Floating surface
+    statement: >-
+      One anatomy for everything that floats over the page — a menu, a popover, the composer picker, a select's
+      list: radius 12 · padding 6 · 1 px border · `--nexus-shadow-md` · items 32 px with 8 px inset and radius 8 at
+      13 px · separators 1 px with 4 px around · captions 12 px secondary; the picker adds a search row and
+      sections, the popover glass. It names its layer (DS-1031), opens from its trigger's corner, closes on Escape
+      and outside click, and returns focus. A select has three sizes — form 34 · toolbar 32 · quiet 26 — and its
+      option hint is a prop, never hidden from outside.
+    components: [DS-3005, DS-3014, DS-3060]
+    rests_on: [DS-1031, DS-1020]
+    source: ["UX-AUDIT",, ]
+    status: adopted
+    proof: kit-menu--floating-surface
+
+  - id: DS-7016
+    name: Action rows
+    statement: >-
+      Secondary actions under content are a quiet row of links, never a row of buttons: 13 px · 500 · secondary
+      colour · underline on hover · a `·` between · baseline-aligned under the text, 8 above. *View plan · Pause ·
+      Change goal · Stop* under a goal card; *Connect Gmail · Not now* in the sentence that names the obstacle; the
+      footer of an inspector section, a row's expansion, a result line, the recovery line of a state. A bordered
+      button keeps three jobs only — the one primary commit of a surface, a confirmation's pair, the header or
+      toolbar line's named actions. A destructive action in a row is the last link, named by its verb, never red —
+      it confirms by name. One component renders the row (`ActionRow` of `LinkButton tone="quiet"`); nothing
+      app-local.
+    components: [DS-3063, DS-3001, DS-3034]
+    rests_on: [DS-0002, DS-0004, DS-0007, DS-7012]
+    source: ["CONSISTENCY-AUDIT ·",, "owner 2026-10-10 18:42 — the goal card's working · a first result"]
+    status: adopted
+    proof: kit-links--quiet-action-row
+
+  # «Onboarding is the conversation» — proposed 2026-10-20 at UAT-2 as "DS-7013" (the
+  # id was already Filter panel; renumbered DS-7017 at UAT-3); adopted with `APPROVED UAT-2` (owner, 11:57).
+  - id: DS-7017
+    name: Hand-over
+    statement: >-
+      A scripted dialogue (DS-5015) ends and the real thread takes its place on the same page: the script's turns fold
+      to one receipt line (*You created Acme in Europe.* — a `details` whose summary is the line, the turns beneath for
+      the record), the host's Ask surface in its inline layout (DS-2008) bound to the new thread appears beneath, and
+      Nexi's first message arrives there — the person never changes screen between creating and talking. Three
+      states: *waiting* (the write is done, the thread is not yet open — one honest line, no spinner, ≤ 2 s expected);
+      *ready* (the thread); *late* (the thread did not open in time — the line and the door to NexChat, nothing
+      invented, nothing claimed). The receipt names only what the write made; a failure before the write is the
+      dialogue's own line (DS-5015), never this pattern. **Δ5:** for the
+      lobby (DS-5016) the hand-over is the receipt and one line — *Opening your chat…* — and the person goes to
+      NexChat's **welcome door** (`/chat/welcome`, `apps/chat#WelcomeDoor`): one line beside the suite's trace while
+      Nexi's first message is written (*waiting*), the same line's honest successor when it is late (*late* — the door
+      opens the thread itself), one line asking for a reload when it could not (*failed*); no sidebar, no composer,
+      no link, no spinner; then the thread. The inline *ready* state stays the scripted dialogue's (DS-5015). **
+      (a)** (owner 2026-10-24): the lobby's and the door's hand-over is the one line **under the quiet wave** of the
+      finish scene (DS-5016) — the wave that filled the screen while Nexi spoke the finish rests in muted ink, the
+      finish line stays beneath it, the host's line beneath that (*Opening your chat…* · *Back to nexiflow.ai in a
+      moment*); no folded `details` on that page — the folded receipt stays the scripted dialogue's inline shape.
+    components: ["@nexus/ui/ask#HandOver", "@nexus/ui/ask#AskSurface", "apps/chat#WelcomeDoor", DS-5015, DS-5016]
+    rests_on: [DS-2008, DS-7011, DS-5018]
+    source: [" C-K-4", "", "", "SC-0497", " S4 Δ5", "", "SC-0512", "", "SC-0513"]
+    status: adopted
+    proof: patterns-hand-over--ready
+
+  # S2 — proposed 2026-10-24 with the edge headers (S1-ARCHITECTURE:
+  # "a deploy/design-system register row, band 7"); not a visual idiom but the one browser contract every host of the
+  # suite serves, so a screen's author knows what the edge forbids (inline script · a frame · a banner). Adopted by
+  # the design-system owner — the deploy test is its proof, not a story.
+  # Adopted 2026-10-25: the enforced nonce policy lands per app in S4 (S2b).
+  - id: DS-7018
+    name: Edge security headers
+    statement: >-
+      Every suite host answers the browser with the same security contract, set once at the edge (Caddy
+      `(edge_headers)`, `deploy/gcp/platform/compose.caddy*.yml`) and never re-stated in an app: HSTS six months with
+      subdomains · `nosniff` · `Referrer-Policy: strict-origin-when-cross-origin` · a `Permissions-Policy` that denies
+      camera · geolocation · payment · usb · FLoC and keeps the microphone to `self` (the composer's mic, a
+      conversation path) · `X-Frame-Options: DENY` on every host but NexCare, whose widget frame is embeddable per
+      installation through its own `frame-ancestors` · the upstream's `Server`
+      `X-Powered-By` banners stripped. The strict content-security policy (`script-src 'self'` + a per-request
+      nonce · `style-src 'unsafe-inline'` only until reaches 0 · Google Fonts as the one external style and
+      font origin · `frame-ancestors 'none'` · `object-src 'none'`) is **enforced by every app from its `proxy.ts`**
+      one builder, `@nexus/app-shell/csp`, mints a 16-byte nonce per request, stamps the policy
+      on the request (Next nonces its own scripts) and on the response, and the root layout hands the nonce to the one
+      inline script of the suite (`THEME_BOOT_SCRIPT`); `script-src 'self' 'nonce-…' 'strict-dynamic'`, `frame-src
+      'self'`, an app's extras as **named arguments** only (NexChat/NexCore `wss:` · NexMap its basemap origin and
+      `data:` on connect · NexCare `frame-ancestors` per installation and the fixture host's flipped dev origin on
+      `frame-src`); `'unsafe-eval'` on a `next dev` server only. The edge keeps the same policy **report-only** with a
+      same-host `report-uri` until the first hosted window is read (G-27); the reports of both land on core-api's door as one sanitised line each — path · origin · directive, never a query, a fragment or a token — and leave the stack nowhere. Every
+      edge value is set-if-absent so an app's own header wins. A screen therefore never carries an inline `<script>`
+      without the nonce, never an `<object>`, never a third-party origin the policy does not name.
+    components: ["deploy/gcp/platform/compose.caddy.suite.yml#(edge_headers)", "packages/app-shell/src/csp.ts", "apps/*/src/proxy.ts"]
+    rests_on: [DS-0001, DS-7011]
+    source: [" ", "", " G-2", "S1-ARCHITECTURE", "deploy/tests/test_edge_headers.py", " R2 G-28", " R2 S4 (R2-S4-CSP-ENFORCED.md)", "", " S6 (evidence/s6/CSP-REPORT-DOOR.md)"]
+    status: adopted
+
+  # S0 (UAT-1 — proposed 2026-10-26): the pattern the setup page's third section proves
+  - id: DS-7019
+    name: Rights before the form
+    statement: >-
+      A form that ends in a write the person may not do is never drawn: the surface asks the policy decision point
+      first and renders the shape the answer allows — *use the shared one* · *add a key* · *ask an administrator* — and
+      the request to a granter is a **first-class shape, not an error**. The rights answer is read once per surface,
+      fails closed (no answer → no key field, a *Retry*), and the server re-checks on every write. What the
+      person prepared is kept as a draft on the request object, never lost at the hand-over. Hiding a field grants
+      nothing.
+    components: ["@nexus/ui/workbench#RadioCard", "@nexus/ui/workbench#SecretInput", "apps/chat/src/components/builders/ToolSetup.tsx#ToolSetup"]
+    rests_on: [DS-0007, DS-3015, DS-3036, DS-6902]
+    source: [" 00-EPIC §A", "", "", "", "", "", "T-4504"]
+    status: adopted

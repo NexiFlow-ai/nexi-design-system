@@ -20,6 +20,10 @@
   --nexus-accent-ring: rgba(124, 142, 248, 0.32);
   --nexus-accent-soft: rgba(124, 142, 248, 0.12);
 
+  /* Brand — DS-1006 (owner 2026-10-19): the nexiflow.ai pink carries the application name after the wordmark, nothing else; Light is the landing's #d43a78 one step deeper (≥ 4.5:1 for 11 px text on the warm white) */
+  --nexus-brand: #c9336f;
+  --nexus-brand-soft: #fbe7ef;
+
   /* Semantic (use sparingly) */
   --nexus-error: #b91c1c;
   --nexus-warning: #b45309;
@@ -48,6 +52,19 @@
   --nexus-data-seq-3: #6366f1;
   --nexus-data-seq-4: #4338ca;
   --nexus-data-seq-5: #312e81;
+  /* The eight named hues a person can *say* — NexForge's colour keys (, DS-1005 amended at S3-B WP-9): a stroke and
+     a paper tint each, read by the scene canvas, the swatches, the thumbnails and the colour key; one value in both
+     themes (the canvas is paper in Graphite too — the hue has to stay the hue the person named) */
+  /*  S3-B WP-10 (DS-1005): type on a solid data colour — paper in both themes (the hues keep ≥ 3:1 against it) */
+  --nexus-on-data: #ffffff;
+  --nexus-data-red: #d9534f;    --nexus-data-red-tint: #f7e0df;
+  --nexus-data-orange: #e08a3c; --nexus-data-orange-tint: #f9e8d8;
+  --nexus-data-yellow: #d9b23a; --nexus-data-yellow-tint: #f8f0d3;
+  --nexus-data-green: #5aa56a;  --nexus-data-green-tint: #dfeee2;
+  --nexus-data-teal: #3f9d9a;   --nexus-data-teal-tint: #d9ecec;
+  --nexus-data-blue: #4f7fd0;   --nexus-data-blue-tint: #dde6f6;
+  --nexus-data-violet: #8a6fd0; --nexus-data-violet-tint: #e7e1f6;
+  --nexus-data-pink: #d06aa0;   --nexus-data-pink-tint: #f6e0ec;
 
   /* Attention accents — subtle mint/pink/green only where meaningful */
   --nexus-accent-mint: #6ee7b7;
@@ -74,6 +91,9 @@
   /*   (proposed): teal — the tenth attention accent; NexSales' tile only, never chrome */
   --nexus-accent-teal: #5eead4;
   --nexus-accent-teal-soft: #f0fdfa;
+  /*  : steel — NexFactory's tile only, never chrome */
+  --nexus-accent-steel: #9fb3c8;
+  --nexus-accent-steel-soft: #f1f5f9;
 
   /* Per-application accents (launcher icons, badges) */
   --nexus-app-chat-accent: var(--nexus-accent-mint);
@@ -101,6 +121,9 @@
   /*  : NexSales' tile appears once the organization installs the module (, proposed) */
   --nexus-app-sales-accent: var(--nexus-accent-teal);
   --nexus-app-sales-soft: var(--nexus-accent-teal-soft);
+  /*  : NexFactory's tile appears once the organization installs the module; steel — the eleventh accent */
+  --nexus-app-factory-accent: var(--nexus-accent-steel);
+  --nexus-app-factory-soft: var(--nexus-accent-steel-soft);
 
   /* Composer — unified size on Home + Chat (override for tenant branding) */
   --nexus-user-bubble: #f5f5f5;
@@ -110,6 +133,9 @@
   --nexus-composer-card-min-height: 120px; /* docked (owner 2026-09-21: a little under the former 132) */
   --nexus-composer-hero-min-height: 92px; /* a new chat's composer, centred on the page */
   --nexus-composer-font-size: 16px;
+  /*  S9 (DS-5011): an answer's figure strip — the thumbnail's width and the dialog's measure */
+  --nexus-figure-thumb: 160px;
+  --nexus-figure-dialog-max-width: 960px;
   --nexus-composer-placeholder-size: 16px;
   --nexus-composer-border: var(--nexus-border);
   --nexus-composer-border-focus: var(--nexus-accent);
@@ -120,6 +146,10 @@
   --nexus-thread-tail-band: 176px; /* 28 px dock padding + the docked card + the gap above it */
   --nexus-thread-tail-opacity: 0.25;
   --nexus-thread-tail-mask: linear-gradient(to bottom, #000 calc(100% - var(--nexus-thread-tail-band)), rgba(0, 0, 0, var(--nexus-thread-tail-opacity)) 100%);
+  /*  (b), owner 2026-10-24 (DS-5018): the same idiom for the conversation frame outside an organization (the
+     lobby · the door), whose composer is one line — a shorter band, the same opacity. */
+  --nexus-convo-tail-band: 72px;
+  --nexus-convo-tail-mask: linear-gradient(to bottom, #000 calc(100% - var(--nexus-convo-tail-band)), rgba(0, 0, 0, var(--nexus-thread-tail-opacity)) 100%);
 
   /* Assistant prose */
   --nexus-assistant-accent-border: var(--nexus-accent-mint);
@@ -135,6 +165,11 @@
      `md` the menu · popover · combobox list (the `0 18px 50px` literal twelve rules carried). `lg` above is the dialog's. */
   --nexus-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
   --nexus-shadow-md: 0 18px 50px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.04);
+  /*  S3-B WP-10 (DS-1031): the same three heights as `filter` values — an SVG element (NexForge's sticker) lifts
+     with `drop-shadow`, where `box-shadow` cannot reach; `sm` at rest · `md` hovered or selected · `lg` while dragged */
+  --nexus-lift-sm: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.12)) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08));
+  --nexus-lift-md: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.14)) drop-shadow(0 8px 18px rgba(0, 0, 0, 0.12));
+  --nexus-lift-lg: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.14)) drop-shadow(0 16px 28px rgba(0, 0, 0, 0.16));
 
   /* Layers —   (DS-1031): a `z-index` is one of these names, never a number in a rule */
   --nexus-z-raised: 1;
@@ -210,6 +245,8 @@
   --nexus-handle-width: 32px;
   --nexus-handle-height: 44px;
   --nexus-shell-motion: 200ms cubic-bezier(0.2, 0, 0, 1);
+  /*  S2 (DS-5014, ): the fold of a thread into its receipt line — 900 ms, the pulse's upper bound */
+  --nexus-receipt-fold: 900ms;
   --nexus-rail-btn: 32px;
   --nexus-confirm-width: 440px;
   --nexus-sidebar-selected-bg: var(--nexus-bg-muted);
@@ -244,6 +281,8 @@
   --nexus-border: #35373b;
   --nexus-border-strong: #4a4c51;
   --nexus-focus: #f4f4f4;
+  --nexus-brand: #f07aa6;
+  --nexus-brand-soft: #45283a;
   --nexus-user-bubble: #2a2c30;
   --nexus-glass-bg: rgba(37, 38, 41, 0.92);
   --nexus-glass-border: rgba(255, 255, 255, 0.06);
@@ -260,6 +299,9 @@
   --nexus-info: #60a5fa;
   --nexus-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --nexus-shadow-md: 0 18px 50px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
+  --nexus-lift-sm: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.4)) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
+  --nexus-lift-md: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.45)) drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35));
+  --nexus-lift-lg: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.45)) drop-shadow(0 16px 28px rgba(0, 0, 0, 0.4));
   /* DS-1005: the data palette as tints (≥ 3:1 on #1b1c1e); the ramp runs faint → strong in both themes */
   --nexus-data-1: #8da2fb;
   --nexus-data-2: #fb923c;

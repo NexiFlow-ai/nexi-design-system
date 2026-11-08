@@ -1,8 +1,149 @@
-# · Design System Register · band 4 — Shared surfaces (DS-4xxx): `@nexus/app-shell` (NexusShell · ShellDock ·
-# AppLauncher · CommandPalette · SettingsSheet · OfflineStrip · ConnectedAccounts · UatControlsDrawer · VoiceDock),
+# · Design System Register · band 4 — Shared surfaces (DS-4xxx): `@nexus/app-shell` (NexusShell · ShellDock
+# AppLauncher · SettingsSheet · OfflineStrip · ConnectedAccounts · VoiceDock — CommandPalette and UatControlsDrawer retired in S3-B WP-10),
 # `@nexus/ui` artifacts (ChartArtifact · TableArtifact · DocumentCanvas · ArtifactCard), `@nexus/ui/flow` (FlowCanvas),
 # `@nexus/ui/scene` and `@nexus/ui/ask`. Rows land at S1 with their stories.
 band: 4
 title: Shared surfaces
 lead: "The shell, the artifacts, the Flow canvas, the scene and the Ask surface — the Ask rows arrived at S3-A with NexChat's stories; the shell · artifacts · Flow canvas · scene rows are owed and land first in S3-B."
-rows: # ---------------------------------------------------------------- @nexus/ui/ask - id: DS-4001 name: Ask bar component: "@nexus/ui/ask#AskBar" stories: conversation-ask-surface statement: >- NexChat's composer line minimised into a host app's header: `+` (attach) · the text field with the app's own placeholder · the mic · `↑` (send) / Stop while running; the panel toggle with its unread dot when an answer arrived closed. One line, the control height of the header (DS-1004), never a second chat input in any app (DS-2008). Offline disables send and says so in the field; disabled is a state, not a hidden bar. states: [empty, composing, running, offline, disabled, unread] a11y: "`role=region` named *Ask ‹app›*; the field is a labelled textbox; Enter sends, Shift+Enter breaks a line; Stop is a real button; the mic reports its outcome in the live region" copy: ["ask.placeholder.*", "ask.region", "ask.stop", "ask.panel.toggle", "ask.panel.unread"] source: [" ", "", "", DS-2008] status: adopted proof: conversation-ask-surface--the-bar-in-every-host - id: DS-4002 name: Ask surface component: "@nexus/ui/ask#AskSurface" stories: conversation-ask-surface statement: >- The bar and its panel as one surface: the panel opens beneath the bar with the conversation for this screen, the answer turns rendered by NexChat's own turn card (DS-5001), the hand-off chip and *Back to ‹app›*. Its states are closed: empty · composing · streaming · answered · answered from the screen · not on the screen · unreadable · an action proposed (the proposal card with Confirm · Change · Cancel) · action done · error · denied · offline · no destination · no route. Each state has one copy class per language; nothing in the panel names a mechanism. states: [empty, composing, streaming, answered, answered_from_screen, not_on_screen, unreadable, action_proposed, action_done, error, denied, offline, no_destination, no_route] a11y: "the panel is a named `dialog`-less region with one polite live region for the answer; Esc and × close and return focus to the bar; the proposal's three decisions are reachable by Tab in order" copy: ["ask.state.*", "ask.action.*", "ask.new", "ask.continue", "ask.no_destination", "ask.chip.unavailable"] source: [" ", "", "", "", "", DS-2008, DS-7011] status: adopted proof: conversation-ask-surface--answered
+rows:
+  # ---------------------------------------------------------------- @nexus/ui/ask
+  - id: DS-4001
+    name: Ask bar
+    component: "@nexus/ui/ask#AskBar"
+    stories: conversation-ask-surface
+    statement: >-
+      NexChat's composer line minimised into a host app's header: `+` (attach) · the text field with the app's own
+      placeholder · the mic · `↑` (send) / Stop while running; the panel toggle with its unread dot when an answer
+      arrived closed. One line, the control height of the header (DS-1004), never a second chat input in any app
+      (DS-2008). Offline disables send and says so in the field; disabled is a state, not a hidden bar.
+    states: [empty, composing, running, offline, disabled, unread]
+    a11y: "`role=region` named *Ask ‹app›*; the field is a labelled textbox; Enter sends, Shift+Enter breaks a line; Stop is a real button; the mic reports its outcome in the live region"
+    copy: ["ask.placeholder.*", "ask.region", "ask.stop", "ask.panel.toggle", "ask.panel.unread"]
+    source: [" ", "", "", DS-2008]
+    status: adopted
+    proof: conversation-ask-surface--the-bar-in-every-host
+
+  - id: DS-4002
+    name: Ask surface
+    component: "@nexus/ui/ask#AskSurface"
+    stories: conversation-ask-surface
+    statement: >-
+      The bar and its panel as one surface: the panel opens beneath the bar with the conversation for this screen,
+      the answer turns rendered by NexChat's own turn card (DS-5001), the hand-off chip and *Back to ‹app›*. Its
+      states are closed: empty · composing · streaming · answered · answered from the screen · not on the screen ·
+      unreadable · an action proposed (the proposal card with Confirm · Change · Cancel) · action done · error ·
+      denied · offline · no destination · no route. Each state has one copy class per language; nothing in the panel
+      names a mechanism.
+    states: [empty, composing, streaming, answered, answered_from_screen, not_on_screen, unreadable, action_proposed, action_done, error, denied, offline, no_destination, no_route]
+    a11y: "the panel is a named `dialog`-less region with one polite live region for the answer; Esc and × close and return focus to the bar; the proposal's three decisions are reachable by Tab in order"
+    copy: ["ask.state.*", "ask.action.*", "ask.new", "ask.continue", "ask.no_destination", "ask.chip.unavailable"]
+    source: [" ", "", "", "", "", DS-2008, DS-7011]
+    status: adopted
+    proof: conversation-ask-surface--answered
+
+  # ---------------------------------------------------------------- @nexus/app-shell
+  - id: DS-4003
+    name: Connected accounts
+    component: "@nexus/app-shell#ConnectedAccountsDialog"
+    stories: layout-connected-accounts
+    statement: >-
+      A connection belongs to the person, not to an app or a Project, so the dialog is the
+      shell's — *Connected accounts* in the account menu — a `Sheet` (DS-3067, `wide`) over `GET /synapse/connections
+      ?owner=me` and the integration catalogue. One `SheetRow` per integration the person may delegate: the account,
+      the granted scopes by their labels, the health and the last use as text — never a token, a code or a
+      credential reference (the server returns none). *Reconnect* (expired — the same consent flow as the
+      just-in-time card, in a popup) and *Disconnect* are 28 px buttons at the row's right; *Disconnect* asks once,
+      inside the sheet, as the kit's `ActionPanel` with `danger` (DS-7004) naming the integration. Offline the list
+      reads and every action is disabled. Visibility of the menu item is the host's hint; authorization is the
+      server's on every call.
+    states: [populated, confirm, empty, loading, error, offline, narrow]
+    a11y: "a named `dialog`; the rows are a `list`; the ladder is `SheetState` (`status` · `alert`); *Close* takes focus on open; the confirmation's heading takes focus and Esc returns to the list; a disabled action stays named"
+    copy: ["shell.connectedAccounts.*", "action.close", "action.retry"]
+    source: ["FR-SYN-011", "AC-SYN-001a",, DS-3067, DS-7004]
+    status: adopted
+    proof: layout-connected-accounts--populated
+
+  - id: DS-4004
+    name: Voice dock
+    component: "@nexus/app-shell#VoiceDock"
+    stories: layout-voice-dock
+    statement: >-
+      The shared Voice Dock: one component for every app — the compact line (mic
+      language · mic state · context · what is shared) and the expanded panel (transcript · understood as · the
+      proposal, the choice between look-alikes, the context-missing ask or the frame's answer · the session's route
+      and retention · the controls). Mute · Stop sharing · End & clear are three distinct controls
+      Text-only and Hands-free are toggles; the proposal card has one primary — *Confirm*, or the step-up door at
+      L4 — and its change step is its own surface with *Re-propose*. The dock renders on synthetic scenes in the
+      workshop and on `?voice_demo=<scene>` in an app; S2 replaces the scene with the real session. The controls are
+      the kit's `Button` (`sm` · `ghost` · `destructive` · `primary`), the waves `@nexus/ui/voice#VoiceWaves`.
+    states: [idle, listening, open-by-voice, choice, not-found, dictation, no-context, sharing, proposal, proposal-change, created, cleared, l3, l4-step-up, denied, provider-unavailable, offline, unsupported, org-switched, text-only, hands-free]
+    a11y: "the state line is an `aria-live` region; every voice state has its text and keyboard equivalent; the mic is `aria-pressed`; the proposal's decisions are reachable by Tab in order; the keyboard link names the alternative"
+    copy: ["voice.*"]
+    source: [" ", "", "08-UX_UAT", "rule 35 (voice-* contracts)"]
+    status: adopted
+    proof: layout-voice-dock--proposal
+
+  - id: DS-4005
+    name: The inbox behind the bell
+    component: "@nexus/app-shell#ShellDock (NotificationInbox)"
+    stories: layout-dock
+    statement: >-
+      The bell's popover once a host feeds notifications (TBD-712 (a)): a head with the unread count and
+      *Mark all read* as a link, the last eight items newest first — each a button: the kind's Lucide glyph, the
+      subject by name, the Project, the relative time (the absolute as the tooltip), the unread dot — and a foot
+      that offers the browser notification for a hidden tab (on · denied · *Turn on*). Identifiers and statuses
+      only — a run's name, a Project's name, an artifact's title; never a message, a cell or a body.
+      Opening an item marks it read and follows its link. The states are the shell's: loading, error with *Try
+      again*, offline / reconnecting as a dashed strip over the list, empty; without a host feed the bell
+      keeps the honest empty popover and never invents a count. The badge on the bell never grows past `99+`.
+    states: [populated, empty, loading, error, offline, reconnecting, browser-on, browser-denied, no-feed]
+    a11y: "the bell is `aria-haspopup=dialog` with the unread count in its name; the popover is a named `dialog` placed from the bell, Esc returns focus; ArrowUp/Down, Home/End move between items and the link actions; each item's name reads unread · kind · subject · Project · time"
+    copy: ["shell.notifications.*"]
+    source: [" TBD-712 (a)",, "", DS-2002, DS-3063]
+    status: adopted
+    proof: layout-dock--inbox
+
+  # ---------------------------------------------------------------- @nexus/ui/scene
+  - id: DS-4010
+    name: Scene canvas
+    component: "@nexus/ui/scene#SceneCanvas · Scene3D · SemanticGlyph"
+    stories: apps-nexforge-scene-canvas
+    statement: >-
+      The one canvas every spatial surface of the suite draws on: a `SceneGraph` of objects (node
+      sticky · text · frame · shape · image, each with a semantic type and its glyph) and relations (nine kinds, each
+      its own line and end), selection and multi-selection, a rubber band, drag · connect · place · edit-in-place, the
+      ghost of a pending proposal and the objects it affects, a lock, a bound object's chip, another person's presence
+      on what they hold, `fit`, a viewport, reduced motion. Colour is **content**: the eight named hues and
+      their tints are `--nexus-data-<hue>` (DS-1005), tint · solid · outline the three fills; nothing on the canvas is
+      a system meaning said in colour alone. The element's and the relation's menus float above the selection as
+      render props (`selectionBar` · `relationBar`) — the canvas owns *where*, the host owns *what*. `Scene3D` is the
+      same graph as solids through a real camera with the CAD gizmo and the presets; `SemanticGlyph` is the
+      26-type glyph set on `--nexus-icon-*`.
+    states: [populated, empty, selected, multi-selected, relation-selected, ghost, affected, locked, bound, presence, read-only, reduced-motion]
+    a11y: "the canvas is an `application` region named after the scene; every object is a focusable `button`-like element named by its label and kind, the selection announced; arrows move the selection, Enter opens, Delete asks; relations are reachable in order; presence is text (`title` and a visually hidden name) beside the ring; reduced motion stills the flowing dashes"
+    copy: ["the host's labels through `SceneCanvasLabels` (forge.canvas.* · forge.kind.* · forge.semantic.* · forge.relation.*)"]
+    source: [" 08-UX ·", "", "", "", "WP-9 (DS-1005 amendment: the named hues)"]
+    status: adopted
+    proof: apps-nexforge-scene-canvas--kinds
+
+  - id: DS-4011
+    name: Scene popover
+    component: "@nexus/ui/scene#ScenePop · ScenePopList · ScenePopItem · ScenePopRow · ScenePopSeg · ScenePopTitle"
+    stories: kit-scene-popover
+    statement: >-
+      The floating pop under a bar button of the scene canvas: a **menu** of items — plain
+      (`menuitem`), one of several (`menuitemradio`, the chosen one bold), a toggle (`menuitemcheckbox`) — with the key
+      at the right edge or the current value as a hint, a title over a group, a long list that scrolls (the 26
+      meanings); or a **dialog** of controls — a `radiogroup` row of swatches, the pill segment (tint · solid ·
+      outline). The bar owns which pop is open, Escape and the click outside; the pop owns its inside: a menu moves
+      focus to its first (or checked) item and ↑ ↓ Home End walk the items, a dialog focuses its chosen radio. One
+      surface, one radius (`--nexus-radius-lg`), one shadow (`--nexus-shadow-md`), one layer (`--nexus-layer-popover`).
+      Replaces the eight raw `role="menu"` and three raw `role="dialog"` NexForge's bars drew (CONSISTENCY-AUDIT M1 ·
+      D1); it is not `Menu` (DS-3005) because it opens from a floating toolbar over a canvas, anchored to a selection,
+      and holds controls a header menu never does.
+    states: [menu, menu-radio, menu-scrolling, dialog, below]
+    a11y: "`role=menu` or `role=dialog` named by the bar button that opened it (`aria-haspopup` · `aria-expanded`); items are real buttons with the menu roles; ↑ ↓ Home End inside a menu, the browser's arrows inside a `radiogroup`; a danger item is marked, never colour alone; the key hint is a `kbd`"
+    copy: ["the host's labels (forge.bar.* · forge.relbar.* · forge.style.*)"]
+    source: ["", "", "", "", "CONSISTENCY-AUDIT M1 · D1", "WP-9"]
+    status: adopted
+    proof: kit-scene-popover--menu

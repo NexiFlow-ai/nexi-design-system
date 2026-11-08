@@ -1,0 +1,1 @@
+const t=["account","contact","interaction","quote","document","contract"],e=["legal_entity","entrepreneur","individual","other"],n=["legal","postal","billing","shipping","warehouse","pickup","delivery"],o=["product_specialist","operations","broker","finance","other"];export{n as A,t as F,e as L,o as T};

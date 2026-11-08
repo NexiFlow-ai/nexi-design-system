@@ -16,6 +16,9 @@
     "filter-panel",
     "form-rhythm",
     "floating-surface",
-    "action-rows"
+    "action-rows",
+    "hand-over",
+    "edge-security-headers",
+    "rights-before-the-form"
   ]
 }

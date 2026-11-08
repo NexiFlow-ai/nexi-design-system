@@ -1,4 +1,4 @@
-# · Design System Register · band 5 — Conversation components (DS-5xxx): NexChat's thread, composer, cards,
+# · Design System Register · band 5 — Conversation components (DS-5xxx): NexChat's thread, composer, cards
 # approvals and canvas. Each row points at the Conversation Register (CR-xxxx) that defines the *behaviour*; this band
 # holds only the *look* (states · tokens · a11y). A row's stories document `CR-` states with the fixtures the
 # `/uat/components` catalogues used — no behaviour change; a change found necessary is a Conversation Change Request
@@ -6,4 +6,530 @@
 band: 5
 title: Conversation components
 lead: "NexChat's components: the look is here, the behaviour is in the Conversation Register. The turn card, the goal on it, the Artifacts Library and its dialogs, and the quoting scenes arrived at S3-A; the composer, the thread, approvals and the Canvas follow in S3-B."
-rows: # ---------------------------------------------------------------- the one turn card - id: DS-5001 name: Turn card owner: apps/chat component: "apps/chat/src/components/thread/TurnCard.tsx#TurnCard" stories: conversation-turn-card statement: >- One component renders every executor — agent · knowledge · data · search · research · Flow · resolver · goal — from one contract. The header line is *‹title› · ‹who/what› · ‹elapsed or when›*, the title an executor's label and never an id. A plain answer is prose in the thread with no frame; work longer than the threshold shows **one** folded progress line that unfolds into the staged view and becomes the receipt with the result beneath it; a turn has at most one progress indicator. The eight states are closed, one copy class and one visual each; an unknown state renders `failed`, never blank. `waiting_on_you` carries the decision inline in the same idiom for every executor. Typography and borders only; no second colour. S8: the card has a `lead` slot — what it already holds about the ask, rendered first in every state, before the progress line and any wait; the goal fills it with its Situation strip (DS-5002), no other executor uses it yet. states: [asked, working, waiting_on_you, waiting_on_other, done, stopped, failed, nothing_found] a11y: "one polite live region per thread announces a state change once; the progress line is `role=progressbar` with `aria-valuetext` = the copy (—: it has no accessible name yet, (c)); every inline decision is reachable by Tab from the composer and runs on Enter; Esc does nothing destructive" copy: ["turn.state.*", "turn.ask.*", "turn.decide", "turn.in_progress", "turn.created_so_far", "turn.want_details", "turn.superseded"] source: [" ", "", "…2006", "",, ""] status: adopted proof: conversation-turn-card--done - id: DS-5002 name: Goal card owner: apps/chat component: "apps/chat/src/components/thread/GoalCard.tsx#GoalCard" stories: conversation-goal-card statement: >- The goal is the eighth executor on the same turn card with the goal's parts in its slots: the plan with Accept · Change · Not now, the latest result as the body with earlier results folded beneath, the coverage line at completion, and the doors (view the plan · stop · pause · resume · open). The turn that opened the goal ends `done` while the goal continues; every later moment updates the same card — never a second card. The edges have no card of their own: a goal in another Project is not found exactly like any other not-found; an archived thread's card is read-only; a question to the running goal is prose in the thread. S8 adds two slots, no new card: the **Situation strip** above the plan — what NEXUS already holds about the subjects of the ask (NexSales · Vibeban · NexCare · artifacts · sources · the people on those records), each line a source word, the record's label and a door; one honest line naming the party when nothing was found; *not checked* for a source that did not answer; a record the person may not read is not a line and not a count — and the **Next line** at the proposal and at completion: 1–3 doors drawn only from found records, installed capabilities or the creation doors (*Create the account in NexSales* · *Add this request to Vibeban*), the colleague suggestion as a sentence then *Ask ⟨name⟩*, and the one question *What would you like me to do next?*. The same Next line (`NextLine`, bound by `NextLineTurn`) is drawn under a plain General or Knowledge answer that named a party (, (a)) — from the server's `turn_view.next` · `person`, never from the answer's words; *Ask ⟨name⟩* and *Add this request to Vibeban* create the one Vibeban item as the person and the receipt names it (*Asked Dana — the item is in Vibeban.* · *Open the item*). A drafted artefact's approval ask shows its security table (reads · writes · reaches) and the approval-required line when it reaches out. states: [asked, working, waiting_on_you, waiting_on_other, done, stopped, failed, nothing_found] a11y: "as DS-5001; the plan's steps are a list, the decisions are buttons in Tab order; earlier results fold under a disclosure button with `aria-expanded`; the Situation strip is a list whose doors are links in Tab order; the Next line is one `nav` landmark labelled *Next*; the security table is a definition list" copy: ["goal.*", "turn.state.*", "turn.ask.*", "turn.next.*"] source: [" ", "", "…", "", DS-5001, "", "", "", "", "", "…"] status: adopted proof: conversation-goal-card--the-journey # ---------------------------------------------------------------- the Artifacts Library - id: DS-5003 name: Artifacts library owner: apps/chat component: "apps/chat/src/components/artifacts/ArtifactsLibrary.tsx#ArtifactsLibrary" stories: conversation-artifacts-library statement: >- A Project's artifacts as the builders' rows grouped by day (DS-3035 rows, DS-3019 toolbar, DS-7010): title · type · origin · status pill · by whom · when. The controls row (search · type · by) appears from twelve rows, pages of fifty with *Show more*; a reader sees published rows only, no *New artifact*, no pills. The empty Project is the chat EmptyState with the one *New artifact* button for a writer and a sentence for a reader; loading · error · offline are the kit's state views (DS-3040 · DS-3042), an empty search offers the knowledge search. Each row's `⋯` holds what the person's rights and the artifact's origin allow — absent, never disabled. states: [populated, few, many, reader, empty_writer, empty_reader, loading, error, offline, empty_search] a11y: "a `table` with a caption per day group; the row menu is a named `menu` opened from a labelled `⋯` button; *Show more* is a button that announces the new count" copy: ["artifacts.*", "artifact.status.*", "artifact.row.*"] source: [" S0-R2-UX", "", "", DS-3035, DS-3019, DS-3040, DS-3042, DS-7010, ""] status: adopted proof: conversation-artifacts-library--eighteen-as-writer - id: DS-5004 name: Artifact row menu owner: apps/chat component: "apps/chat/src/components/artifacts/artifactModel.ts#rowMenuItems" stories: conversation-artifacts-library statement: >- The `⋯` of an artifact row (DS-3005 menu): Open · Open source chat · Publish · Add to dashboard · Rename · Archive… · Restore in sections, each item present only when the rights and the origin allow it — a reader sees Open and Open source chat; an owner of an archived chart sees Restore; a published document the person did not write offers no Rename. Nothing is disabled: an item that cannot run is not there. states: [own_draft_writer, published_writer, published_owner, archived_owner, notebook_writer, reader] a11y: "`role=menu` named after the row's title; items are `menuitem` buttons; ↑ ↓ move, Esc closes and returns focus to the `⋯`" copy: ["artifacts.row.*"] source: [" S0-R2-UX", "", DS-3005, ""] status: adopted proof: conversation-artifacts-library--row-menus - id: DS-5005 name: New artifact dialog owner: apps/chat component: "apps/chat/src/components/artifacts/NewArtifactDialog.tsx#NewArtifactDialog" stories: conversation-artifacts-library statement: >- *New artifact* is the Flow door: the intent composer with *Ask NEXUS*, beneath it *Start with an empty document* and *Start with an empty table*. One dialog (DS-7015 floating surface), one primary; an empty start names the new artifact *Untitled document 1* / *Untitled table 1*. states: [open, asking, empty_document, empty_table] a11y: "a named `dialog`; focus lands in the composer; Esc cancels and returns focus to *New artifact*" copy: ["artifacts.new", "artifacts.new.ask", "artifacts.new.untitledDocument", "artifacts.new.untitledTable"] source: [" S0-R2-UX", "", "", DS-7015, ""] status: adopted proof: conversation-artifacts-library--new-artifact - id: DS-5006 name: Publish artifact dialog owner: apps/chat component: "apps/chat/src/components/artifacts/PublishArtifactDialog.tsx#PublishArtifactDialog" stories: conversation-artifacts-library statement: >- Publish to the Project (DS-7004 confirmation): the artifact's name in the title, one sentence on who will see it, and the KNOWLEDGE line read as the person — *captured* · *capture is off* · *NexGraph cannot be read* · *checking…* — never a mechanism word. The verb is on the primary. states: [knowledge_on, knowledge_off, graph_unavailable, checking] a11y: "a named `alertdialog`; the knowledge line is `role=status`; Publish is the primary, Cancel first in Tab order" copy: ["artifacts.row.publish", "artifact.publish.knowledge.*", "artifact.publish.recorded"] source: [" S0-R2-UX", "", DS-7004, ""] status: adopted proof: conversation-artifacts-library--publish-knowledge-captured - id: DS-5007 name: Archive artifact dialog owner: apps/chat component: "apps/chat/src/components/artifacts/ArchiveArtifactDialog.tsx#ArchiveArtifactDialog" stories: conversation-artifacts-library statement: >- Archive… (DS-7004 confirmation): the name in the title, two sentences (what happens · what does not), the *Used by* line naming the dashboards and tasks that hold it — or that the owning app could not be asked — and the verb on the primary. Reversible: the archived row offers Restore. states: [default, used_by_unavailable] a11y: "a named `alertdialog`; *Used by* is a list; Archive is the primary, Cancel first in Tab order" copy: ["artifacts.row.archive", "artifact.archive.*", "artifact.archived.toast"] source: [" S0-R2-UX", "", DS-7004, ""] status: adopted proof: conversation-artifacts-library--archive-dialog - id: DS-5008 name: Project artifacts door owner: apps/chat component: "apps/chat/src/components/artifacts/ProjectArtifactsDoors.tsx#ProjectMenuScene" stories: conversation-artifacts-library statement: >- The Project's door to its artifacts, with no tab of its own: the Project name menu (● ‹name› ▾) carries *View artifacts · ‹n›* after *Project details*; the details line repeats the count with the same door. states: [menu, details_line] a11y: "a `menu` opened from the Project name button; the count is text, not a badge alone" copy: ["artifacts.title", "artifacts.by"] source: [" S0-R2-UX", "", DS-3005, ""] status: adopted proof: conversation-artifacts-library--project-doors # ---------------------------------------------------------------- supply-chain quoting - id: DS-5009 name: Quote document view owner: apps/chat component: "apps/chat/src/components/quote/QuoteArtifactView.tsx#QuoteArtifactView" stories: conversation-quoting statement: >- A quoting document in the Canvas: the Request as five blocks A–E, every fact with its source; the Draft as lines that name their kind (reported · calculated · tariff · observed · TBC) and their basis in words; the reply beside its Ukrainian original with the same TBC marks. Its states are the Canvas's: empty · loading · a document that could not be read (named) · not found (the Project's 404, byte for byte the same for another legal entity's request) · offline (the last saved version with a banner). Margin, markup and the sale price are part of no view. states: [populated, empty, loading, error, not_found, offline] a11y: "an `article` named after the document; embedded tables are real tables with headers; the offline banner is `role=status`" copy: ["quote.empty.*", "quote.turn.*.title", "quote.reply.title", "quote.handoff.title"] source: [" 08", "OS-2401…2406", "", "", ""] status: adopted proof: conversation-quoting--request-empty - id: DS-5010 name: Quoting scenes owner: apps/chat component: "apps/chat/src/components/quote/QuoteCatalogue.tsx#DraftApproval" stories: conversation-quoting statement: >- The six quoting conversations as compositions of DS-5001 (the Flow executor) and DS-5009: a one-line request (working 3 of 5 · the receipt and the Request); a packing list (facts from cells, one conflict kept, an unreadable photo named); the draft (the approval card with the document beneath its question — *Change a line* → a reason → *Approve*); the gate (stopped · who decides · which documents · under which edition; a person clears with a reason); the reply and its options (a language `tablist`; *Reply is right* → *Reply ready*); the formula sheet in the agent's instructions (change a line · run the golden cases · publish only when all pass); the hand-off (a draft in the known order of steps and a task for the operator — nothing is written). states: [intake, packing_list, draft, gate, reply, sheet, handoff] a11y: "every decision is a button on the card; the language switch is a `tablist` with roving tabindex; the golden-case receipt is `role=status` with pass/fail as text, not colour" copy: ["quote.turn.*", "quote.gate.*", "quote.reply.*", "quote.sheet.*", "quote.notes.*"] source: [" 08", "OS-2401…2406", "", DS-5001, DS-5009, ""] status: adopted proof: conversation-quoting--the-draft
+rows:
+  # ---------------------------------------------------------------- the one turn card
+  - id: DS-5001
+    name: Turn card
+    owner: apps/chat
+    component: "apps/chat/src/components/thread/TurnCard.tsx#TurnCard"
+    stories: conversation-turn-card
+    statement: >-
+      One component renders every executor — agent · knowledge · data · search · research · Flow · resolver · goal —
+      from one contract. The header line is *‹title› · ‹who/what› · ‹elapsed or when›*, the title an
+      executor's label and never an id. A plain answer is prose in the thread with no frame; work
+      longer than the threshold shows **one** folded progress line that unfolds into the staged view (
+      ) and becomes the receipt with the result beneath it; a turn has at most one progress
+      indicator. The eight states are closed, one copy class and one visual each; an unknown state renders
+      `failed`, never blank. `waiting_on_you` carries the decision inline in the same idiom for every
+      executor. Typography and borders only; no second colour.
+      S8: the card has a `lead` slot — what it already holds about the ask, rendered first in every
+      state, before the progress line and any wait; the goal fills it with its Situation strip (DS-5002), no other
+      executor uses it yet.
+    states: [asked, working, waiting_on_you, waiting_on_other, done, stopped, failed, nothing_found]
+    a11y: "one polite live region per thread announces a state change once; the progress line is `role=progressbar` with `aria-valuetext` = the copy (—: it has no accessible name yet, (c)); every inline decision is reachable by Tab from the composer and runs on Enter; Esc does nothing destructive"
+    copy: ["turn.state.*", "turn.ask.*", "turn.decide", "turn.in_progress", "turn.created_so_far", "turn.want_details", "turn.superseded"]
+    source: [" ", "", "…2006", "",, ""]
+    status: adopted
+    proof: conversation-turn-card--done
+
+  - id: DS-5002
+    name: Goal card
+    owner: apps/chat
+    component: "apps/chat/src/components/thread/GoalCard.tsx#GoalCard"
+    stories: conversation-goal-card
+    statement: >-
+      The goal is the eighth executor on the same turn card with the goal's parts in its slots:
+      the plan with Accept · Change · Not now, the latest result as the body with earlier results folded beneath,
+      the coverage line at completion, and the doors (view the plan · stop · pause · resume · open). The turn that
+      opened the goal ends `done` while the goal continues; every later moment updates the same card — never a
+      second card. The edges have no card of their own: a goal in another Project is not found exactly like any
+      other not-found; an archived thread's card is read-only; a question to the running goal is prose in the thread.
+      S8 adds two slots, no new card: the **Situation strip** above the plan — what NEXUS
+      already holds about the subjects of the ask (NexSales · Vibeban · NexCare · artifacts · sources · the people on
+      those records), each line a source word, the record's label and a door; one honest line naming the party when
+      nothing was found; *not checked* for a source that did not answer; a record the person may not read is not a
+      line and not a count — and the **Next line** at the proposal and at completion: 1–3 doors drawn only from found
+      records, installed capabilities or the creation doors (*Create the account in NexSales* · *Add this request to
+      Vibeban*), the colleague suggestion as a sentence then *Ask ⟨name⟩*, and the one question *What would you like
+      me to do next?*. The same Next line (`NextLine`, bound by `NextLineTurn`) is drawn under a plain General or
+      Knowledge answer that named a party (, (a)) — from the server's `turn_view.next` · `person`
+      never from the answer's words; *Ask ⟨name⟩* and *Add this request to Vibeban* create the one Vibeban item as
+      the person and the receipt names it (*Asked Dana — the item is in Vibeban.* · *Open the item*). A drafted
+      artefact's approval ask shows its security table (reads · writes · reaches) and the approval-required line
+      when it reaches out.
+    states: [asked, working, waiting_on_you, waiting_on_other, done, stopped, failed, nothing_found]
+    a11y: "as DS-5001; the plan's steps are a list, the decisions are buttons in Tab order; earlier results fold under a disclosure button with `aria-expanded`; the Situation strip is a list whose doors are links in Tab order; the Next line is one `nav` landmark labelled *Next*; the security table is a definition list"
+    copy: ["goal.*", "turn.state.*", "turn.ask.*", "turn.next.*"]
+    source: [" ", "", "…", "", DS-5001, "", "", "", "", "", "…"]
+    status: adopted
+    proof: conversation-goal-card--the-journey
+
+  # ---------------------------------------------------------------- the Artifacts Library
+  - id: DS-5003
+    name: Artifacts library
+    owner: apps/chat
+    component: "apps/chat/src/components/artifacts/ArtifactsLibrary.tsx#ArtifactsLibrary"
+    stories: conversation-artifacts-library
+    statement: >-
+      A Project's artifacts as the builders' rows grouped by day (DS-3035 rows, DS-3019 toolbar, DS-7010): title · type ·
+      origin · status pill · by whom · when. The controls row (search · type · by) appears from twelve rows, pages of
+      fifty with *Show more*; a reader sees published rows only, no *New artifact*, no pills. The empty Project is the
+      chat EmptyState with the one *New artifact* button for a writer and a sentence for a reader; loading · error ·
+      offline are the kit's state views (DS-3040 · DS-3042), an empty search offers the knowledge search. Each row's `⋯` holds
+      what the person's rights and the artifact's origin allow — absent, never disabled.
+    states: [populated, few, many, reader, empty_writer, empty_reader, loading, error, offline, empty_search]
+    a11y: "a `table` with a caption per day group; the row menu is a named `menu` opened from a labelled `⋯` button; *Show more* is a button that announces the new count"
+    copy: ["artifacts.*", "artifact.status.*", "artifact.row.*"]
+    source: [" S0-R2-UX", "", "", DS-3035, DS-3019, DS-3040, DS-3042, DS-7010, ""]
+    status: adopted
+    proof: conversation-artifacts-library--eighteen-as-writer
+
+  - id: DS-5004
+    name: Artifact row menu
+    owner: apps/chat
+    component: "apps/chat/src/components/artifacts/artifactModel.ts#rowMenuItems"
+    stories: conversation-artifacts-library
+    statement: >-
+      The `⋯` of an artifact row (DS-3005 menu): Open · Open source chat · Publish · Add to dashboard · Rename ·
+      Archive… · Restore in sections, each item present only when the rights and the origin allow it — a reader sees
+      Open and Open source chat; an owner of an archived chart sees Restore; a published document the person did not
+      write offers no Rename. Nothing is disabled: an item that cannot run is not there.
+    states: [own_draft_writer, published_writer, published_owner, archived_owner, notebook_writer, reader]
+    a11y: "`role=menu` named after the row's title; items are `menuitem` buttons; ↑ ↓ move, Esc closes and returns focus to the `⋯`"
+    copy: ["artifacts.row.*"]
+    source: [" S0-R2-UX", "", DS-3005, ""]
+    status: adopted
+    proof: conversation-artifacts-library--row-menus
+
+  - id: DS-5005
+    name: New artifact dialog
+    owner: apps/chat
+    component: "apps/chat/src/components/artifacts/NewArtifactDialog.tsx#NewArtifactDialog"
+    stories: conversation-artifacts-library
+    statement: >-
+      *New artifact* is the Flow door: the intent composer with *Ask NEXUS*, beneath it *Start with an empty
+      document* and *Start with an empty table*. One dialog (DS-7015 floating surface), one primary; an empty start names the new
+      artifact *Untitled document 1* / *Untitled table 1*.
+    states: [open, asking, empty_document, empty_table]
+    a11y: "a named `dialog`; focus lands in the composer; Esc cancels and returns focus to *New artifact*"
+    copy: ["artifacts.new", "artifacts.new.ask", "artifacts.new.untitledDocument", "artifacts.new.untitledTable"]
+    source: [" S0-R2-UX", "", "", DS-7015, ""]
+    status: adopted
+    proof: conversation-artifacts-library--new-artifact
+
+  - id: DS-5006
+    name: Publish artifact dialog
+    owner: apps/chat
+    component: "apps/chat/src/components/artifacts/PublishArtifactDialog.tsx#PublishArtifactDialog"
+    stories: conversation-artifacts-library
+    statement: >-
+      Publish to the Project (DS-7004 confirmation): the artifact's name in the title, one sentence on who will see
+      it, and the KNOWLEDGE line read as the person — *captured* · *capture is off* · *NexGraph cannot be read* ·
+      *checking…* — never a mechanism word. The verb is on the primary.
+    states: [knowledge_on, knowledge_off, graph_unavailable, checking]
+    a11y: "a named `alertdialog`; the knowledge line is `role=status`; Publish is the primary, Cancel first in Tab order"
+    copy: ["artifacts.row.publish", "artifact.publish.knowledge.*", "artifact.publish.recorded"]
+    source: [" S0-R2-UX", "", DS-7004, ""]
+    status: adopted
+    proof: conversation-artifacts-library--publish-knowledge-captured
+
+  - id: DS-5007
+    name: Archive artifact dialog
+    owner: apps/chat
+    component: "apps/chat/src/components/artifacts/ArchiveArtifactDialog.tsx#ArchiveArtifactDialog"
+    stories: conversation-artifacts-library
+    statement: >-
+      Archive… (DS-7004 confirmation): the name in the title, two sentences (what happens · what does not), the
+      *Used by* line naming the dashboards and tasks that hold it — or that the owning app could not be asked — and
+      the verb on the primary. Reversible: the archived row offers Restore.
+    states: [default, used_by_unavailable]
+    a11y: "a named `alertdialog`; *Used by* is a list; Archive is the primary, Cancel first in Tab order"
+    copy: ["artifacts.row.archive", "artifact.archive.*", "artifact.archived.toast"]
+    source: [" S0-R2-UX", "", DS-7004, ""]
+    status: adopted
+    proof: conversation-artifacts-library--archive-dialog
+
+  - id: DS-5008
+    name: Project artifacts door
+    owner: apps/chat
+    component: "apps/chat/src/components/artifacts/ProjectArtifactsDoors.tsx#ProjectMenuScene"
+    stories: conversation-artifacts-library
+    statement: >-
+      The Project's door to its artifacts, with no tab of its own: the Project name menu (● ‹name› ▾) carries *View
+      artifacts · ‹n›* after *Project details*; the details line repeats the count with the same door.
+    states: [menu, details_line]
+    a11y: "a `menu` opened from the Project name button; the count is text, not a badge alone"
+    copy: ["artifacts.title", "artifacts.by"]
+    source: [" S0-R2-UX", "", DS-3005, ""]
+    status: adopted
+    proof: conversation-artifacts-library--project-doors
+
+  # ---------------------------------------------------------------- supply-chain quoting
+  - id: DS-5009
+    name: Quote document view
+    owner: apps/chat
+    component: "apps/chat/src/components/quote/QuoteArtifactView.tsx#QuoteArtifactView"
+    stories: conversation-quoting
+    statement: >-
+      A quoting document in the Canvas: the Request as five blocks A–E, every fact with
+      its source; the Draft as lines that name their kind (reported · calculated · tariff · observed · TBC) and their
+      basis in words; the reply beside its Ukrainian original with the same TBC marks. Its states are the Canvas's:
+      empty · loading · a document that could not be read (named) · not found (the Project's 404, byte for byte the
+      same for another legal entity's request) · offline (the last saved version with a banner). Margin, markup and
+      the sale price are part of no view.
+    states: [populated, empty, loading, error, not_found, offline]
+    a11y: "an `article` named after the document; embedded tables are real tables with headers; the offline banner is `role=status`"
+    copy: ["quote.empty.*", "quote.turn.*.title", "quote.reply.title", "quote.handoff.title"]
+    source: [" 08", "OS-2401…2406", "", "", ""]
+    status: adopted
+    proof: conversation-quoting--request-empty
+
+  - id: DS-5010
+    name: Quoting scenes
+    owner: apps/chat
+    component: "apps/chat/src/components/quote/QuoteCatalogue.tsx#DraftApproval"
+    stories: conversation-quoting
+    statement: >-
+      The six quoting conversations as compositions of DS-5001 (the Flow executor) and DS-5009: a one-line request
+      (working 3 of 5 · the receipt and the Request); a packing list (facts from cells, one conflict kept, an
+      unreadable photo named); the draft (the approval card with the document beneath its question — *Change a
+      line* → a reason → *Approve*); the gate (stopped · who decides · which documents · under which edition; a
+      person clears with a reason); the reply and its options (a language `tablist`; *Reply is right* → *Reply
+      ready*); the formula sheet in the agent's instructions (change a line · run the golden cases · publish only when
+      all pass); the hand-off (a draft in the known order of steps and a task for the operator — nothing is written).
+    states: [intake, packing_list, draft, gate, reply, sheet, handoff]
+    a11y: "every decision is a button on the card; the language switch is a `tablist` with roving tabindex; the golden-case receipt is `role=status` with pass/fail as text, not colour"
+    copy: ["quote.turn.*", "quote.gate.*", "quote.reply.*", "quote.sheet.*", "quote.notes.*"]
+    source: [" 08", "OS-2401…2406", "", DS-5001, DS-5009, ""]
+    status: adopted
+    proof: conversation-quoting--the-draft
+
+  # S0 — proposed 2026-10-17; the owner adopts the row with APPROVED + APPROVED
+  - id: DS-5013
+    name: Channel rendering
+    owner: apps/chat
+    component: "apps/chat/src/components/channels/TelegramPreview.tsx#TelegramPreview"
+    stories: conversation-channel-rendering
+    statement: >-
+      The projection of the one card into a messenger: what the renderer makes
+      of every register card state when the executor face is a Telegram private chat — the answer (the web's text,
+      the receipt's source count, `[n]` kept, *Open in Nexi* under every card) · *typing* then one progress message
+      edited in place · the long answer as its gist and the door · a table or figures as one line and the door · the
+      stages of a goal or a Flow ticking in one edited message with Pause · Stop · Resume exactly when the web's card
+      has them · the next line as ≤ 3 buttons · an artifact as its title line · approvals as Approve · Reject · Open
+      with a second tap, or the door only above the inline level · the connect ask · the route confirm · the not-found
+      line with no door · the generic line for a state the table lacks, never silence · the voice read-back, the
+      spoken gist as a voice bubble, the audio-file fallback · the file lines · the queue, rate and unavailable lines
+      · the stranger's offer · the link, the cues, the picker, the proactive lines, disconnect, revoked. Rendered
+      through `TelegramPreview` — the workshop's monochrome mock of a chat (no Telegram asset, tokens only) so the
+      goldens can be seen and reviewed, en and uk. Every line is a `channel.telegram.*` key; the honesty rows hold on
+      this face: no mechanism in copy · not-found sameness · nothing invented · uk = en.
+    states: [answer, working, gist, table, figures, stages, paused, next-line, artifact, approval-inline, approval-second-tap, approval-done, approval-already, approval-web-only, approval-expired, connect-ask, connect-waiting, connect-done, connect-declined, route-confirm, nothing-found, failed, generic, voice, voice-audio-file, voice-too-long, file-attached, file-refused, queued, stranger, link-confirm, link-done, cues, project-pick, notify, disconnect, revoked, unavailable]
+    a11y: "the preview is a `section` named after the scene; messages are an ordered list; a keyboard is a `group` of real buttons whose label is the accessible name; a voice bubble carries its length as the name; the typing line is `role=status`"
+    copy: ["channel.telegram.*", "channel.preview.*"]
+    source: [" 08", "", "", "", "", "", "", "", ""]
+    status: adopted
+
+  # S2 «Request access as a conversation» — the row approved at UAT-1 S2 (owner
+  # 2026-10-19 22:35), the component with `APPROVED UAT-2 (EPIC-040 S2)` (owner 2026-10-20 14:24).
+  - id: DS-5014
+    name: Fade-out receipt
+    owner: packages/ui
+    component: "packages/ui/src/ask/FadeOutReceipt.tsx#FadeOutReceipt"
+    stories: conversation-fade-out-receipt
+    statement: >-
+      After a terminal act — *Send* on a scripted dialogue — the thread fades over the fold's length
+      (`--nexus-receipt-fold`, DS-1040) and what remains is one line, the receipt (*Your data is saved — thank you*),
+      with *what happens next* under it; S1's saved page in place, no navigation. States `folding` → `folded`
+      held open while the closing clip is being read so the wave runs for it; reduced motion
+      folds at once. The thread leaves the tree when folded — nothing stale remains. Used by DS-5015 when the script
+      carries `lines.done`; 's intake hands over to DS-7017 instead.
+    states: [folding, folded, reduced_motion]
+    a11y: "the receipt line is a polite `status` announced once; the thread keeps its `log` role while it fades and is removed, not hidden, when folded; `prefers-reduced-motion` skips the fade"
+    copy: ["the script's `lines.done` · `lines.next` (pack content, en = uk)"]
+    source: [" S2 ", "", "", "S2-INTAKE-UX–", DS-1040, DS-5015]
+    status: adopted
+    proof: conversation-fade-out-receipt--folded
+
+  # «Onboarding is the conversation» — proposed 2026-10-20 at UAT-2; adopted with
+  # `APPROVED UAT-2` (owner, 11:57). Reused by S2 `request-access.json`: `interpret`
+  #, `rate_limited` without *Try again*, `lines.done`
+  # → DS-5014 (`APPROVED UAT-2 (EPIC-040 S2)`, 2026-10-20 14:24).
+  - id: DS-5015
+    name: Scripted dialogue
+    owner: packages/ui
+    component: "packages/ui/src/ask/ScriptedDialogue.tsx#ScriptedDialogue"
+    stories: conversation-scripted-dialogue
+    statement: >-
+      A conversation whose every line is closed content a human reviewed — a script of steps (text · chips · confirm)
+      with validations and retry lines, en = uk, in the `nexus-scripted-dialogue-v1` format shipped as pack content
+      (`packs/nexus-base/intake/*.json`) — rendered with the kit's thread and composer (DS-2008 line composer, the
+      Ask turns): Nexi asks one question at a time; the person answers in the composer or taps a chip; a refused
+      answer gets the step's retry line and the same question (never a form error, never a red field); the
+      confirmation turn repeats what was said with *Create* · *Change*; *Change* offers the answered questions as
+      chips and returns to the confirmation after the one answer; the host's `onSubmit` is the page's one write — a
+      field the server refused (`422 code`) re-asks that step with its retry line; offline and other errors are one
+      honest line and *Try again*, nothing created. No model reads an answer; the hook
+      (`useScriptedDialogue`, a pure reducer) owns the state and never a fetch. Δ3: rendered in the one
+      conversation frame (DS-5018 — the header says the intent, the turns are NexChat's own, the composer at the
+      bottom); the speaker toggle and the browser's `speechSynthesis` are gone (a voice is the host's clip,; the
+      intake has none).
+    states: [asking, answered, refused, confirming, changing, submitting, server_refused, offline, failed, in_the_frame, handed_over, typed_into_chip, typed_unreadable, rate_limited, receipt]
+    a11y: "the dialogue is a `section` named by the host; the thread is one `log`; one polite live region announces Nexi's newest line once; chips are real buttons in a `group` named by the question, in Tab order; the composer is the kit's (`role=search`, Enter sends, Shift+Enter a newline); the speaker is a toggle button with `aria-pressed`, disabled with a reason when the language has no voice; a refused answer is announced through the live region"
+    copy: ["dialogue.placeholder", "the script's own lines (pack content, en = uk)"]
+    source: [" C-K-1", "", "", "SC-0495…0496", " S2 ", "", "", DS-2008, DS-7017]
+    status: adopted
+    proof: conversation-scripted-dialogue--confirming
+
+  # Δ3 (; owner 2026-10-22 10:58 — «the first message must be from Nexi like a message in chat … /request has
+  # the old design, it must work the same approach — the UI must be maximum reusable, it is just a different intent»)
+  - id: DS-5018
+    name: Conversation frame
+    owner: packages/ui
+    component: "packages/ui/src/ask/ConversationFrame.tsx#ConversationFrame"
+    stories: conversation-conversation-frame
+    statement: >-
+      The one shape of every Nexi dialogue outside an organization — the lobby (`/welcome`, DS-5016) and the request
+      intake (`/request`, DS-5015) are the same surface with a different intent. Four things and nothing else: the
+      header (the Nexi wordmark, DS-1061, and one line of context the host writes — *Acme Logistics · Invitation* ·
+      *Start with Nexi* · *Request access*; the state word is the page's `h1`, never drawn), the thread growing from
+      the top exactly as NexChat draws it — Nexi's lines as NexChat's assistant message (`NexiTurn` =
+      `.nexus-message-assistant`: prose, no name, no mark), the person's as NexChat's bubble (`PersonTurn` =
+      `.nexus-message-user`, right-hand, with the quiet *Spoken* mark when dictated,), the same 28px rhythm
+      the foot (the kit's line composer, DS-2008, pinned at the bottom, and whatever the dialogue puts
+      beside it: a receipt, a wave while a voice is in the room), and one polite live region. The host's `main` is
+      `.nexus-convo-page` — the viewport: the header stays, the composer stays, the thread scrolls between them. Without
+      a context the header is absent (a dialogue inside a page of the shell — Prepare an organization). No word above
+      the thread, no toggle, no link, no decoration. Presentational: the dialogue owns the turns; the host owns the page.
+      ** (b)** (owner 2026-10-24 20:11): the frame scrolls as NexChat's thread does (DS-5003) — the frame spans
+      the viewport and the thread is the **one scrolling box**, so its scrollbar sits at the viewport's edge, never
+      beside the words; the header, the composer and the words keep the reading column (`--nexus-composer-max-width`)
+      centred by their own margins; the thread's tail passes *behind* the composer's band (the mask
+      `--nexus-convo-tail-mask`, a 72px band, `--nexus-convo-tail-band`) with the band's room beneath the last line,
+      and a new turn scrolls the thread to its very end — nothing cramped against the composer, no inner scrollbar.
+      The finish scene of DS-5016 takes the thread's place in the frame.
+    states: [direct_visit, invitation, request_access, longer, turn_not_sent, inside_the_shell]
+    a11y: "a `section` named by the host; the header holds the wordmark (`role=img` *Nexi*) and the context line; the title is a visually hidden `h1` announced once on change; the thread is one `log` with no control in it, Nexi's and the person's turns distinguished as in NexChat (a reader hears the bubble's text as the person's own words sent, Nexi's as the answer); one polite live region; the composer is the kit's"
+    copy: ["the host's context line (lobby.context.* · core.request.intake.title)", "the dialogue's lines"]
+    source: [" Δ3", "", "", "", "", DS-1061, DS-2008, DS-5003, DS-5015, DS-5016]
+    status: adopted
+    proof: conversation-conversation-frame--interaction
+
+  # «Nexi in the lobby» — proposed 2026-10-21 at UAT-1; awaits the design-system
+  # owner's word with `APPROVED UAT-1`.
+  - id: DS-5016
+    name: Lobby thread
+    owner: packages/ui
+    component: "packages/ui/src/ask/LobbyThread.tsx#LobbyThread"
+    stories: conversation-lobby-thread
+    statement: >-
+      The one surface a signed-in person with no organization meets: a title that follows the conversation's state
+      the wave + speaker (DS-5013), the thread of Nexi's
+      lines and the person's lines (a dictated one marked), the kit's composer (DS-2008) with its mic, and one
+      permanent text door (*I have a code*). Δ1: **no chip, no button** — every answer
+      the approval included, is typed or spoken into the one composer; the final step is Nexi's read-back of
+      everything she will do and the person's *all good*, the composer named *Answer Nexi* while it waits
+      after the commit the screen becomes **voice mode** — the thread folds, the wave is the screen, Nexi speaks the
+      receipt and the same words are written beneath it, with the link to the request under `by_request` (
+      ); in the open contour the hand-over to the welcome thread follows (DS-7017). The voice is the host's
+      clip from chat-api's `voice-*` door — never the browser's
+      `speechSynthesis`; the kit draws the speaker toggle and the wave. Nexi opens with the most specific truth the
+      engine read; a knowledge answer is a turn with its
+      provenance word; validation is a line Nexi says, never a red field; the tool's working line and the
+      wave while it runs. Presentational: the host owns every turn and the clip; nothing here fetches, decides or
+      interprets; the model's prose arrives as text. Δ2 (owner's brief 2026-10-22, — «Contextual
+      conversational activation»): **four things and nothing else** — the header (the Nexi wordmark and one line of
+      context the host writes from the opening: *Acme Logistics · Invitation* · *Start with Nexi* · *Panama · New
+      organization*), the thread growing from the bottom (the person's words on screen the moment they are sent; `*a
+      word*` drawn as emphasis, never a control; the one progress is the line *Nexi is writing…* beside the suite's
+      trace — the accent dot travelling its line, the same identic as NexChat's turn (DS-5001; owner 2026-10-23 —
+      pink tried and returned to the accent, 19:49)), the kit's one-line
+      composer pinned at the bottom, and the wave **only while a voice is in the room** (Nexi speaking · voice mode).
+      Gone: the drawn title (the state word stays for assistive technology), the speaker toggle, the code door, the
+      request link, the decorative wave. A turn that did not go through keeps the words in the composer and says so in
+      one line (`note`); sending again is the retry. Δ3: drawn in the conversation frame (DS-5018) — the thread
+      grows from the top in NexChat's own turns: Nexi's as prose, the person's as the bubble. **The door**
+      the same surface for a stranger at `/request` on the lobby engine in visitor
+      mode — the header *Request access* → the organization's name once said, the engine's closed opening, a knowledge
+      answer with its provenance word, the eight facts of the request in any order and one read-back, the closing line
+      after *all good* (the composer folds; the landing follows), and the closed script as the fallback with one honest
+      line. Written only: no voice, no wave, no form, never a 429. **** (owner 2026-10-23 21:42, a–h): a line of
+      Nexi's is drawn as its **paragraphs** (the answer · the engine's provenance line · the resumed ask) — the
+      provenance is the engine's one line in the text, the caption beneath is gone (e · f); the walk is **driven** by
+      the engine's lines (h): *Now — back to your request.* after a detour, *We have 5 of 8 — … to go.* after two empty
+      turns, *That's everything I need.* before the read-back; `handed_over` is the receipt and **one line** — *Opening
+      your chat…* — and the host moves on (Δ5 d · h6: a new owner → NexChat's `/chat/welcome`, where Nexi's first
+      message opens; a request → the landing); no thread on the page, no Overview, no link. ** (a)** (owner
+      2026-10-24 20:11 — «the finish is a voice that fills the screen»): both ways, the door and the lobby, the finish
+      is one **scene** — after the commit the thread folds away and the page is the wave (`VoiceWaves` the height of
+      the frame between the header and the words, its grain following the canvas), Nexi speaks the finish line (the
+      door's: the thanks, the team has it, the confirmation to {email}, the invitation by mail once the team has read
+      it — `receipt.door`; the lobby's: its receipt) and the same sentences stand beneath, centred (`--nexus-text-2xl`);
+      `handed_over` is the same scene with the wave **quiet** (muted ink) and the host's one line under the words
+      (*Opening your chat…* · *Back to nexiflow.ai in a moment*); no composer, no thread, no link. The visitor's door
+      may ask for this one clip of its own thread; without a clip the scene is written only
+      never a fake voice. The wave while a voice is in the room during the walk (the lobby's 36px band under the
+      composer) is unchanged.
+    states: [reading, idle, thinking, working, voice, voice_fetching, voice_by_request, handed_over, handed_over_late, fallback, offline, capped, invited, invited_twice, prepared, new_organization, read_back, by_request, by_request_read_back, knowledge_answer, knowledge_not_found, name_taken, stale, tool_failed, not_now, join_by_handle, join_unknown_handle, speaking, turn_not_sent, door_opening, door_knowledge_answer, door_progress, door_facts_in_any_order, door_read_back, door_sending, door_finish, door_closing, door_fallback, knowledge_paragraphs]
+    a11y: "a `section` named by the host; the header holds the wordmark (`role=img` *Nexi*) and the context line; the state word is the page's `h1`, visually hidden, its change announced once (`aria-live=polite`); the thread is one `log` with no button and no link in it; the composer is the kit's and its accessible name follows the state (*Answer Nexi* while a read-back waits · *Ask Nexi* otherwise); one polite live region announces Nexi's newest line, *Nexi is writing…*, the sentence being spoken, the working line, the fallback, the cap, the note and the receipt once; the wave exists only while a voice is in the room and is named *Nexi is speaking* while the clip plays; in the finish scene the wave is decorative (`aria-hidden`) unless a clip plays, the finish line is text beneath it, and the hand-over line is a polite status; the folded thread is a `details`; reduced motion stills the wave"
+    copy: ["lobby.title", "lobby.context.start", "lobby.context.invitation", "lobby.context.invitations", "lobby.context.prepared", "lobby.context.request", "lobby.context.proposal", "lobby.placeholder", "lobby.placeholder.answer", "lobby.composer.answer", "lobby.composer.ask", "lobby.thinking", "lobby.unavailable", "lobby.fallback", "lobby.capped", "lobby.voice.speaking", "lobby.folded", "lobby.handover.opening", "the engine's closed lines and the model's prose"]
+    source: [" ", "–", "–", "", "", "SC-0500…0508", " S4", "–", "", "", "SC-0509…0512", "", "SC-0513", DS-1061, DS-2008, DS-5013, DS-5018, DS-7017]
+    status: adopted
+    proof: conversation-lobby-thread--read-back
+
+  # S0 (UAT-1 — proposed 2026-10-26 after `APPROVED 045-UAT-0`): two conversation components that point at
+  # CR-ids through and; they change only through a Conversation Change Request (rule 35).
+  - id: DS-5019
+    name: Automation card
+    owner: apps/chat
+    component: "apps/chat/src/components/thread/AutomationCard.tsx#AutomationCard"
+    stories: conversation-automation-card
+    statement: >-
+      The one card an ask with `automation_intent` gets, for every role: *Set up an automation?* with four
+      lines — what it will do · *When* (the schedule read back in words, with the zone) · *Using* (the connection or
+      data, named, with its state) · *Tells* (the asker, in the bell and this chat — (a); *everyone in ⟨Project⟩*
+      as an option) — and *Review setup · Not now*. *Review setup* is a disclosure: the schedule as a `Select` (daily ·
+      weekdays · weekly · custom under *Technical*), the time, the recipients, then *Not now · Confirm* (*Confirm and
+      enable* for a builder). Then the card **is the summary** — its face a `role=status` chip line: *Draft — enable in
+      Configure* · *Awaiting a builder* · *Enabled · next run ⟨when⟩* · *Paused* / *Paused — archived by ⟨name⟩* · *Needs
+      changes — "⟨note⟩"* — with each run's receipt beneath (*07:02 · 3 changes · View*). Honesty: an unexpressible
+      schedule asks for a time it can run and drafts nothing; a missing connection is named with its door and the face
+      stays *Draft*; a missing template is said; **nothing runs until a human enables it**. Actions by role
+      builders *Pause · Change · Open in Configure*; members *Change · Stop asking*. Offline: *Confirm* `aria-disabled`
+      with the reason.
+    states: [proposed, unexpressible, reviewing, draft, needs-connection, awaiting, enabled, with-receipts, paused, paused-archived, needs-changes, template-unavailable, offline]
+    a11y: "a `region` labelled by its title; *Review setup* carries `aria-expanded`; the schedule `Select` and the time field are labelled; the face is text in a chip (`role=status`), never colour alone; the receipts are a list; the card stacks at 200 %"
+    copy: ["automation.card.*", "automation.face.*", "automation.schedule.*", "automation.unexpressible"]
+    source: [" 08-UX_UAT", "…", "", "", "", "", "", "", "", ""]
+    status: adopted
+
+  - id: DS-5020
+    name: Briefing — since yesterday
+    owner: apps/chat
+    component: "apps/chat/src/components/thread/Briefing.tsx#Briefing"
+    stories: conversation-briefing
+    statement: >-
+      Under a new chat's hero composer, at most three honest lines (amends 's *nothing to click first*
+      (a)): a title (*Since yesterday* / *Since ⟨day⟩*) with a trailing *Briefing · on* ⚙; each line a
+      `ProviderMark` (a connected account) or the app's accent glyph (a NEXUS item) · one sentence ≤ 120 chars whose
+      entity is a link · one action — *Ask* (the sentence becomes this chat's first turn with the item's refs as
+      grounding; never a prefilled message) or *Open* (the bell's deep link) · a *Dismiss* ✕ on hover/focus. **The
+      section is absent when there is nothing** — no *nothing new* line. NEXUS lines are deterministic from the person's
+      inbox and work read models; connected-account lines (Gmail · Microsoft 365 · Atlassian · Dropbox) are read
+      just-in-time **as the person**, read-only, last 24 h, ≤ 20 items, cached 15 min, one model sentence each flagged
+      `llm_proposed`, **Personal chat only** and **on by default for every consented connection** — the ⚙ sheet
+      turns a connection off (*Show in briefing*) or the whole thing (*Turn off the briefing*). Loading draws the title
+      and three skeleton lines only after the composer is usable; a failed read is silent; offline shows cached lines
+      *as of ⟨time⟩*.
+    states: [personal, project, nexus-only, empty-absent, loading-after-composer, asked, dismissed, settings-sheet, offline]
+    a11y: "a `section` labelled by its title; each line's sentence is text with one link and one button; *Dismiss* is an `IconButton` with a name; the sheet is a `dialog` with `Switch`es; the skeleton is `aria-busy`; nothing here takes focus from the composer"
+    copy: ["chat.briefing.*"]
+    source: [" S0-UX-DRAFT", "…", "", "", "", "", ""]
+    status: adopted
+
+  # ---------------------------------------------------------------- S0 — the Support drawer
+  - id: DS-5021
+    name: Support drawer
+    owner: packages/ui
+    component: "packages/ui/src/support/SupportDrawer.tsx#SupportDrawer"
+    stories: conversation-support-drawer
+    statement: >-
+      The one place a signed-in person talks to NEXUS Platform Support from any screen (,
+      ): a right-rail drawer opened by the deterministic `+` row *Get NEXUS support* (every Ask surface, the
+      NexChat composer, the shell's user menu) or by the door card *Ask NEXUS support →* after a dead-end turn. It hosts
+      the provider installation's care widget frame (maxi) on the provider's origin — the suite shell passes **only**
+      the signed support context (organization · opaque person ref · role class · language · ceiling), the text the
+      person explicitly carried over, and `{app, label, kind}` of the screen; never the screen's data, the thread, a
+      file or a URL with query text. Two tabs — *Conversation* (the frame; a `ScriptedDialogue` stands in for it in
+      the workshop) · *My cases* (`SUP-n` · state · *expected reply by …* · the last public update). The drawer never
+      shows a balance (038's page owns it) and never a staff full name. A Visitor never sees the row. Offline keeps the
+      message and retries; a frame that cannot load says *Support is unavailable right now* with the Help & support
+      link; a suspended organization's running session keeps the drawer. No mechanism word (*frame · assertion · PDP ·
+      grant row*) in copy; uk = en.
+    states: [empty, composing, answered, handed-off, person-active, my-cases, my-cases-empty, denied-visitor, offline, frame-unavailable, no-credits, suspended, loading]
+    a11y: "a `complementary` landmark named *NEXUS support*; focus enters the first input on open and returns to the trigger on `Esc`/close; the tabs are a `tablist`; the frame has a `title` and a `lang` matching the suite's; *handed-off* and *person active* are `role=status` lines; keyboard-complete in en and uk"
+    copy: ["support.drawer.*", "support.cases.*", "support.door.*"]
+    source: [" 08-UX_UAT–", "", "", "", "", "", "", "", ""]
+    status: proposed
+
+  # ---------------------------------------------------------------- S6 — a Spin room on the kit
+  - id: DS-5022
+    name: Room line
+    owner: packages/ui
+    component: "packages/ui/src/ask/RoomThread.tsx#RoomLine"
+    stories: conversation-room-thread
+    statement: >-
+      One line of a room shared by many (S6, (a)): a face (one letter of the name, or the
+      person's picture the host already holds; the wordmark for Nexi), the name and the time on one line, the words
+      beneath as paragraphs in the reading column, the suite's rhythm. In a room nobody's words are a bubble — the
+      reader's own line is a line too (every line is somebody's to the others). A mention (`@Nexi`, a member) is a
+      quiet mark in the words, never a link. Under a line that has a thread: the chip — the faces, *n replies · last
+      reply when* — the host opens. **Nexi's line** (`NexiRoomLine`) is the same shape with the stages edits in
+      place: *Nexi is working…* with the trace (or the stage and its elapsed time), then the answer with its receipt
+      (*from n documents*) and the door *Open in Nexi*; the gist past the room's limit; the audience line (*Waiting on
+      Olena.*,) and the ceiling line as one sentence; in the channel it names whom it answers (*asked
+      by Olena*). The line to a person who is not connected carries the one button *Connect Nexi account*.
+      No card, no shadow, no colour but the brand's mark on Nexi's face. **S7:** a line that has no
+      thread yet carries a quiet door at the right of its name — *Reply in thread* — on hover or focus (always on
+      touch); a line that has a thread keeps its chip instead; a line on its way has neither.
+    states: [line, own-line, with-mentions, with-thread-chip, reply-door, pending, edited, nexi-working, nexi-working-stage, nexi-answer, nexi-gist, nexi-waiting, nexi-ceiling, nexi-connect, nexi-off]
+    a11y: "an `article` named *Message by ⟨name⟩, ⟨when⟩*; the face is decorative (`aria-hidden`, or an `img` with empty alt); the time is a `time`; the thread chip is a button that says its count; Nexi's working line carries the trace with no spinner; the door is a link with its own words; the mention mark is text"
+    copy: ["room.line.actions", "room.reply.one", "room.reply.many", "room.reply.last", "room.edited", "room.pending", "room.nexi.asked_by", "room.nexi.connect", "channel.spin.working", "channel.spin.answer.gist", "channel.spin.answer.open"]
+    source: [" -DESKTOP-ON-NEXCHAT", "", "", "", "", "", "", "", "", DS-5018, DS-2008, " — `APPROVED UAT-1 (EPIC-037 S6)` 2026-11-01"]
+    status: adopted
+    proof: conversation-room-thread--populated
+
+  - id: DS-5023
+    name: Room thread
+    owner: packages/ui
+    component: "packages/ui/src/ask/RoomThread.tsx#RoomThread"
+    stories: conversation-room-thread
+    statement: >-
+      The log and the composer of a Spin room on the kit: the one scrolling log of room lines
+      (DS-5022) with the day dividers and the *New* line, in the reading column as NexChat's thread scrolls
+      and the kit's line composer (DS-2008 `AskBar`: text · `+` when the host allows files
+      mic · ↑) pinned beneath, named *Message #room*. The `@` panel sits above the composer while the host has a
+      query — a listbox with Nexi first when she is in the room, then the members; typing narrows it, a click or
+      Enter puts the name in the draft. `mode="thread"` is the same log narrower: the root pinned first, the replies
+      beneath, the composer *Reply in thread*. The ladder (DS-7006): populated · empty (*No messages yet — say hello.*
+      and, when Nexi is a member, how to ask her) · loading (the trace and one line, no skeleton) · error (one
+      sentence and *Try again*, no composer) · not a member (one sentence, nothing of the room — not-found
+      sameness) · offline (the lines stay, the composer says so, nothing is sent — C-6). Presentational: the host (the
+      desktop over its Nostr transport) owns every line, the draft and every door; nothing here fetches, signs or
+      interprets; no decision is recorded here (rule 85 — chat-api's).
+    states: [populated, nexi-working, nexi-gist, nexi-unbound, pending, mention-panel, thread-panel, empty, empty-no-nexi, loading, error, not-member, offline]
+    a11y: "a `section` named by the room; the log is one `log` named by the room; the day and *New* lines are `separator`s with their label; the states are `status` (loading, offline) or `alert` (error); the mention panel is a `listbox` of `option`s the first selected, `Esc` closes it; the composer is the kit's (`role=search`, Enter sends, Shift+Enter a newline); uk = en"
+    copy: ["room.placeholder", "room.thread.placeholder", "room.thread.title", "room.empty", "room.empty.nexi", "room.loading", "room.error", "room.retry", "room.not_member", "room.offline", "room.unread", "room.mention.title", "room.mention.nexi", "room.mention.empty", "room.composer.label", "room.thread.composer.label"]
+    source: [" -DESKTOP-ON-NEXCHAT", "", "", "…", " (amendment at S6 UAT-2)", DS-5018, DS-5022, DS-2008, DS-7006, " — `APPROVED UAT-1 (EPIC-037 S6)` 2026-11-01"]
+    status: adopted
+    proof: conversation-room-thread--populated
+
+  - id: DS-5024
+    name: Capability card
+    owner: apps/chat
+    component: "apps/chat/src/components/thread/CapabilitySuggestionCard.tsx#CapabilitySuggestionCard"
+    stories: conversation-capability-card
+    statement: >-
+      The chat's answer when the Project has no tool for the ask (S4, — the `capability` arm,
+      answering with the *same* object the agent's *Add tool* door's Ask line reads: `capability-suggestion`, one
+      ranking of the Project's projection, one `capability_suggest` decision row; the door draws it inside DS-6901
+      `door--ask-answer`, the thread draws it as this card — one object, two mounts). Under the answer's words: *Tools
+      for this* and at most five rows, best first — a `ProviderMark` (DS-3066) · *Provider · Name* · the one act the
+      projection's state word allows the person: *Add to ⟨agent⟩* (a builder; the turn's agent, the same bind the door
+      makes) · *Connect ⟨provider⟩ →* (a `user_delegated` connection) · a reason chip and no button (*Needs an
+      administrator* · *Not connected yet* · *Above this Project's classification*) — or the one line *Nothing here does
+      that yet. You can connect a new API or ask an administrator.* Then the card's last door as an action row: *Connect a
+      new API* (a builder → the S3 setup page with `?thread · message`; back returns to the thread, the request is filed
+      under the turn) · *Ask an administrator* (a member → 's one field **in place of the list** — the note
+      *Send for review · Cancel*; the request is `kind = capability` under this turn). The receipt is one `role=status`
+      line (*Added to ⟨agent⟩.* · *Sent for review — the administrators of ⟨Project⟩ will see it.* · a refusal's line);
+      the person's request's face follows beneath as a chip (*Awaiting review* · *Approved — added to ⟨agent⟩* · *Needs
+      changes*) with *Open*. Honesty: a viewer gets the same rows with their reason and no act, no door; *nothing here*
+      is byte-identical for an empty match and a match the person may not see; an `add` row the runtime's U6 card on the
+      same turn already covers is not repeated; the sentence is nowhere in the card; the projection is the only source
+      of rows. Offline: every act `disabled`, the words stay.
+    states: [member, builder, mixed, nothing-here, nothing-here-member, viewer, viewer-nothing, asking, asking-error, sending, sent, approved, declined, added, adding, add-failed, offline]
+    a11y: "a `region` labelled by its title; the rows are a list named by the title; every act is a real button or link (a reason is a chip, never a disabled control); the note field is labelled with its hint and `aria-invalid` on error; the form carries `aria-busy` while sending; the receipt is `role=status`; the card stacks at 320 px and 200 %; uk = en"
+    copy: ["turn.capability.title", "turn.capability.row", "turn.capability.nothing_here", "turn.capability.reason.*", "turn.capability.request_sent", "turn.capability.added", "turn.capability.add_failed", "turn.capability.requests", "turn.action.add_tool", "turn.action.add_tool_to", "turn.action.connect_new_api", "turn.action.ask_administrator", "agent.tools.door.row.connect", "agent.tools.setup.ask.note_label", "agent.tools.ask.hint", "agent.tools.setup.footer.send", "agent.tools.request.status.*", "agent.tools.request.chip.*"]
+    source: [" 00-EPIC §B", "", "", "", "…", "", "", "", "", "", "", DS-6901, DS-3066, DS-5019, DS-7006]
+    status: proposed

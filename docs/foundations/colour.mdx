@@ -1,6 +1,6 @@
 ---
 title: "Colour"
-description: "Neutrals, semantic colour, the attention accents, per-application accents and the data palette — in both themes."
+description: "Neutrals, semantic colour, the attention accents, per-application accents, the data palette and the brand colour — in both themes."
 kind: reference
 app: platform
 ---
@@ -11,7 +11,7 @@ app: platform
 
 Background, subtle, muted, surface, raised, text (primary · secondary · muted), border (default · strong), focus, and the one accent with its ring and soft tint. Both themes define every neutral; a component names the token, never the hex.
 
-Tokens: `--nexus-bg … --nexus-accent-soft`
+Tokens: `nexus-bg … --nexus-accent-soft`
 
 <Story id="design-system-foundations--neutrals" height={520} />
 
@@ -19,23 +19,23 @@ Tokens: `--nexus-bg … --nexus-accent-soft`
 
 Error, warning, success, info — four values, used sparingly, always with a label or an icon that carries the same meaning. They tint a chip's dot or an inline alert; they never fill a surface.
 
-Tokens: `--nexus-error · --nexus-warning · --nexus-success · --nexus-info`
+Tokens: `nexus-error · --nexus-warning · --nexus-success · --nexus-info`
 
 <Story id="design-system-foundations--semantic" height={520} />
 
 ## DS-1003 — Attention accents
 
-Mint, pink, sky, amber, green, violet, slate, coral, copper, each with a soft tint. They identify an application in the launcher and may mark one running or selected thing on a screen. Never navigation chrome, never a chip, never text colour.
+Mint, pink, sky, amber, green, violet, slate, coral, copper, teal, steel, each with a soft tint. They identify an application in the launcher and may mark one running or selected thing on a screen. Never navigation chrome, never a chip, never text colour — **an application's glyph inside its own launcher tile may take its accent**.
 
-Tokens: `--nexus-accent-mint … --nexus-accent-copper-soft`
+Tokens: `nexus-accent-mint … --nexus-accent-steel-soft`
 
 <Story id="design-system-foundations--accents" height={520} />
 
 ## DS-1004 — Per-application accents
 
-Each application owns one accent pair (`--nexus-app-<app>-accent` · `-soft`) mapped to an attention accent. A new application claims a free pair in its UAT-0 and the scaffold writes it; two neighbours in the launcher never share a hue.
+Each application owns one accent pair (`--nexus-app-<app>-accent` · `-soft`) mapped to an attention accent. A new application claims a free pair in its UAT-0 and the scaffold writes it; two neighbours in the launcher never share a hue. Ten pairs: chat mint · spin pink · tasks amber · bi sky · graph violet · core slate · map green · care coral · forge copper · sales teal · **factory steel**.
 
-Tokens: `--nexus-app-chat-accent … --nexus-app-forge-soft`
+Tokens: `nexus-app-chat-accent … --nexus-app-factory-soft`
 
 <Story id="design-system-foundations--app-accents" height={520} />
 
@@ -43,7 +43,15 @@ Tokens: `--nexus-app-chat-accent … --nexus-app-forge-soft`
 
 Eight categorical hues and one sequential ramp (`--nexus-data-1 … -8`, `--nexus-data-seq-1 … -5`) for things that are *data* — NexForge colour keys, NexBI series, NexMap layers, NexGraph hues — defined once in both themes with ≥ 3:1 against the surface. An app never picks its own chart colour; the attention accents (DS-1003) are not a data palette.
 
-Tokens: `--nexus-data-1 … --nexus-data-seq-5 (new)`
+Tokens: `nexus-data-1 … --nexus-data-seq-5 (new) · --nexus-on-data (WP-10: type on a solid data colour, paper in both themes)`
 
 <Story id="design-system-foundations--data-palette" height={520} />
+
+## DS-1006 — Brand colour
+
+One brand colour, the pink of nexiflow.ai (`--nexus-brand`: #c9336f in Light — the landing's #d43a78 one step deeper so 11 px text clears 4.5:1 on the warm white — and #f07aa6 in Graphite; `--nexus-brand-soft` its wash). It carries exactly one thing: the **application name after the wordmark** (`Core` · `VibeBan` · `Graph` · `Docs` … — `.nexus-cc-sidebar-app` in every app's brand row, `.nx-brand-app` in NexiDocs), as "Flow" is pink on the landing. The wordmark `Nexi` stays graphite; buttons, favicons, the sign-in doors, navigation chrome and the one accent (DS-1001) keep their tokens. Whether the one accent itself becomes the brand colour is a separate register question (step B, open); the attention pink of NexSpin (DS-1003 · DS-1004) is not the brand colour.
+
+Tokens: `nexus-brand · --nexus-brand-soft`
+
+<Story id="design-system-brand-mark--shell-with-app" height={520} />
 
